@@ -156,6 +156,8 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   async logout(@Ctx(){req, res}: RequestContext): Promise<Boolean> {
+    const userId = req.session.userId;  
+    console.log("logging out user: ", userId)
     res.clearCookie(__COOKIE_NAME__)
     return new Promise<Boolean>(res=>{
       req.session.destroy(err=>{
