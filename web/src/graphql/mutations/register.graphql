@@ -1,5 +1,5 @@
-mutation Register($email:String!, $username:String!, $password:String! ) {
-  register(userinfo: {email:$email, password:$password, username:$username} ) {
+mutation Register($email:String!, $username:String!, $password:String!, $firstName:String!, $lastName:String! ) {
+  register(userinfo: {username:$username, email:$email, password:$password, firstName:$firstName, lastName:$lastName} ) {
     errors {
       field
       message
@@ -7,6 +7,8 @@ mutation Register($email:String!, $username:String!, $password:String! ) {
     user {
       id
       username
+      firstName
+      lastName
     }
   }
 }
