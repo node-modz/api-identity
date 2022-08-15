@@ -24,7 +24,7 @@
   
 ### creates migration files
 ```bash
-  npx typeorm migration:generate -c ledgers -n <name> -d src/migrations/
+  npx typeorm migration:generate -c ledgers -d src/migrations/ -n <name> 
 ```  
   
 ### executes migrations on DB

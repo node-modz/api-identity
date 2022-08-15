@@ -47,6 +47,8 @@ export type Query = {
 
 export type RegisterUserInput = {
   email: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
   username: Scalars['String'];
 };
@@ -54,7 +56,9 @@ export type RegisterUserInput = {
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String'];
+  firstName: Scalars['String'];
   id: Scalars['String'];
+  lastName: Scalars['String'];
   updatedAt: Scalars['String'];
   username: Scalars['String'];
 };
@@ -82,10 +86,12 @@ export type RegisterMutationVariables = Exact<{
   email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string } | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string } | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -121,8 +127,10 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $username: String!, $password: String!) {
-  register(userinfo: {email: $email, password: $password, username: $username}) {
+    mutation Register($email: String!, $username: String!, $password: String!, $firstName: String!, $lastName: String!) {
+  register(
+    userinfo: {username: $username, email: $email, password: $password, firstName: $firstName, lastName: $lastName}
+  ) {
     errors {
       field
       message
@@ -130,6 +138,8 @@ export const RegisterDocument = gql`
     user {
       id
       username
+      firstName
+      lastName
     }
   }
 }

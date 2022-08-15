@@ -13,7 +13,9 @@ import {
   useDisclosure,
   BoxProps,
   FlexProps,
+  Select,
 } from '@chakra-ui/react';
+import NextLink from 'next/link'
 import {
   FiHome,
   FiTrendingUp,
@@ -25,15 +27,16 @@ import {
 import { IconType } from 'react-icons';
 
 interface LinkItemProps {
+  href: string;
   name: string;
   icon: IconType;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { href: '/neol/dashboard', name: 'Dasboard', icon: FiHome },
+  { href: '/neol/trending', name: 'Trending', icon: FiTrendingUp },
+  { href: '/neol/explore', name: 'Explore', icon: FiCompass },
+  { href: '/neol/favorites', name: 'Favourites', icon: FiStar },
+  { href: '/neol/settings', name: 'Settings', icon: FiSettings },
 ];
 
 export default function SimpleSidebar({ children }: { children: ReactNode }) {
@@ -79,14 +82,23 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       pos="fixed"
       h="full"
       {...rest}>
+      <Select placeholder="Select option">
+        <option value="Comp-X">Comp-X</option>
+        <option value="Comp-Y">Comp-Y</option>
+        <option value="IND-A">IND-A</option>
+        <option value="IND-B">IND-B</option>
+        <option value="ITD-Z-fed">ITD-Z-fed</option>
+        <option value="ITD-Z-state">ITD-Z-state</option>
+      </Select>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           Logo
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
+
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem key={link.name} icon={link.icon} href={link.href}>
           {link.name}
         </NavItem>
       ))}
@@ -95,37 +107,41 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 };
 
 interface NavItemProps extends FlexProps {
+  href: string;
   icon: IconType;
   children: React.ReactNode;
 }
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+  console.log(rest.href)
   return (
-    <Link href="#" style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: 'cyan.400',
-          color: 'white',
-        }}
-        {...rest}>
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: 'white',
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
-    </Link>
+    <NextLink href={rest.href}>
+      <Link href={rest.href} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+        <Flex
+          align="center"
+          p="4"
+          mx="4"
+          borderRadius="lg"
+          role="group"
+          cursor="pointer"
+          _hover={{
+            bg: 'cyan.400',
+            color: 'white',
+          }}
+          {...rest}>
+          {icon && (
+            <Icon
+              mr="4"
+              fontSize="16"
+              _groupHover={{
+                color: 'white',
+              }}
+              as={icon}
+            />
+          )}
+          {children}
+        </Flex>
+      </Link>
+    </NextLink>
   );
 };
 

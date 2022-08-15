@@ -13,33 +13,49 @@ import {
 import { getConnection } from "typeorm";
 import { RequestContext } from "../app/request-context";
 import { __COOKIE_NAME__ } from "../app/app-constants";
-import 'reflect-metadata'
+import "reflect-metadata";
 
 @InputType()
 class RegisterUserInput {
   @Field()
   email: string;
+
   @Field()
   username: string;
+  
   @Field()
   password: string;
 
+  @Field({nullable:true})
+  firstName!: string;
+
+  @Field({nullable:true})
+  lastName!: string;
+
   validate(): FieldError[] | null {
-    const errors: FieldError[] = []
+    const errors: FieldError[] = [];
     if (!this.email.includes("@")) {
       errors.push(new FieldError("email", "invalid email"));
+    }
+
+    if (!this.username) {
+      this.username = this.email;
     }
 
     if (this.username.length <= 2) {
       errors.push(new FieldError("username", "length must be greater than 2"));
     }
 
-    if (this.username.includes("@")) {
-      errors.push(new FieldError("username", "cannot include an @"));
-    }
-
     if (this.password.length <= 2) {
       errors.push(new FieldError("password", "length must be greater than 2"));
+    }
+
+    if (!this.firstName) {
+      errors.push(new FieldError("firstName", "invalid first name"));
+    }
+
+    if (!this.lastName) {
+      errors.push(new FieldError("lastName", "invalid last name"));
     }
     return errors.length > 0 ? errors : null;
   }
@@ -49,8 +65,10 @@ class RegisterUserInput {
 class FieldError {
   @Field()
   field: string;
+
   @Field()
   message: string;
+
   constructor(field: string, message: string) {
     this.field = field;
     this.message = message;
@@ -61,22 +79,23 @@ class FieldError {
 class UserResponse {
   @Field(() => [FieldError], { nullable: true })
   errors?: FieldError[];
+
   @Field(() => User, { nullable: true })
   user?: User;
 }
 
 @Resolver()
 export class UserResolver {
+
   @Query(() => User, { nullable: true })
   async me(@Ctx() { req }: RequestContext) {
-    
-    const userId = req.session.userId;  
+    const userId = req.session.userId;
     if (!userId) {
       console.log("session no active session:");
       return null;
     }
-    
-    console.log("session user found: ",userId);
+
+    console.log("session user found: ", userId);
     const user = await User.findOne({ where: { id: userId } });
     return user;
   }
@@ -86,7 +105,7 @@ export class UserResolver {
     @Arg("userinfo") userinfo: RegisterUserInput,
     @Ctx() { req }: RequestContext
   ): Promise<UserResponse> {
-    console.log("reegister request");
+    
     const errors = userinfo.validate();
     if (errors) {
       return { errors };
@@ -94,12 +113,19 @@ export class UserResolver {
     const hashedPWD = await argon2.hash(userinfo.password);
     let user;
     try {
-      console.log("registering user: ", userinfo.username, "password:", userinfo.password)
+      console.log(
+        "registering user: ",
+        userinfo.username,
+        "password:",
+        userinfo.password
+      );
       const result = await getConnection()
         .createQueryBuilder()
         .insert()
         .into(User)
         .values({
+          lastName: userinfo.lastName,
+          firstName: userinfo.firstName,
           username: userinfo.username,
           email: userinfo.email,
           password: hashedPWD,
@@ -136,7 +162,7 @@ export class UserResolver {
     @Arg("password") password: string,
     @Ctx() { req }: RequestContext
   ): Promise<UserResponse> {
-    console.log("login user: ", username, "password:", password)
+    console.log("login user: ", username, "password:", password);
     const user = await User.findOne({ where: { username: username } });
     if (!user) {
       return {
@@ -155,19 +181,19 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Ctx(){req, res}: RequestContext): Promise<Boolean> {
-    const userId = req.session.userId;  
-    console.log("logging out user: ", userId)
-    res.clearCookie(__COOKIE_NAME__)
-    return new Promise<Boolean>(res=>{
-      req.session.destroy(err=>{
-        if(err) {
-          console.log("unable to destroy session",err)
-          res(false)
-          return
+  async logout(@Ctx() { req, res }: RequestContext): Promise<Boolean> {
+    const userId = req.session.userId;
+    console.log("logging out user: ", userId);
+    res.clearCookie(__COOKIE_NAME__);
+    return new Promise<Boolean>((res) => {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log("unable to destroy session", err);
+          res(false);
+          return;
         }
-        res(true)
-      })
-    })
+        res(true);
+      });
+    });
   }
 }

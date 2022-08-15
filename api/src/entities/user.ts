@@ -25,4 +25,12 @@ export class User extends BaseEntity {
     @Field(() => String)
     @UpdateDateColumn()
     updatedAt!: Date;
+
+    @Field()
+    @Column({nullable:true})
+    firstName!: string;
+    
+    @Field()
+    @Column({nullable:true})
+    lastName!: string;
 }

@@ -16,18 +16,15 @@ import { CTA } from '../components/CTA'
 import { Footer } from '../components/Footer'
 import { NavBar } from '../components/NavBar'
 import SimpleSidebar from '../components/neol/Sidebar'
-import WithSubnavigation from '../components/neol/Navbar'
+import TopNavBar from '../components/neol/TopNavBar'
 
 
 const Index = () => (
   <>
-    <WithSubnavigation />    
+    <TopNavBar />    
     <SimpleSidebar>
-      <NavBar/>
-      <>Hello World</>  
       <ChakraContainer/>     
-    </SimpleSidebar>  
-       
+    </SimpleSidebar>         
   </>
 )
 const ChakraContainer = () => {

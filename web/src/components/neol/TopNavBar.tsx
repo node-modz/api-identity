@@ -28,8 +28,11 @@ import {
     ChevronRightIcon,
     AddIcon,
 } from '@chakra-ui/icons';
+import NextLink from 'next/link'
+import { Router, useRouter } from "next/router"
+import { useLogoutMutation, useMeQuery } from "../../generated/graphql"
 
-export default function WithSubnavigation() {
+export default function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();
 
     return (
@@ -75,48 +78,7 @@ export default function WithSubnavigation() {
                     justify={'flex-end'}
                     direction={'row'}
                     spacing={6}>
-                    <Button
-                        as={'a'}
-                        fontSize={'sm'}
-                        fontWeight={400}
-                        variant={'link'}
-                        href={'/login'}>
-                        Sign In
-                    </Button>
-                    <Button
-                        as={'a'}
-                        display={{ base: 'none', md: 'inline-flex' }}
-                        fontSize={'sm'}
-                        fontWeight={600}
-                        color={'white'}
-                        bg={'pink.400'}
-                        href={'/register'}
-                        _hover={{
-                            bg: 'pink.300',
-                        }}>
-                        Sign Up
-                    </Button>
-                    <Menu>
-                        <MenuButton
-                            as={Button}
-                            rounded={'full'}
-                            variant={'link'}
-                            cursor={'pointer'}
-                            minW={0}>
-                            <Avatar
-                                size={'sm'}
-                                src={
-                                    'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                                }
-                            />
-                        </MenuButton>
-                        <MenuList>
-                            <MenuItem>Settings</MenuItem>
-                            <MenuItem>Profile</MenuItem>
-                            <MenuDivider />
-                            <MenuItem>Logout</MenuItem>
-                        </MenuList>
-                    </Menu>
+                    <LoggedInState/>                    
                 </Stack>
             </Flex>
 
@@ -127,6 +89,90 @@ export default function WithSubnavigation() {
     );
 }
 
+
+const LoggedInState = () => {
+    const router = useRouter()
+    const [response, logout] = useLogoutMutation()
+    const [{ data, fetching }] = useMeQuery()
+    let view = null;
+    if (!fetching && !data?.me) {
+        view = (
+            <>
+                <Login />
+                <Register />
+            </>
+        )
+    } else if (!fetching && data?.me) {
+        view = (
+            <>
+                <UserProfile />
+                <Button onClick={async () => {
+                    console.log("clicked logout")
+                    await logout();
+                    router.push('/');
+                }} variant="link" mr={12}>logout
+                </Button>
+            </>
+        )
+    }
+    return (<>{view}</>);
+}
+const Login = () => {
+    return (
+        <NextLink href="/login">
+            <Button
+                as={'a'}
+                fontSize={'sm'}
+                fontWeight={400}
+                variant={'link'}>
+                Sign In
+            </Button>
+        </NextLink>
+    )
+}
+const Register = () => {
+    return (
+        <NextLink href="/register">
+            <Button
+                as={'a'}
+                display={{ base: 'none', md: 'inline-flex' }}
+                fontSize={'sm'}
+                fontWeight={600}
+                color={'white'}
+                bg={'pink.400'}
+                _hover={{
+                    bg: 'pink.300',
+                }}>
+                Sign Up
+            </Button>
+        </NextLink>
+    )
+}
+const UserProfile = () => {
+    return (
+        <Menu>
+            <MenuButton
+                as={Button}
+                rounded={'full'}
+                variant={'link'}
+                cursor={'pointer'}
+                minW={0}>
+                <Avatar
+                    size={'sm'}
+                    src={
+                        'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
+                    }
+                />
+            </MenuButton>
+            <MenuList>
+                <MenuItem>Settings</MenuItem>
+                <MenuItem>Profile</MenuItem>
+                <MenuDivider />
+                <MenuItem>Logout</MenuItem>
+            </MenuList>
+        </Menu>
+    )
+}
 const DesktopNav = () => {
     const linkColor = useColorModeValue('gray.600', 'gray.200');
     const linkHoverColor = useColorModeValue('gray.800', 'white');
