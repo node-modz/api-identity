@@ -32,11 +32,11 @@ interface LinkItemProps {
   icon: IconType;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { href: '/neol/dashboard', name: 'Dasboard', icon: FiHome },
-  { href: '/neol/trending', name: 'Trending', icon: FiTrendingUp },
-  { href: '/neol/explore', name: 'Explore', icon: FiCompass },
-  { href: '/neol/favorites', name: 'Favourites', icon: FiStar },
-  { href: '/neol/settings', name: 'Settings', icon: FiSettings },
+  { href: '/dashboard', name: 'Dasboard', icon: FiHome },
+  { href: '/trending', name: 'Trending', icon: FiTrendingUp },
+  { href: '/explore', name: 'Explore', icon: FiCompass },
+  { href: '/favorites', name: 'Favourites', icon: FiStar },
+  { href: '/settings', name: 'Settings', icon: FiSettings },
 ];
 
 export default function SimpleSidebar({ children }: { children: ReactNode }) {

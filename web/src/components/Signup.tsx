@@ -1,8 +1,8 @@
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
-import { useRegisterMutation } from '../../generated/graphql';
-import { toErrorMap } from '../../utils/utils';
-import { InputField, PasswordField } from '../InputField';
+import { useRegisterMutation } from '../generated/graphql';
+import { toErrorMap } from '../utils/utils';
+import { InputField, PasswordField } from './InputField';
 import NextLink from 'next/link';
 import {
   Flex,
@@ -13,6 +13,9 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { MODULE_CONFIG } from './ModuleConfig';
+
+
 
 export const Signup = () => {
   const [registerReponse, register] = useRegisterMutation();
@@ -22,19 +25,17 @@ export const Signup = () => {
     <Formik
       initialValues={{ firstName: "", lastName: "", email: "", username: "", password: "" }}
       onSubmit={async (values, { setErrors }) => {
-        console.log(values);
         const response = await register(values);
-        console.log(response.data);
         if (response.error) {
           console.log(response.error);
+          setErrorMsg(response.error.toString())
         } else if (response.data?.register.errors) {
           setErrors(toErrorMap(response.data.register.errors));
         } else {
-          router.push("/");
+          router.push(MODULE_CONFIG.auth.postSignupPath);
         }
       }}>
-      {(props) => {
-        const { values, errors, touched, handleChange, isSubmitting } = props;
+      {({isSubmitting}) => {
         return (
           <Form>
             <Flex

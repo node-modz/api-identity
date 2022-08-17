@@ -1,6 +1,5 @@
-import { NavBar } from "../../components/NavBar"
-import TopNavBar from "../../components/neol/TopNavBar"
-import SimpleSidebar from "../../components/neol/Sidebar"
+import TopNavBar from "../components/TopNavBar"
+import SimpleSidebar from "../components/Sidebar"
 
 const Settings = () => (
     <>
