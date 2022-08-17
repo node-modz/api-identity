@@ -7,6 +7,7 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   name: string,
   label: string,
 }
+
 export const InputField: React.FC<InputFieldProps> = (props: InputFieldProps) => {
   // inputProps now has all minus label & size i.e type, placeholder etc..
   const { label, size: _, ...inputProps } = props

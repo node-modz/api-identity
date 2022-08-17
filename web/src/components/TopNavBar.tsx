@@ -30,7 +30,7 @@ import {
 } from '@chakra-ui/icons';
 import NextLink from 'next/link'
 import { Router, useRouter } from "next/router"
-import { useLogoutMutation, useMeQuery } from "../../generated/graphql"
+import { useLogoutMutation, useMeQuery } from "../generated/graphql"
 
 export default function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();

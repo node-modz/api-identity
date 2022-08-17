@@ -1,8 +1,8 @@
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
-import { useLoginMutation } from '../../generated/graphql';
-import { toErrorMap } from '../../utils/utils';
-import { InputField } from '../InputField';
+import { useLoginMutation } from '../generated/graphql';
+import { toErrorMap } from '../utils/utils';
+import { InputField } from './InputField';
 import {
   Flex,
   Box, Checkbox,
@@ -13,6 +13,7 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react';
+import { MODULE_CONFIG } from './ModuleConfig';
 
 export const SignIn = () => {
   const [, loginRequest] = useLoginMutation();
@@ -26,11 +27,10 @@ export const SignIn = () => {
         if (response.data?.login.errors) {
           setErrors(toErrorMap(response.data.login.errors));
         } else {
-          router.push("/");
+          router.push(MODULE_CONFIG.auth.postLoginPath);
         }
       }}>
-      {(props) => {
-        const { values, errors, touched, handleChange, isSubmitting } = props;
+      {({isSubmitting}) => {
         return (
           <Flex
             minH={'100vh'}
