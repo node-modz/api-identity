@@ -6,8 +6,16 @@ $ yarn install
 
 ```
 ```bash
-$ yar dev;  //http://localhost:3000
+$ yarn dev;  //http://localhost:3000
 ```
+
+# Generating new graphql queries/mutations
+
+update src/graphql/mutations or src/graphql/queries to get the appropriate info
+```bash
+$ yarn gen
+```
+
 
 # chakra react-app guide
 https://chakra-ui.com/getting-started/cra-guide

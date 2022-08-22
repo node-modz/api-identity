@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
 import { useLoginMutation } from '../generated/graphql';
@@ -13,9 +14,11 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react';
-import { MODULE_CONFIG } from './ModuleConfig';
+import { MODULE_CONFIG } from '../app/ModuleConfig';
+import { AuthContext } from '../app/AuthContext';
 
 export const SignIn = () => {
+  const authContext = useContext(AuthContext)
   const [, loginRequest] = useLoginMutation();
   const router = useRouter();
   return (
@@ -23,14 +26,18 @@ export const SignIn = () => {
       initialValues={{ username: "", password: "" }}
       onSubmit={async (values, { setErrors }) => {
         const response = await loginRequest(values);
-        console.log(response.operation.context);
+
         if (response.data?.login.errors) {
           setErrors(toErrorMap(response.data.login.errors));
         } else {
-          router.push(MODULE_CONFIG.auth.postLoginPath);
+          if (response.data?.login.tokenInfo) {
+            authContext.setAuthState?.(response.data?.login.tokenInfo)
+            console.log("postlogin: isAuthenticated:",authContext.isAuthenticated?.())
+          }          
+          router.push(MODULE_CONFIG.auth.postLogin.href);
         }
       }}>
-      {({isSubmitting}) => {
+      {({ isSubmitting }) => {
         return (
           <Flex
             minH={'100vh'}

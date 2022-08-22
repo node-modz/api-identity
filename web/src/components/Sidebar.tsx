@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
 import {
   IconButton,
   Box,
@@ -25,19 +25,9 @@ import {
   FiMenu,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
+import { AuthContext } from '../app/AuthContext';
+import { MODULE_CONFIG } from '../app/ModuleConfig';
 
-interface LinkItemProps {
-  href: string;
-  name: string;
-  icon: IconType;
-}
-const LinkItems: Array<LinkItemProps> = [
-  { href: '/dashboard', name: 'Dasboard', icon: FiHome },
-  { href: '/trending', name: 'Trending', icon: FiTrendingUp },
-  { href: '/explore', name: 'Explore', icon: FiCompass },
-  { href: '/favorites', name: 'Favourites', icon: FiStar },
-  { href: '/settings', name: 'Settings', icon: FiSettings },
-];
 
 export default function SimpleSidebar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -97,7 +87,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
 
-      {LinkItems.map((link) => (
+      {MODULE_CONFIG.SideBar.Items.map((link) => (
         <NavItem key={link.name} icon={link.icon} href={link.href}>
           {link.name}
         </NavItem>
@@ -112,7 +102,8 @@ interface NavItemProps extends FlexProps {
   children: React.ReactNode;
 }
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
-  console.log(rest.href)
+  const authContext = useContext(AuthContext);
+  console.log("loading sidebar")
   return (
     <NextLink href={rest.href}>
       <Link href={rest.href} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>

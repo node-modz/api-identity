@@ -28,7 +28,10 @@ export const caccheExchangeConfig = {
                     return query
                 } else {
                     let r = {
-                        me: result.login.user
+                        me: {
+                            user: result.login.user,
+                            tokenInfo: result.login.tokenInfo
+                        }
                     }
                     console.log("success: ",r)
                     return r
@@ -47,7 +50,10 @@ export const caccheExchangeConfig = {
                       return query
                   } else {
                       let r = {
-                          me: result.register.user
+                          me: {
+                            user: result.register.user,
+                            tokenInfo: result.register.tokenInfo
+                          }
                       }
                       console.log("success: ",r)
                       return r

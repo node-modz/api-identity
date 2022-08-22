@@ -10,5 +10,10 @@ mutation Register($email:String!, $username:String!, $password:String!, $firstNa
       firstName
       lastName
     }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
   }
 }

@@ -7,3 +7,4 @@ export const __CORS_ALLOW_DOMAINS__ = "http://localhost:3000"
 export const __SESSION_SECRET__ = "adfadadf-afadfad-afdafa"
 export const __LEDGERS_DB__ = "postgresql://docker:docker@localhost:5433/ledgers" //process.env.DATABASE_URL,
 export const __REDIS_SERVER__ = "localhost:6389"
+export const __JWT_SECRET__ = "some-xyz-seccret"

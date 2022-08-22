@@ -29,12 +29,14 @@ import {
     AddIcon,
 } from '@chakra-ui/icons';
 import NextLink from 'next/link'
-import { Router, useRouter } from "next/router"
+import { NextRouter, Router, useRouter } from "next/router"
 import { useLogoutMutation, useMeQuery } from "../generated/graphql"
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '../app/AuthContext';
+import { MODULE_CONFIG, NavItem } from '../app/ModuleConfig';
 
 export default function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();
-
     return (
         <Box>
             <Flex
@@ -78,7 +80,7 @@ export default function TopNavBar() {
                     justify={'flex-end'}
                     direction={'row'}
                     spacing={6}>
-                    <LoggedInState/>                    
+                    <LoggedInState />
                 </Stack>
             </Flex>
 
@@ -89,37 +91,67 @@ export default function TopNavBar() {
     );
 }
 
-
+// TODO: enhance this to leverage AuthContext to figure out if the user is logged In.
 const LoggedInState = () => {
-    const router = useRouter()
-    const [response, logout] = useLogoutMutation()
-    const [{ data, fetching }] = useMeQuery()
+    const router = useRouter();
+    const [response, logoutAPI] = useLogoutMutation();
+    const authContext = useContext(AuthContext)
+
+
+    // TODO: is it possible to assign this as action in MODULE_CONFIG
+    const doLogut = async () => {
+        console.log("clicked logout")
+        await logoutAPI();
+        authContext.logout?.();
+        router.push(MODULE_CONFIG.auth.postLogout.href);
+    }
+    console.log("In LoggedInState: isAuthenticated", authContext.isAuthenticated?.())
+
     let view = null;
-    if (!fetching && !data?.me) {
+    if (authContext.isAuthenticated?.()) {
+        view = (
+            <>
+                <UserProfile />
+                <Button onClick={async () => {
+                    doLogut();
+                }} variant="link" mr={12}>logout
+                </Button>
+            </>
+        )
+    } else {
         view = (
             <>
                 <Login />
                 <Register />
             </>
         )
-    } else if (!fetching && data?.me) {
-        view = (
-            <>
-                <UserProfile />
-                <Button onClick={async () => {
-                    console.log("clicked logout")
-                    await logout();
-                    router.push('/');
-                }} variant="link" mr={12}>logout
-                </Button>
-            </>
-        )
     }
+    //const [{ data, fetching }] = useMeQuery();
+    // if (!fetching && !data?.me) {
+    //     view = (
+    //         <>
+    //             <Login />
+    //             <Register />
+    //         </>
+    //     )
+    // } else if (!fetching && data?.me) {           
+    //     view = (
+    //         <>
+    //             <UserProfile />
+    //             <Button onClick={() => { 
+    //                 doLogut();
+    //             }} variant="link" mr={12}>logout
+    //             </Button>
+    //         </>
+    //     )
+    // }
     return (<>{view}</>);
+
+   
 }
 const Login = () => {
     return (
-        <NextLink href="/login">
+        <NextLink href={MODULE_CONFIG.auth.login.href}>
             <Button
                 as={'a'}
                 fontSize={'sm'}
@@ -132,7 +164,7 @@ const Login = () => {
 }
 const Register = () => {
     return (
-        <NextLink href="/register">
+        <NextLink href={MODULE_CONFIG.auth.register.href}>
             <Button
                 as={'a'}
                 display={{ base: 'none', md: 'inline-flex' }}
@@ -165,10 +197,18 @@ const UserProfile = () => {
                 />
             </MenuButton>
             <MenuList>
-                <MenuItem>Settings</MenuItem>
-                <MenuItem>Profile</MenuItem>
-                <MenuDivider />
-                <MenuItem>Logout</MenuItem>
+                //TODO: onClick of logout call logout function above
+                {MODULE_CONFIG.UserProfile.Items.map((navItem) => {
+                    if (navItem.href) {
+                        return (
+                            <NextLink key={navItem.label} href={navItem.href}>
+                                <MenuItem>{navItem.label}</MenuItem>
+                            </NextLink>
+                        )
+                    } else {
+                        return (<MenuDivider key={navItem.label} />)
+                    }
+                })}
             </MenuList>
         </Menu>
     )
@@ -180,7 +220,7 @@ const DesktopNav = () => {
 
     return (
         <Stack direction={'row'} spacing={4}>
-            {NAV_ITEMS.map((navItem) => (
+            {MODULE_CONFIG.TopNav.Items.map((navItem) => (
                 <Box key={navItem.label}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
                         <PopoverTrigger>
@@ -260,7 +300,7 @@ const MobileNav = () => {
             bg={useColorModeValue('white', 'gray.800')}
             p={4}
             display={{ md: 'none' }}>
-            {NAV_ITEMS.map((navItem) => (
+            {MODULE_CONFIG.TopNav.Items.map((navItem) => (
                 <MobileNavItem key={navItem.label} {...navItem} />
             ))}
         </Stack>
@@ -316,51 +356,3 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         </Stack>
     );
 };
-
-interface NavItem {
-    label: string;
-    subLabel?: string;
-    children?: Array<NavItem>;
-    href?: string;
-}
-
-const NAV_ITEMS: Array<NavItem> = [
-    {
-        label: 'Inspiration',
-        children: [
-            {
-                label: 'Explore Design Work',
-                subLabel: 'Trending Design to inspire you',
-                href: '#',
-            },
-            {
-                label: 'New & Noteworthy',
-                subLabel: 'Up-and-coming Designers',
-                href: '#',
-            },
-        ],
-    },
-    {
-        label: 'Find Work',
-        children: [
-            {
-                label: 'Job Board',
-                subLabel: 'Find your dream design job',
-                href: '#',
-            },
-            {
-                label: 'Freelance Projects',
-                subLabel: 'An exclusive list for contract work',
-                href: '#',
-            },
-        ],
-    },
-    {
-        label: 'Learn Design',
-        href: '#',
-    },
-    {
-        label: 'Hire Designers',
-        href: '#',
-    },
-];

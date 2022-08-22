@@ -42,7 +42,7 @@ export type MutationRegisterArgs = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
-  me?: Maybe<User>;
+  me?: Maybe<UserResponse>;
 };
 
 export type RegisterUserInput = {
@@ -51,6 +51,13 @@ export type RegisterUserInput = {
   lastName?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
   username: Scalars['String'];
+};
+
+export type Token = {
+  __typename?: 'Token';
+  expiresAt: Scalars['Float'];
+  token: Scalars['String'];
+  userInfo: Scalars['String'];
 };
 
 export type User = {
@@ -66,6 +73,7 @@ export type User = {
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
+  tokenInfo?: Maybe<Token>;
   user?: Maybe<User>;
 };
 
@@ -75,7 +83,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string } | null } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string } | null, tokenInfo?: { __typename?: 'Token', token: string, userInfo: string, expiresAt: number } | null } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -91,12 +99,12 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string } | null } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string } | null, tokenInfo?: { __typename?: 'Token', token: string, userInfo: string, expiresAt: number } | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string } | null, tokenInfo?: { __typename?: 'Token', token: string, userInfo: string, expiresAt: number } | null } | null };
 
 
 export const LoginDocument = gql`
@@ -109,6 +117,11 @@ export const LoginDocument = gql`
     user {
       id
       username
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
     }
   }
 }
@@ -141,6 +154,11 @@ export const RegisterDocument = gql`
       firstName
       lastName
     }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
   }
 }
     `;
@@ -151,8 +169,15 @@ export function useRegisterMutation() {
 export const MeDocument = gql`
     query Me {
   me {
-    id
-    username
+    user {
+      id
+      username
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
   }
 }
     `;
