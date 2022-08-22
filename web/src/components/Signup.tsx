@@ -12,12 +12,14 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import { MODULE_CONFIG } from './ModuleConfig';
+import { useContext, useState } from 'react';
+import { MODULE_CONFIG } from '../app/ModuleConfig';
+import { AuthContext } from '../app/AuthContext';
 
 
 
 export const Signup = () => {
+  const authContext = useContext(AuthContext)
   const [registerReponse, register] = useRegisterMutation();
   const [errMsg, setErrorMsg] = useState('');
   const router = useRouter();
@@ -31,11 +33,13 @@ export const Signup = () => {
           setErrorMsg(response.error.toString())
         } else if (response.data?.register.errors) {
           setErrors(toErrorMap(response.data.register.errors));
-        } else {
-          router.push(MODULE_CONFIG.auth.postSignupPath);
+        } else if (response.data?.register.tokenInfo) {          
+          authContext.setAuthState?.(response.data?.register.tokenInfo)
+          console.log("postsignup: isAuthenticated:",authContext.isAuthenticated?.())
+          router.push(MODULE_CONFIG.auth.postSignup.href);
         }
       }}>
-      {({isSubmitting}) => {
+      {({ isSubmitting }) => {
         return (
           <Form>
             <Flex
@@ -63,7 +67,7 @@ export const Signup = () => {
                         <InputField label="Last Name" placeholder='Last Name' name='lastName' type="text" />
                       </Box>
                     </HStack>
-                    <InputField label="Email" placeholder='Email' name='email' type="text" />
+                    <InputField label="Email" placeholder='Email' name='username' type="text" />
                     <PasswordField label="Password" placeholder='password' name='password' type='password' />
                     <Stack spacing={10} pt={2}>
                       <Button

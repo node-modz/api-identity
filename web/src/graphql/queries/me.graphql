@@ -1,6 +1,13 @@
 query Me {
   me {
-    id
+    user {
+      id
     username
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
   }
 }

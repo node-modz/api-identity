@@ -1,93 +1,23 @@
 import { User } from "../entities/user";
 import argon2 from "argon2";
+import * as jwt from "jsonwebtoken";
+import jwtDecode from "jwt-decode";
 import {
   Arg,
   Ctx,
-  Field,
-  InputType,
   Mutation,
-  ObjectType,
   Query,
   Resolver,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { RequestContext } from "../app/request-context";
-import { __COOKIE_NAME__ } from "../app/app-constants";
+import { __COOKIE_NAME__, __JWT_SECRET__ } from "../app/app-constants";
 import "reflect-metadata";
-
-@InputType()
-class RegisterUserInput {
-  @Field()
-  email: string;
-
-  @Field()
-  username: string;
-  
-  @Field()
-  password: string;
-
-  @Field({nullable:true})
-  firstName!: string;
-
-  @Field({nullable:true})
-  lastName!: string;
-
-  validate(): FieldError[] | null {
-    const errors: FieldError[] = [];
-    if (!this.email.includes("@")) {
-      errors.push(new FieldError("email", "invalid email"));
-    }
-
-    if (!this.username) {
-      this.username = this.email;
-    }
-
-    if (this.username.length <= 2) {
-      errors.push(new FieldError("username", "length must be greater than 2"));
-    }
-
-    if (this.password.length <= 2) {
-      errors.push(new FieldError("password", "length must be greater than 2"));
-    }
-
-    if (!this.firstName) {
-      errors.push(new FieldError("firstName", "invalid first name"));
-    }
-
-    if (!this.lastName) {
-      errors.push(new FieldError("lastName", "invalid last name"));
-    }
-    return errors.length > 0 ? errors : null;
-  }
-}
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-
-  @Field()
-  message: string;
-
-  constructor(field: string, message: string) {
-    this.field = field;
-    this.message = message;
-  }
-}
-
-@ObjectType()
-class UserResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
-
-  @Field(() => User, { nullable: true })
-  user?: User;
-}
+import { UserResponse, RegisterUserInput, FieldError, Token } from "./models";
 
 @Resolver()
 export class UserResolver {
-
-  @Query(() => User, { nullable: true })
+  @Query(() => UserResponse, { nullable: true })
   async me(@Ctx() { req }: RequestContext) {
     const userId = req.session.userId;
     if (!userId) {
@@ -97,7 +27,14 @@ export class UserResolver {
 
     console.log("session user found: ", userId);
     const user = await User.findOne({ where: { id: userId } });
-    return user;
+
+    if (user) {
+      const tokenInfo = createToken(user);
+      return { user, tokenInfo };
+    }
+
+    return {user}
+    
   }
 
   @Mutation(() => UserResponse)
@@ -105,13 +42,12 @@ export class UserResolver {
     @Arg("userinfo") userinfo: RegisterUserInput,
     @Ctx() { req }: RequestContext
   ): Promise<UserResponse> {
-    
     const errors = userinfo.validate();
     if (errors) {
       return { errors };
     }
     const hashedPWD = await argon2.hash(userinfo.password);
-    let user;
+    let user, tokenInfo;
     try {
       console.log(
         "registering user: ",
@@ -133,6 +69,9 @@ export class UserResolver {
         .returning("*")
         .execute();
       user = result.raw[0];
+
+      tokenInfo = createToken(user);
+      console.log("token: ", tokenInfo);
     } catch (err) {
       let error = err as { code: string; message: string };
       console.log(
@@ -151,9 +90,10 @@ export class UserResolver {
         };
       }
     }
+    console.log("tokenInfo:",tokenInfo)
     req.session!.userId = user.id;
     console.log("session save:", req.session);
-    return { user };
+    return { user, tokenInfo };
   }
 
   @Mutation(() => UserResponse)
@@ -175,9 +115,12 @@ export class UserResolver {
         errors: [new FieldError("username", "invalid username/Password")],
       };
     }
+    const tokenInfo = createToken(user);    
     req.session!.userId = user.id;
+    
+    console.log("tokenInfo:",tokenInfo)
     console.log("session save:", req.session);
-    return { user };
+    return { user, tokenInfo };
   }
 
   @Mutation(() => Boolean)
@@ -197,3 +140,25 @@ export class UserResolver {
     });
   }
 }
+
+const createToken = (user: User) : Token => {
+  const token  = jwt.sign(
+    {
+      sub: user.id,
+      email: user.email,
+      role: user.email.startsWith("vn1") ? "admin" : "user",
+      iss: "api.ledgers",
+      aud: "api.ledgers",
+    },
+    __JWT_SECRET__,
+    { algorithm: "HS256", expiresIn: "1h" }
+  );
+  const decodedToken = jwtDecode<{sub:string,exp:number}>(token);
+  const userInfo = (({firstName,lastName})=>({firstName,lastName}))(user)
+
+  return {
+    token: token,
+    userInfo: JSON.stringify(userInfo),
+    expiresAt: decodedToken.exp,
+  }
+};

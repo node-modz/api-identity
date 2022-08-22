@@ -8,5 +8,10 @@ mutation Login($username:String!, $password:String!) {
       id
       username
     }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
   }
 }
