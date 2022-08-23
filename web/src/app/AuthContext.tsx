@@ -1,6 +1,7 @@
 
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { Token } from '../generated/graphql';
+import { useClient } from 'urql';
+import { MeDocument, MeQuery, MeQueryVariables, Token } from '../generated/graphql';
 import { useMeQuery } from "../generated/graphql"
 
 const TOKEN_KEY = "ldgr.token";
@@ -21,8 +22,8 @@ const DEFAULT_STATE = {
 const AuthContext = createContext<{
     authState?: AuthState,
     setAuthState?: (s: AuthState) => void
-    logout?:() => void
-    isAuthenticated?:()=>boolean
+    logout?: () => void
+    isAuthenticated?: () => boolean
 }>({});
 
 
@@ -95,7 +96,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     const isAdmin = (): boolean => {
         return authState.userInfo["role"] === 'admin';
-    } 
+    }
 
     return (
         <AuthContext.Provider value={{
