@@ -31,7 +31,7 @@ import {
 import NextLink from 'next/link'
 import { NextRouter, Router, useRouter } from "next/router"
 import { useLogoutMutation, useMeQuery } from "../generated/graphql"
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../app/AuthContext';
 import { MODULE_CONFIG, NavItem } from '../app/ModuleConfig';
 
@@ -91,12 +91,19 @@ export default function TopNavBar() {
     );
 }
 
-// TODO: enhance this to leverage AuthContext to figure out if the user is logged In.
 const LoggedInState = () => {
+    const [domLoaded, setDomLoaded] = useState(false);
     const router = useRouter();
     const [response, logoutAPI] = useLogoutMutation();
     const authContext = useContext(AuthContext)
 
+    useEffect(() => {
+        setDomLoaded(true);
+    }, []);
+
+    if (!domLoaded) {
+        return <></>
+    }
 
     // TODO: is it possible to assign this as action in MODULE_CONFIG
     const doLogut = async () => {
@@ -147,7 +154,7 @@ const LoggedInState = () => {
     // }
     return (<>{view}</>);
 
-   
+
 }
 const Login = () => {
     return (

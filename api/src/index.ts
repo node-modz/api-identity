@@ -1,7 +1,7 @@
 import initApp from "./app/init-context";
 
 const main = async () => {
-  console.log("start neoledgers");
+  console.log("start neoledgers:",__dirname);
 
   const app = initApp();
   for ( const file of [

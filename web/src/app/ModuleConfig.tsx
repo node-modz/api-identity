@@ -48,7 +48,7 @@ export const MODULE_CONFIG = {
         Items: [
             { href: '/dashboard', name: 'Dasboard', icon: FiHome },
             { href: '/trending', name: 'Trending', icon: FiTrendingUp },
-            { href: '/explore', name: 'Explore', icon: FiCompass },
+            { href: '/posts', name: 'Posts', icon: FiCompass },
             { href: '/favorites', name: 'Favourites', icon: FiStar },
             { href: '/settings', name: 'Settings', icon: FiSettings },
         ] as Array<LinkItemProps>

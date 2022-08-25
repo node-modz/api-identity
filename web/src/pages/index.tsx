@@ -2,7 +2,8 @@
 import SimpleSidebar from '../components/Sidebar'
 import TopNavBar from '../components/TopNavBar'
 import { ChakraContainer } from '../components/sample/ChakraContainer'
-import { AuthProvider } from '../app/AuthContext'
+import { withUrqlClient } from 'next-urql'
+import { createUrqlClient } from '../app/urql-bootstrap'
 
 
 const Index = () => (
@@ -13,4 +14,4 @@ const Index = () => (
     </SimpleSidebar>         
   </>
 )
-export default Index
+export default withUrqlClient(createUrqlClient,{ssr:true})(Index)

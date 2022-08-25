@@ -1,6 +1,9 @@
 import { createClient, dedupExchange, fetchExchange } from 'urql';
 import { cacheExchange, Cache, QueryInput, query, CacheExchangeOpts } from '@urql/exchange-graphcache';
 import { LoginMutation, MeDocument, MeQuery, RegisterMutation } from '../generated/graphql';
+import { __GRAPHQL_API_SERVER__ } from './app-constants';
+import { devtoolsExchange } from '@urql/devtools';
+
 
 function updateCache<R,Q>(
     cache:Cache,
@@ -64,3 +67,12 @@ export const caccheExchangeConfig = {
       },     
     },
   } as CacheExchangeOpts;
+
+  export const createUrqlClient = (ssrExchange:any) => ({
+    url: __GRAPHQL_API_SERVER__,
+    //requestPolicy:'network-only',
+    fetchOptions: {
+      credentials: "include" as const,
+    },
+    exchanges: [devtoolsExchange, dedupExchange, cacheExchange(caccheExchangeConfig), ssrExchange, fetchExchange],
+  })

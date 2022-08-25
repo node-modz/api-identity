@@ -23,9 +23,16 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createPost: Post;
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
+};
+
+
+export type MutationCreatePostArgs = {
+  text: Scalars['String'];
+  title: Scalars['String'];
 };
 
 
@@ -39,10 +46,27 @@ export type MutationRegisterArgs = {
   userinfo: RegisterUserInput;
 };
 
+export type Post = {
+  __typename?: 'Post';
+  createdAt: Scalars['String'];
+  creator: User;
+  id: Scalars['String'];
+  text: Scalars['String'];
+  title: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   me?: Maybe<UserResponse>;
+  post?: Maybe<Post>;
+  posts: Array<Post>;
+};
+
+
+export type QueryPostArgs = {
+  id: Scalars['String'];
 };
 
 export type RegisterUserInput = {
@@ -66,6 +90,7 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
+  posts: Array<Post>;
   updatedAt: Scalars['String'];
   username: Scalars['String'];
 };
@@ -105,6 +130,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'UserResponse', user?: { __typename?: 'User', id: string, username: string } | null, tokenInfo?: { __typename?: 'Token', token: string, userInfo: string, expiresAt: number } | null } | null };
+
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: string, title: string, text: string, createdAt: string, updatedAt: string, creator: { __typename?: 'User', id: string } }> };
 
 
 export const LoginDocument = gql`
@@ -184,4 +214,22 @@ export const MeDocument = gql`
 
 export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
   return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
+};
+export const PostsDocument = gql`
+    query Posts {
+  posts {
+    id
+    title
+    text
+    createdAt
+    updatedAt
+    creator {
+      id
+    }
+  }
+}
+    `;
+
+export function usePostsQuery(options?: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'>) {
+  return Urql.useQuery<PostsQuery, PostsQueryVariables>({ query: PostsDocument, ...options });
 };
