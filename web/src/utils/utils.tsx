@@ -7,3 +7,5 @@ export const toErrorMap = (errors:FieldError[]) => {
     })
     return map
 }
+
+export const isServerSide = () => typeof window === "undefined";

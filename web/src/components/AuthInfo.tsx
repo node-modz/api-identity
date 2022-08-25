@@ -12,8 +12,8 @@ const AuthStateItem = ({ title, value='' }: { title: string, value: string }) =>
 }
 const AuthInfo = () => {
     const authContext = useContext(AuthContext);
-    if ( authContext.authService?.authState ) {
-        const {token,userInfo,expiresAt} = authContext.authService?.authState
+    if ( authContext.authState ) {
+        const {token,userInfo,expiresAt} = authContext.authState
         return (
             <Stack>
                 <AuthStateItem title='token' value={token}></AuthStateItem>

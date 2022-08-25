@@ -1,4 +1,5 @@
 import { ApolloServer } from "apollo-server-express";
+import { PostResolver } from "../resolvers/post-resolver";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "../resolvers/hello-resolver";
 import { UserResolver } from "../resolvers/user-resolver";
@@ -10,7 +11,7 @@ const init = async (ctx: AppContext) => {
   const redisClient = ctx.redis;
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver],
+      resolvers: [HelloResolver, UserResolver, PostResolver],
       validate: false,
     }),
     context: (props) => {

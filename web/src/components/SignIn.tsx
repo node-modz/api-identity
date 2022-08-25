@@ -27,7 +27,9 @@ export const SignIn = () => {
       onSubmit={async (values, { setErrors }) => {
         const response = await loginRequest(values);
 
-        if (response.data?.login.errors) {
+        if( response.error) {
+          console.log("error: ", response.error)
+        } else if (response.data?.login.errors) {
           setErrors(toErrorMap(response.data.login.errors));
         } else {
           if (response.data?.login.tokenInfo) {

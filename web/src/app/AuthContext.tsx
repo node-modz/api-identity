@@ -1,6 +1,7 @@
 
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
-import { Token } from '../generated/graphql';
+import { useClient } from 'urql';
+import { MeDocument, MeQuery, MeQueryVariables, Token } from '../generated/graphql';
 import { useMeQuery } from "../generated/graphql"
 
 const TOKEN_KEY = "ldgr.token";
@@ -21,8 +22,8 @@ const DEFAULT_STATE = {
 const AuthContext = createContext<{
     authState?: AuthState,
     setAuthState?: (s: AuthState) => void
-    logout?:() => void
-    isAuthenticated?:()=>boolean
+    logout?: () => void
+    isAuthenticated?: () => boolean
 }>({});
 
 
@@ -41,28 +42,33 @@ function loadAuthState(): AuthState {
     return DEFAULT_STATE
 }
 
+// TODO: secure routes..
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-    // TODO: not sure if the following block is doing the right thing.    
-    // ideally this gets called only once to make a call to the server & figure out if the user is loggedin.
-    // the useMeQuery() seems to automatically execute the query
-    const [{ data, fetching }] = useMeQuery();
-    console.log("In provider");
+    
+    console.log("In auth provider");
+    const client = useClient()    
     let state = loadAuthState()
     const [authState, setAuthState] = useState(state)
 
-    useEffect(()=> {
-        console.log("In provider:useEffect()", "token=", state.token);
-        if (state.token=="" && data?.me && data?.me.tokenInfo) {
-            setAuthState({
-                token:data?.me.tokenInfo.token,
-                userInfo:JSON.parse(data?.me.tokenInfo.userInfo),
-                expiresAt: data?.me.tokenInfo.expiresAt
+    // Loaded once after DOM is loaded.
+    useEffect(() => {
+        console.log("In provider:useEffect()", "token=", state.token);       
+        client
+            .query<MeQuery, MeQueryVariables>(MeDocument)
+            .toPromise()
+            .then(result => {
+                const { data } = result
+                if (data?.me && data?.me.tokenInfo) {
+                    console.log("in provider: setting state");
+                    setAuthState({
+                        token: data?.me.tokenInfo.token,
+                        userInfo: JSON.parse(data?.me.tokenInfo.userInfo),
+                        expiresAt: data?.me.tokenInfo.expiresAt
+                    })
+                }
             })
-        }
-    },[])
+    }, [])
     ////
-
-    
 
     const setAuthInfo = (tokenInfo: Token) => {
         console.log("provider:setting login state", tokenInfo);
@@ -86,6 +92,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const isAuthenticated = (): boolean => {
+        if ( typeof window === 'undefined') return false
         if (!authState.token || !authState.expiresAt) {
             return false;
         }
@@ -95,7 +102,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     const isAdmin = (): boolean => {
         return authState.userInfo["role"] === 'admin';
-    } 
+    }
 
     return (
         <AuthContext.Provider value={{
