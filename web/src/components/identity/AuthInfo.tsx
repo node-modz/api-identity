@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { AuthContext } from '../app/AuthContext'
+import { AuthContext } from '../../app/AuthContext'
 import { Stack, Text, Button } from '@chakra-ui/react'
 
 const AuthStateItem = ({ title, value='' }: { title: string, value: string }) => {

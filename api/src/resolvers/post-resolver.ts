@@ -8,10 +8,7 @@ const doSleep = (ms:number) => new Promise((res)=>setTimeout(res,ms))
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  async posts() : Promise<Post[]> {
-    console.log("sleep started");
-    //await doSleep(10000);
-    console.log("sleep done")
+  async posts() : Promise<Post[]> {    
     return Post.find({
         where:{            
         },

@@ -16,7 +16,7 @@ const init = async (ctx: AppContext) => {
     }),
     context: (props) => {
       const { req, res } = props;
-      return { req, res, redisClient };
+      return { req, res, redis:redisClient };
     },
   });
   server.applyMiddleware({ app, cors: false });

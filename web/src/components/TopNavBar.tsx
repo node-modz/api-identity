@@ -110,7 +110,7 @@ const LoggedInState = () => {
         console.log("clicked logout")
         await logoutAPI();
         authContext.logout?.();
-        router.push(MODULE_CONFIG.auth.postLogout.href);
+        router.push(MODULE_CONFIG.identity.postLogout.href);
     }
     console.log("In LoggedInState: isAuthenticated", authContext.isAuthenticated?.())
 
@@ -158,7 +158,7 @@ const LoggedInState = () => {
 }
 const Login = () => {
     return (
-        <NextLink href={MODULE_CONFIG.auth.login.href}>
+        <NextLink href={MODULE_CONFIG.identity.login.href}>
             <Button
                 as={'a'}
                 fontSize={'sm'}
@@ -171,7 +171,7 @@ const Login = () => {
 }
 const Register = () => {
     return (
-        <NextLink href={MODULE_CONFIG.auth.register.href}>
+        <NextLink href={MODULE_CONFIG.identity.register.href}>
             <Button
                 as={'a'}
                 display={{ base: 'none', md: 'inline-flex' }}

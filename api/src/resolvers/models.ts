@@ -84,3 +84,9 @@ export class UserResponse {
   @Field(() => Token, { nullable: true })
   tokenInfo?: Token;
 }
+
+@ObjectType()
+export class ForgotPasswordResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?:FieldError[]
+}

@@ -15,16 +15,11 @@ const init = async (_: AppContext) => {
     // synchronize: true,
     migrations: [path.join(__dirname, "../migrations/*")],
     entities: [User, Post],
-  });
-
-  //TODO: move this to use seed library
-  await seedUserData();
-  //await seedPostData("vn1@gmail.com");
-  //await cleanDB();
+  });  
   console.log("init db: done");
 };
 
-const seedUserData = async () => {
+export const seedData = async () => {
   const uList = [
     {
       email: "vn1@gmail.com",
@@ -34,15 +29,15 @@ const seedUserData = async () => {
       posts: [
         { title: "title-first", text: "this is our first post" },
         { title: "title-two", text: "this is our seccond post" },
-        { title: "title-three", text: "this is our third post" }, 
-      ]
+        { title: "title-three", text: "this is our third post" },
+      ],
     },
     {
       email: "vn2@gmail.com",
       firstName: "V2",
       lastName: "N2",
       password: "aaa",
-      posts:[],
+      posts: [],
     },
   ];
   for (var u of uList) {
@@ -53,14 +48,15 @@ const seedUserData = async () => {
     });
     if (!user) {
       const hashedPWD = await argon2.hash(u.password);
-      user = User.create({
+      user = await User.create({
         username: u.email,
+        email:u.email,
         firstName: u.firstName,
         lastName: u.lastName,
         password: hashedPWD,
-      });
+      }).save();
     }
-    for ( var p of u.posts ) {
+    for (var p of u.posts) {
       const post = await Post.findOne({
         where: {
           title: p.title,
@@ -72,34 +68,10 @@ const seedUserData = async () => {
     }
   }
 };
-// const seedPostData = async (email: string) => {
-//   const user = await User.findOne({
-//     where: {
-//       email: email,
-//     },
-//   });
-//   if (!user) {
-//     console.log("user not found:", email);
-//   }
-//   const posts = [
-//     { title: "title-first", text: "this is our first post" },
-//     { title: "title-two", text: "this is our seccond post" },
-//     { title: "title-three", text: "this is our third post" },
-//   ];
-//   for (var p of posts) {
-//     const post = await Post.findOne({
-//       where: {
-//         title: p.title,
-//       },
-//     });
-//     if (!post) {
-//       Post.create({ creator: user, ...p }).save();
-//     }
-//   }
-// };
 
-const cleanDB = async () => {
+export const cleanDB = async () => {
   await getConnection().createQueryBuilder().delete().from(Post).execute();
+  await getConnection().createQueryBuilder().delete().from(User).execute();  
 };
 
 export default init;
