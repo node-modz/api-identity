@@ -27,7 +27,7 @@ export interface NavItem {
 }
 
 export const MODULE_CONFIG = {
-    auth: {
+    identity: {
         postLogin: {
             href:"/dashboard"
         },
@@ -35,13 +35,16 @@ export const MODULE_CONFIG = {
             href:"/dashboard"
         },
         register: {
-            href:'/register'
+            href:'/identity/register'
         },
         login: {
-            href:'/login'
+            href:'/identity/login'
         },        
         postLogout: {
             href:'/'
+        },
+        forgotPassword: {
+            href:'/identity/password/forgot-password'
         }
     },
     SideBar: {

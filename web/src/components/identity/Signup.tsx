@@ -1,8 +1,8 @@
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
-import { useRegisterMutation } from '../generated/graphql';
-import { toErrorMap } from '../utils/utils';
-import { InputField, PasswordField } from './InputField';
+import { useRegisterMutation } from '../../generated/graphql';
+import { toErrorMap } from '../../utils/utils';
+import { InputField, PasswordField } from '../InputField';
 import NextLink from 'next/link';
 import {
   Flex,
@@ -13,8 +13,8 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
-import { MODULE_CONFIG } from '../app/ModuleConfig';
-import { AuthContext } from '../app/AuthContext';
+import { MODULE_CONFIG } from '../../app/ModuleConfig';
+import { AuthContext } from '../../app/AuthContext';
 
 
 
@@ -36,7 +36,7 @@ export const Signup = () => {
         } else if (response.data?.register.tokenInfo) {          
           authContext.setAuthState?.(response.data?.register.tokenInfo)
           console.log("postsignup: isAuthenticated:",authContext.isAuthenticated?.())
-          router.push(MODULE_CONFIG.auth.postSignup.href);
+          router.push(MODULE_CONFIG.identity.postSignup.href);
         }
       }}>
       {({ isSubmitting }) => {

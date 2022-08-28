@@ -17,7 +17,7 @@ import { Footer } from './Footer';
 export const ChakraContainer = () => {
   return (
     <Container height="100vh">
-      <Hero title="hello W3 ledgers" />
+      <Hero title="W3 ledgers" />
       <Main>
         <Text color="text">
           Example repository of <Code>Next.js</Code> + <Code>chakra-ui</Code> +{' '}

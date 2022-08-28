@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
-import { useLoginMutation } from '../generated/graphql';
-import { toErrorMap } from '../utils/utils';
-import { InputField } from './InputField';
+import { useLoginMutation } from '../../generated/graphql';
+import { toErrorMap } from '../../utils/utils';
+import { InputField } from '../InputField';
 import {
   Flex,
   Box, Checkbox,
@@ -14,8 +14,9 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react';
-import { MODULE_CONFIG } from '../app/ModuleConfig';
-import { AuthContext } from '../app/AuthContext';
+import { MODULE_CONFIG } from '../../app/ModuleConfig';
+import { AuthContext } from '../../app/AuthContext';
+import NextLink from 'next/link'
 
 export const SignIn = () => {
   const authContext = useContext(AuthContext)
@@ -27,16 +28,16 @@ export const SignIn = () => {
       onSubmit={async (values, { setErrors }) => {
         const response = await loginRequest(values);
 
-        if( response.error) {
+        if (response.error) {
           console.log("error: ", response.error)
         } else if (response.data?.login.errors) {
           setErrors(toErrorMap(response.data.login.errors));
         } else {
           if (response.data?.login.tokenInfo) {
             authContext.setAuthState?.(response.data?.login.tokenInfo)
-            console.log("postlogin: isAuthenticated:",authContext.isAuthenticated?.())
-          }          
-          router.push(MODULE_CONFIG.auth.postLogin.href);
+            console.log("postlogin: isAuthenticated:", authContext.isAuthenticated?.())
+          }
+          router.push(MODULE_CONFIG.identity.postLogin.href);
         }
       }}>
       {({ isSubmitting }) => {
@@ -68,7 +69,9 @@ export const SignIn = () => {
                         align={'start'}
                         justify={'space-between'}>
                         <Checkbox>Remember me</Checkbox>
-                        <Link color={'blue.400'}>Forgot password?</Link>
+                        <NextLink href={MODULE_CONFIG.identity.forgotPassword.href}>
+                          <Link href={MODULE_CONFIG.identity.forgotPassword.href} color={'blue.400'}>Forgot password?</Link>
+                        </NextLink>
                       </Stack>
                       <Button
                         type='submit'

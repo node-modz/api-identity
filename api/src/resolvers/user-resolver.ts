@@ -2,21 +2,103 @@ import { User } from "../entities/user";
 import argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
-import {
-  Arg,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
 import { RequestContext } from "../app/request-context";
-import { __COOKIE_NAME__, __JWT_SECRET__ } from "../app/app-constants";
+import {
+  __CONFIG__,
+  __COOKIE_NAME__,
+  __JWT_SECRET__,
+} from "../app/app-constants";
 import "reflect-metadata";
-import { UserResponse, RegisterUserInput, FieldError, Token } from "./models";
+import {
+  UserResponse,
+  RegisterUserInput,
+  FieldError,
+  Token,
+  ForgotPasswordResponse,
+  ChangePasswordResponse,
+  ChangePasswordInput,
+} from "./models";
+import { v4 } from "uuid";
+import * as notifier from "../notify/email";
 
 @Resolver()
 export class UserResolver {
+  @Mutation(() => ForgotPasswordResponse)
+  async forgotPassword(
+    @Arg("email") email: string,
+    @Ctx() reqCtxt: RequestContext
+  ): Promise<ForgotPasswordResponse> {
+    console.log("begin forgot password");
+    const user = await User.findOne({ where: { email: email } });
+    if (!user) {
+      return {
+        errors: [new FieldError("email", "invalid email")],
+      };
+    }
+
+    const token = v4();
+    await reqCtxt.redis.set(
+      __CONFIG__.auth.forgot_password_prefix + token,
+      user.id,
+      "ex",
+      1000 * 60 * 60 * 24 * 3 // 3days
+    );
+
+    await notifier.sendEmail(
+      email,
+      `<a href="http://localhost:3000/identity/password/${token}">reset password</a>`
+    );
+
+    return { errors: [] };
+  }
+
+  @Mutation(() => ChangePasswordResponse)
+  async changePassword(
+    @Arg("input") input: ChangePasswordInput,
+    @Ctx() reqCtxt: RequestContext
+  ) {
+    const { token, password } = input;
+    const { req, redis } = reqCtxt;
+
+    if (password.length <= 2) {
+      return {
+        errors: [new FieldError("password", "length must be greater than 2")],
+      };
+    }
+
+    let key = __CONFIG__.auth.forgot_password_prefix + token;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return {
+        errors: [new FieldError("token", "invalid token")],
+      };
+    }
+
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+      return {
+        errors: [new FieldError("token", "user no longer exists")],
+      };
+    }
+
+    await User.update(
+      { id: userId },
+      {
+        password: await argon2.hash(password),
+      }
+    );
+
+    await redis.del(key);
+
+    // log in user after change password
+    req.session.userId = user.id;
+
+    const tokenInfo = createToken(user);
+    return { user, tokenInfo };
+  }
+
   @Query(() => UserResponse, { nullable: true })
   async me(@Ctx() { req }: RequestContext) {
     const userId = req.session.userId;
@@ -33,8 +115,7 @@ export class UserResolver {
       return { user, tokenInfo };
     }
 
-    return {user}
-    
+    return { user };
   }
 
   @Mutation(() => UserResponse)
@@ -90,7 +171,7 @@ export class UserResolver {
         };
       }
     }
-    console.log("tokenInfo:",tokenInfo)
+    console.log("tokenInfo:", tokenInfo);
     req.session!.userId = user.id;
     console.log("session save:", req.session);
     return { user, tokenInfo };
@@ -115,10 +196,10 @@ export class UserResolver {
         errors: [new FieldError("username", "invalid username/Password")],
       };
     }
-    const tokenInfo = createToken(user);    
+    const tokenInfo = createToken(user);
     req.session!.userId = user.id;
-    
-    console.log("tokenInfo:",tokenInfo)
+
+    console.log("tokenInfo:", tokenInfo);
     console.log("session save:", req.session);
     return { user, tokenInfo };
   }
@@ -141,8 +222,8 @@ export class UserResolver {
   }
 }
 
-const createToken = (user: User) : Token => {
-  const token  = jwt.sign(
+const createToken = (user: User): Token => {
+  const token = jwt.sign(
     {
       sub: user.id,
       email: user.email,
@@ -153,12 +234,14 @@ const createToken = (user: User) : Token => {
     __JWT_SECRET__,
     { algorithm: "HS256", expiresIn: "1h" }
   );
-  const decodedToken = jwtDecode<{sub:string,exp:number}>(token);
-  const userInfo = (({firstName,lastName})=>({firstName,lastName}))(user)
+  const decodedToken = jwtDecode<{ sub: string; exp: number }>(token);
+  const userInfo = (({ firstName, lastName }) => ({ firstName, lastName }))(
+    user
+  );
 
   return {
     token: token,
     userInfo: JSON.stringify(userInfo),
     expiresAt: decodedToken.exp,
-  }
+  };
 };
