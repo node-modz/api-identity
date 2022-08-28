@@ -44,7 +44,7 @@ export const MODULE_CONFIG = {
             href:'/'
         },
         forgotPassword: {
-            href:'/identity/password/forgot'
+            href:'/identity/password/forgot-password'
         }
     },
     SideBar: {

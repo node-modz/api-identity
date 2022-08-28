@@ -17,9 +17,11 @@ import {
   FieldError,
   Token,
   ForgotPasswordResponse,
+  ChangePasswordResponse,
+  ChangePasswordInput,
 } from "./models";
 import { v4 } from "uuid";
-import * as em from '../notify/email'
+import * as notifier from "../notify/email";
 
 @Resolver()
 export class UserResolver {
@@ -28,7 +30,6 @@ export class UserResolver {
     @Arg("email") email: string,
     @Ctx() reqCtxt: RequestContext
   ): Promise<ForgotPasswordResponse> {
-    
     console.log("begin forgot password");
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
@@ -45,9 +46,57 @@ export class UserResolver {
       1000 * 60 * 60 * 24 * 3 // 3days
     );
 
-    await em.sendEmail(email,`<a href="http://localhost:3000/identity/password/${token}">reset password</a>`);
+    await notifier.sendEmail(
+      email,
+      `<a href="http://localhost:3000/identity/password/${token}">reset password</a>`
+    );
 
     return { errors: [] };
+  }
+
+  @Mutation(() => ChangePasswordResponse)
+  async changePassword(
+    @Arg("input") input: ChangePasswordInput,
+    @Ctx() reqCtxt: RequestContext
+  ) {
+    const { token, password } = input;
+    const { req, redis } = reqCtxt;
+
+    if (password.length <= 2) {
+      return {
+        errors: [new FieldError("password", "length must be greater than 2")],
+      };
+    }
+
+    let key = __CONFIG__.auth.forgot_password_prefix + token;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return {
+        errors: [new FieldError("token", "invalid token")],
+      };
+    }
+
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+      return {
+        errors: [new FieldError("token", "user no longer exists")],
+      };
+    }
+
+    await User.update(
+      { id: userId },
+      {
+        password: await argon2.hash(password),
+      }
+    );
+
+    await redis.del(key);
+
+    // log in user after change password
+    req.session.userId = user.id;
+
+    const tokenInfo = createToken(user);
+    return { user, tokenInfo };
   }
 
   @Query(() => UserResponse, { nullable: true })

@@ -15,6 +15,18 @@ export type Scalars = {
   Float: number;
 };
 
+export type ChangePasswordInput = {
+  password: Scalars['String'];
+  token: Scalars['String'];
+};
+
+export type ChangePasswordResponse = {
+  __typename?: 'ChangePasswordResponse';
+  errors?: Maybe<Array<FieldError>>;
+  tokenInfo?: Maybe<Token>;
+  user?: Maybe<User>;
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
@@ -28,11 +40,17 @@ export type ForgotPasswordResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword: ChangePasswordResponse;
   createPost: Post;
   forgotPassword: ForgotPasswordResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
+};
+
+
+export type MutationChangePasswordArgs = {
+  input: ChangePasswordInput;
 };
 
 
@@ -113,6 +131,14 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type ChangePasswordMutationVariables = Exact<{
+  token: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string } | null, tokenInfo?: { __typename?: 'Token', token: string, userInfo: string, expiresAt: number } | null } };
+
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
 }>;
@@ -155,6 +181,29 @@ export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
 export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: string, title: string, text: string, createdAt: string, updatedAt: string, creator: { __typename?: 'User', id: string } }> };
 
 
+export const ChangePasswordDocument = gql`
+    mutation changePassword($token: String!, $password: String!) {
+  changePassword(input: {token: $token, password: $password}) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
+  }
+}
+    `;
+
+export function useChangePasswordMutation() {
+  return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email) {

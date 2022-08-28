@@ -90,3 +90,34 @@ export class ForgotPasswordResponse {
   @Field(() => [FieldError], { nullable: true })
   errors?:FieldError[]
 }
+@ObjectType()
+export class ChangePasswordResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => User, { nullable: true })
+  user?: User;
+
+  @Field(() => Token, { nullable: true })
+  tokenInfo?: Token;
+}
+
+@InputType()
+export class ChangePasswordInput {
+  @Field()
+  token: string;
+
+  @Field()
+  password: string;
+
+  validate(): FieldError[] | null {
+    const errors: FieldError[] = [];
+
+    if (this.password.length <= 2) {
+      errors.push(new FieldError("password", "length must be greater than 2"));
+    }
+
+    return errors.length > 0 ? errors : null;
+  }
+}
+

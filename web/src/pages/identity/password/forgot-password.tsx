@@ -12,4 +12,5 @@ const ForgotPasswordPage = () => {
       );
 }
 
+
 export default withUrqlClient(createUrqlClient, { ssr: false })(ForgotPasswordPage);
