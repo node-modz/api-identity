@@ -17,8 +17,6 @@ const main = async () => {
   ]) {
     await require(file).default(appCtxt)
   }
-
-  await setup(argv);
      
   appCtxt.http.listen(4000, () => {
     console.log("ledgers-api listening on: 4000");
@@ -28,18 +26,3 @@ const main = async () => {
 main().catch((e) => {
   console.error("main error:", e);
 });
-
-const setup = async (argv:minimist.ParsedArgs) => {
-  if( argv["db_clean"] ) {
-    db.cleanDB();
-  }
-
-  if( argv["db_seed"] ) {
-    db.seedData();
-  }
-
-  if ( argv["email_setup"] ) {
-    await email.createTestAccount();
-    //await email.sendEmail()  
-  }
-}
