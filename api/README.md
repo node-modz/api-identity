@@ -32,5 +32,15 @@
   $ npx typeorm migration:run -c ledgers
 ```
 
+### Seeding Database
+```bash
+  $ npx ts-node src/seed/dbseed.ts --clean --tenants --users --activity
+```  
 
-  
+### Working on new domains
+```bash    
+  $ npx typeorm migration:generate -c ledgers -d src/migrations/ -n bank_activity
+  $ npx typeorm migration:run -c ledgers
+  $ npx typeorm migration:revert -c ledgers
+  $ rm dist/migrations/*bank* src/migrations/*bank*
+```  
