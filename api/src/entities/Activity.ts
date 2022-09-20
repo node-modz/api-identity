@@ -1,4 +1,4 @@
-import { Field, ObjectType } from 'type-graphql';
+import { Field, GraphQLTimestamp, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
 import { Post } from './Post';
 
@@ -12,11 +12,11 @@ export abstract class Activity extends BaseEntity {
     @Column()
     activityDate!: Date;
     
-    @Field(() => String)
+    @Field(() => GraphQLTimestamp)
     @CreateDateColumn()
     createdAt!: Date;
   
-    @Field(() => String)
+    @Field(() => GraphQLTimestamp)
     @UpdateDateColumn()
     updatedAt!: Date;
 }

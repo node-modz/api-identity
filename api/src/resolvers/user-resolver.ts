@@ -1,4 +1,4 @@
-import { User } from "../entities/user";
+import { User } from "../entities/User";
 import argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
@@ -239,9 +239,9 @@ const createToken = (user: User): Token => {
     user
   );
 
-  return {
-    token: token,
-    userInfo: JSON.stringify(userInfo),
-    expiresAt: decodedToken.exp,
-  };
+  const t = new  Token()
+  t.token=token;
+  t.userInfo=JSON.stringify(userInfo)
+  t.expiresAt=decodedToken.exp
+  return t;
 };

@@ -34,6 +34,7 @@ import { useLogoutMutation, useMeQuery } from "../generated/graphql"
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../app/AuthContext';
 import { MODULE_CONFIG, NavItem } from '../app/ModuleConfig';
+import { AuthContent } from './identity/AuthInfo';
 
 export default function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();
@@ -117,7 +118,7 @@ const LoggedInState = () => {
     let view = null;
     if (authContext.isAuthenticated?.()) {
         view = (
-            <>
+            <>                
                 <UserProfile />
                 <Button onClick={async () => {
                     doLogut();

@@ -1,7 +1,7 @@
 import initApp from "../app/init-context";
 import minimist from "minimist";
 import { ActivityType, BankActivity } from "../entities/BankActivity";
-import { User } from "../entities/user";
+import { User } from "../entities/User";
 import { Post } from "../entities/Post";
 import moment from "moment";
 import argon2 from "argon2";
@@ -53,10 +53,10 @@ const doSeed = async (argv: minimist.ParsedArgs) => {
         }).save();
       }
     );
+  }
 
-    if (argv["activity"]) {
-      await loadBankActivityFiles();     
-    }
+  if (argv["activity"]) {
+    await loadBankActivityFiles();     
   }
 };
 
