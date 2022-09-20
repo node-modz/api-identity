@@ -3,8 +3,8 @@ import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGenerat
 import { Activity } from './Activity';
 
 export enum  ActivityType {
-    Deposit = "deposit",
-    Withdrawal = "withdrawal"
+    Deposit = "bank.deposit",
+    Withdrawal = "bank.withdrawal"
 }
 
 @ObjectType()
@@ -17,13 +17,13 @@ export class BankActivity extends Activity {
 
     @Field()
     @Column({ type: "float4"} )
-    amount: number   
+    amount: number
     
-    @Field()
+    @Field({nullable:true})
     @Column({nullable:true})
     reference!: string   
 
-    @Field()
+    @Field({nullable:true})
     @Column({nullable:true})
     description!: string   
 }   

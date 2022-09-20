@@ -35,6 +35,9 @@ function updateCache<R, Q>(
 
 //cache lookup doesn't seem to work, its fetching all the time.
 export const caccheExchangeConfig = {
+  keys: {
+    PaginatedBankActivity: () =>  null,
+  },
   updates: {
     Mutation: {
       login: (_result, args, cache, info) => {

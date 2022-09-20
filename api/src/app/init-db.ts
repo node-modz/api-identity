@@ -1,5 +1,5 @@
 import path from "path";
-import { User } from "../entities/user";
+import { User } from "../entities/User";
 import { createConnection } from "typeorm";
 import { AppContext } from "./init-context";
 import { Post } from "../entities/Post";
@@ -13,11 +13,11 @@ const init = async (_: AppContext) => {
   const conn = await createConnection({
     type: "postgres",
     url: __LEDGERS_DB__,
-    logging: true,
+    // logging: true,
     // synchronize: true,
     migrations: [path.join(__dirname, "../migrations/*")],
-    entities: [User, Post, BankActivity,Tenant],
-    //entities: ['../entities/*.ts'],
+    // entities: [User, Post, BankActivity,Tenant],
+    entities: [path.join(__dirname, '../entities/*')],
   });  
   console.log("init db: done");
 };

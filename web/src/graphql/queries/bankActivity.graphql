@@ -1,0 +1,14 @@
+query BankActivity($offset:Int!,$limit:Int!) {
+  bankActivity(offset:$offset,  limit:$limit) {
+    activity {
+      id
+      activityDate
+      activityType
+      amount
+      reference
+      description
+      createdAt
+    }
+    hasMore
+  }
+}
