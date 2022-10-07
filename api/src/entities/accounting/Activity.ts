@@ -1,6 +1,5 @@
 import { Field, GraphQLTimestamp, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
-import { Post } from './Post';
 
 @ObjectType()
 export abstract class Activity extends BaseEntity {

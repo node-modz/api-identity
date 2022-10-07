@@ -5,18 +5,16 @@
 ```
 ```
   $ yarn install
+  $ yarn watch
 ```
 
 ```
   $ npx typeorm migration:run -c ledgers
+  $ npx ts-node src/seed/dbseed.ts --clean --tenants --users --activity
 ```
 
 ```bash
   $ yarn dev; // this should start on localhost:4000
-```
-
-```bash
-  $ yarn watch
 ```
 
 
@@ -34,13 +32,14 @@
 
 ### Seeding Database
 ```bash
-  $ npx ts-node src/seed/dbseed.ts --clean --tenants --users --activity
+  $ npx ts-node src/seed/dbseed.ts --clean --tenants --users --activity --dacchain
 ```  
 
 ### Working on new domains
 ```bash    
-  $ npx typeorm migration:generate -c ledgers -d src/migrations/ -n bank_activity
-  $ npx typeorm migration:run -c ledgers
+  $ export wip_feature=dac
   $ npx typeorm migration:revert -c ledgers
-  $ rm dist/migrations/*bank* src/migrations/*bank*
+  $ rm dist/migrations/*${wip_feature}* src/migrations/*${wip_feature}*  
+  $ npx typeorm migration:generate -c ledgers -d src/migrations/ -n $wip_feature
+  $ npx typeorm migration:run -c ledgers  
 ```  

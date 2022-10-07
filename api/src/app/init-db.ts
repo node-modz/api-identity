@@ -1,12 +1,7 @@
 import path from "path";
-import { User } from "../entities/User";
 import { createConnection } from "typeorm";
 import { AppContext } from "./init-context";
-import { Post } from "../entities/Post";
 import { __LEDGERS_DB__ } from "./app-constants";
-
-import { BankActivity } from "../entities/BankActivity";
-import { Tenant } from "../entities/Tenant";
 
 const init = async (_: AppContext) => {
   console.log("init db:", __LEDGERS_DB__);
@@ -17,7 +12,13 @@ const init = async (_: AppContext) => {
     // synchronize: true,
     migrations: [path.join(__dirname, "../migrations/*")],
     // entities: [User, Post, BankActivity,Tenant],
-    entities: [path.join(__dirname, '../entities/*')],
+    entities: [
+      path.join(__dirname, '../entities/core/*'),
+      path.join(__dirname, '../entities/dacchain/*'),
+      path.join(__dirname, '../entities/accounting/*'),
+      path.join(__dirname, '../entities/dacns/*'),
+      path.join(__dirname, '../entities/*')
+    ],
   });  
   console.log("init db: done");
 };

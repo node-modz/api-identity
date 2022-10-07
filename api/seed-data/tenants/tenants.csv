@@ -1,5 +1,7 @@
 ShortName,Description
-SEED-VRN,Vineel Seed tenant
-SEED-KITTY,Krithi Tenant
-SEED-HITHA,Hitha Tenant
-SEED-AD,Anudeep Tenant
+t-VRN,Vineel Seed tenant
+t-KITTY,Krithi Tenant
+t-HITHA,Hitha Tenant
+t-AD,Anudeep Tenant
+t-WaveLabs,Wavelabs Tenant
+t-DACChain,DACChain Reserve Tenant

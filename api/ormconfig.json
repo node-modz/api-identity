@@ -6,6 +6,6 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/*.js"],
+    "entities": ["dist/entities/**/*.js"],
     "migrations": ["dist/migrations/*.js"]
 }

@@ -1,4 +1,4 @@
-import { User } from "../entities/User";
+import { User } from "../entities/core/User";
 import argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
@@ -26,7 +26,7 @@ import * as notifier from "../notify/email";
 @Resolver()
 export class UserResolver {
   @Mutation(() => ForgotPasswordResponse)
-  async forgotPassword(
+  async IdForgotPassword(
     @Arg("email") email: string,
     @Ctx() reqCtxt: RequestContext
   ): Promise<ForgotPasswordResponse> {
@@ -55,7 +55,7 @@ export class UserResolver {
   }
 
   @Mutation(() => ChangePasswordResponse)
-  async changePassword(
+  async identityChangePassword(
     @Arg("input") input: ChangePasswordInput,
     @Ctx() reqCtxt: RequestContext
   ) {
