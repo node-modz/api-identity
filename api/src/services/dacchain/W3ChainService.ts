@@ -411,37 +411,4 @@ export class W3ChainService {
         return activityKey;
     }
 
-
-   
-
-    /**
-     * move the funds from self-bank to party where the funds need to be sent.
-     * @param ledger
-     * @param payment 
-     * @param txnRefId 
-     */
-    async xfrFromSelf(ledger:W3Ledger, payment:Payment, txnRefId:string) {
-        /**
-         * amount = payment.totalAmount()
-         * wallet:W3Ledger = chainService.getWallet(ledger.owner);
-         * balance = wallet.getBalance();
-         * if( amount > balance ) { 
-         *   return "insufficient funds"; 
-         * }
-         * 
-         */
-        [ledger,payment,txnRefId]
-    }
-
-    /**
-     * move the funds received into ledger to self-bank
-     * @param ledger 
-     * @param payment 
-     * @param txnRefId 
-     */
-    async xfrToSelf(ledger:W3Ledger, payment:Payment, txnRefId:string ) {
-        [ledger,payment,txnRefId]
-    }
-
-
 }
