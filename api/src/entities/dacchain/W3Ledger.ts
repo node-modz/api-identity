@@ -13,6 +13,10 @@ export enum ActivityType {
     DR = "w3l.debit",
     CR = "w3l.credit"
 }
+export enum LedgerType {
+    WALLET = "w3l.wallet",
+    W3LEDGER = "w3l.ledger"
+}
 export interface Payment {
     principal?: { amount:number, currency:string, description:string }
     interest?: { amount:number, currency:string, description:string }
@@ -27,7 +31,7 @@ export type LedgerRules = {
 };
 
 // A[+];DR [-];CR <=> L[+];CR [-];DR
-// R[+];CR [-];DR <=> E[+];DR [-];CR
+// E[+];DR [-];CR <=> R[+];CR [-];DR
 export const __LEDGER_RULES__ = new Map<string, LedgerRules>([
     [
         "seed.xfr", {
@@ -77,6 +81,9 @@ export class W3Ledger extends BaseEntity {
     ownerChainId!: string;
     @Column()
     partnerChainId!: string
+
+    @Column()
+    ledgerType:LedgerType
 
     //reference id for the external application like "loan:loan-id", "gl:gl-acct-id" etc..
     @Column({nullable:true})
@@ -134,7 +141,7 @@ export class W3Ledger extends BaseEntity {
     }
 
     // A[+];DR [-];CR <=> L[+];CR [-];DR
-    // R[+];CR [-];DR <=> E[+];DR [-];CR
+    // E[+];DR [-];CR <=> R[+];CR [-];DR
     public static cf(accountType:AccountType,actityType:ActivityType): number {
         switch(accountType+":"+actityType) {
             case AccountType.A+":"+ActivityType.DR:return +1
@@ -149,7 +156,8 @@ export class W3Ledger extends BaseEntity {
             case AccountType.E+":"+ActivityType.DR:return +1
             case AccountType.E+":"+ActivityType.CR:return -1
         }
-        return 1;
+        // should not happen, way to find any potential issues
+        return 0; 
     }
 
     

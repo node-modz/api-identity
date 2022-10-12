@@ -43,12 +43,25 @@ export class W3LedgerAccountActivity extends BaseEntity {
     @Column()
     activityType: ActivityType;
 
-    @Column({ type: "float4" })
-    amount: number
-
     @Column({ type: "int" })
     cf:number
 
+    // we could keep track of this as #units of an asset i.e USD, IBM, APPL etc..
+    // USD, IBM, APPL, any digital asset cash/stock/bond
+    // @Column()
+    // asset: string
+
+    // @Column({ type: "float4" })
+    // units: number
+
+    // @Column({ type: "float4" })
+    // price: number
+
+
+    @Column({ type: "float4" })
+    amount: number
+
+    // USD, INR, CAD; currency used for purchase of above units
     @Column()
     currency: string
 
