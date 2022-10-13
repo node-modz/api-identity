@@ -1,14 +1,12 @@
 import initApp from "./app/init-context";
-import *  as email  from "./notify/email";
 import minimist from 'minimist'
-import * as db from './app/init-db'
 
 const main = async () => {
   const argv = minimist(process.argv.slice(2));
-  console.log("start neoledgers:",__dirname);  
+  console.log("start api-server:",__dirname);  
   console.dir(argv)
 
-  const appCtxt = initApp();
+  const appCtxt = initApp("ledgers-api");
   for ( const file of [
     "./app/init-db",
     "./app/init-http",
@@ -24,5 +22,5 @@ const main = async () => {
 };
 
 main().catch((e) => {
-  console.error("main error:", e);
+  console.error("ledgers-api error:", e);
 });

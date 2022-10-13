@@ -1,7 +1,7 @@
 
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
 import 'reflect-metadata'
-import { Post } from "../entities/Post";
+import { Post } from "../entities/core/Post";
 
 const doSleep = (ms:number) => new Promise((res)=>setTimeout(res,ms))
 

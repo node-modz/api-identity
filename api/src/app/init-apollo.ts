@@ -7,7 +7,7 @@ import { AppContext } from "./init-context";
 import { BankActivityResolver } from "../resolvers/bank-activity-resolver";
 
 const init = async (ctx: AppContext) => {
-  console.log("init apollo: ");
+  console.log(ctx.name, ": init apollo: ");
   const app = ctx.http;
   const redisClient = ctx.redis;
   const server = new ApolloServer({
@@ -21,7 +21,7 @@ const init = async (ctx: AppContext) => {
     },
   });
   server.applyMiddleware({ app, cors: false });
-  console.log("init apollo: done");
+  console.log(ctx.name, ": init apollo: done");
 };
 
 export { init as initApollo };

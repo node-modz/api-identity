@@ -3,8 +3,8 @@ import { createConnection } from "typeorm";
 import { AppContext } from "./init-context";
 import { __LEDGERS_DB__ } from "./app-constants";
 
-const init = async (_: AppContext) => {
-  console.log("init db:", __LEDGERS_DB__);
+const init = async (appCtxt: AppContext) => {
+  console.log(appCtxt.name, ": init db:", __LEDGERS_DB__);
   const conn = await createConnection({
     type: "postgres",
     url: __LEDGERS_DB__,
@@ -17,10 +17,11 @@ const init = async (_: AppContext) => {
       path.join(__dirname, '../entities/dacchain/*'),
       path.join(__dirname, '../entities/accounting/*'),
       path.join(__dirname, '../entities/dacns/*'),
+      path.join(__dirname, '../entities/oauth2/*'),
       path.join(__dirname, '../entities/*')
     ],
   });  
-  console.log("init db: done");
+  console.log(appCtxt.name, ": init db: done");
 };
 
 

@@ -8,8 +8,8 @@ import Redis from "ioredis";
 
 const init = async (ctx: AppContext) => {
 
-  console.log("init redis: ",__REDIS_SERVER__);
-  console.log("init redis: connecting to redis client: ");
+  console.log(ctx.name,": init redis: ",__REDIS_SERVER__);
+  console.log(ctx.name,": init redis: connecting to redis client: ");
   
   const app = ctx.http;
   const RedisStore = connectRedis(session);
@@ -37,7 +37,7 @@ const init = async (ctx: AppContext) => {
   );
 
   ctx.redis = redis;
-  console.log("init redis: done")
+  console.log(ctx.name,": init redis: done")
 };
 
 export { init as initRedis };

@@ -1,4 +1,4 @@
-{
+[{
     "name":"ledgers",
     "type": "postgres",
     "host": "localhost",
@@ -6,6 +6,46 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/**/*.js"],
+    "entities": ["dist/entities/**/*.js","dist/entities/Post.js"],
+    "migrations": ["dist/migrations/**/*.js"]
+},{
+    "name":"core",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5433,
+    "username": "docker",
+    "password": "docker",
+    "database": "ledgers",
+    "entities": ["dist/entities/core/*.js"],
     "migrations": ["dist/migrations/*.js"]
-}
+},{
+    "name":"oauth2",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5433,
+    "username": "docker",
+    "password": "docker",
+    "database": "ledgers",
+    "entities": ["dist/entities/oauth2/*.js"],
+    "migrations": ["dist/migrations/*.js"]
+},{
+    "name":"accounting",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5433,
+    "username": "docker",
+    "password": "docker",
+    "database": "ledgers",
+    "entities": ["dist/entities/accounting/*.js"],
+    "migrations": ["dist/migrations/*.js"]
+},{
+    "name":"dacchain",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5433,
+    "username": "docker",
+    "password": "docker",
+    "database": "ledgers",
+    "entities": ["dist/entities/dacchain/*.js","dist/entities/core/*.js"],
+    "migrations": ["dist/migrations/*.js"]
+}]

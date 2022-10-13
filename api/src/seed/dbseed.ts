@@ -1,7 +1,7 @@
 import initApp from "../app/init-context";
 import minimist from "minimist";
 import { ActivityType, BankActivity } from "../entities/accounting/BankActivity";
-import { Post } from "../entities/Post";
+import { Post } from "../entities/core/Post";
 import moment from "moment";
 import argon2 from "argon2";
 import { createConnection, Db, getConnection, QueryRunner } from "typeorm";
@@ -50,7 +50,7 @@ const main = async () => {
   console.log("start dbseed:", __dirname);
   console.dir(argv);
 
-  const appCtxt = initApp();
+  const appCtxt = initApp("db-seed");
   for (const file of ["../app/init-db"]) {
     await require(file).default(appCtxt);
   }

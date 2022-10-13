@@ -4,7 +4,7 @@ import { __CORS_ALLOW_DOMAINS__ } from "./app-constants";
 import { AppContext } from "./init-context";
 
 const init = async (ctx: AppContext) => {
-    console.log("init http: ")
+    console.log(ctx.name,": init http: ")
     const app = express();
 
   // configure cors: 
@@ -18,7 +18,7 @@ const init = async (ctx: AppContext) => {
   );
   app.set("trust proxy", 1);
   ctx.http = app;
-  console.log("init http: done")
+  console.log(ctx.name, ": init http: done")
 }
 
 export { init as initHttp }
