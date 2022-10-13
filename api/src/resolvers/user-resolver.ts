@@ -21,7 +21,7 @@ import {
   ChangePasswordInput,
 } from "./models";
 import { v4 } from "uuid";
-import * as notifier from "../notify/email";
+import { EmailNotifierService } from "../services/notifier/EmailNotifierService";
 
 @Resolver()
 export class UserResolver {
@@ -46,7 +46,8 @@ export class UserResolver {
       1000 * 60 * 60 * 24 * 3 // 3days
     );
 
-    await notifier.sendEmail(
+    const notifier = new EmailNotifierService();
+    await notifier.notify(
       email,
       `<a href="http://localhost:3000/identity/password/${token}">reset password</a>`
     );
