@@ -17,7 +17,7 @@ services:
       - APP_DB_NAME=ledgers
     volumes:
       - ./db:/docker-entrypoint-initdb.d/
-      - ./db-data:/var/lib/postgresql
+      - ./docker/db-data:/var/lib/postgresql
     ports:
       - 5433:5432
 
@@ -28,4 +28,4 @@ services:
       - '6389:6379'
     command: redis-server --save 20 1 --loglevel warning
     volumes: 
-      - ./redis:/data      
+      - ./docker/redis-data:/data      
