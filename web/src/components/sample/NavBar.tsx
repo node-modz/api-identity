@@ -2,7 +2,7 @@ import { Box, Link, Flex, Button } from "@chakra-ui/react"
 import NextLink from 'next/link'
 import { Router, useRouter } from "next/router"
 import React from "react"
-import { useLogoutMutation, useMeQuery } from "../generated/graphql"
+import { useLogoutMutation, useMeQuery } from "../../graphql/identity/graphql"
 
 
 interface NavBarProps { }
@@ -34,7 +34,7 @@ export const NavBar: React.FC<NavBarProps> = (props) => {
                 <NextLink href="/register">
                     <Link color="white" mr={12}>register</Link>
                 </NextLink>
-                <Box mr={4}><div>{data.me.username}</div></Box>
+                <Box mr={4}><div>{data.me?.user?.username}</div></Box>
                 <Button onClick={async () => {
                     console.log("clicked logout")
                     await logout();

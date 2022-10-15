@@ -6,6 +6,7 @@ import { AppContext } from "./init-context";
 const init = async (ctx: AppContext) => {
     console.log(ctx.name,": init http: ")
     const app = express();
+    console.log(ctx.name,"cors domains:", __CORS_ALLOW_DOMAINS__)
 
   // configure cors: 
   // can be done dynamically as well: 

@@ -14,13 +14,14 @@ const main = async () => {
     for ( const file of [
       "./app/init-db",
       "./app/init-http",
-      "./app/init-oauth",
+      "./app/init-oauth2",
     ]) {
       await require(file).default(appCtxt)
     }
 
-    appCtxt.http.listen(3000,()=>{
-        console.log("ledgers-oauth2 listening on: 3000")
+    const port = 4001;
+    appCtxt.http.listen(port,()=>{
+        console.log("ledgers-oauth2 listening on:", port)
     });
 }
 

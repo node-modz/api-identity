@@ -1,0 +1,83 @@
+mutation changePassword($token:String!,$password:String!) {
+  changePassword(input:{token:$token,password:$password}) {
+    errors {
+      field,
+      message
+    }
+    user{
+      id
+      username
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
+  }
+}
+
+mutation ForgotPassword($email:String!) {
+  forgotPassword(email:$email) {
+    errors {
+      field,
+      message
+    }
+  }
+}
+
+mutation Login($username:String!, $password:String!) {
+  login(username: $username, password: $password ) {
+    errors {
+      field
+      message
+    } 
+    user {
+      id
+      username
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
+  }
+}
+
+mutation Logout {
+  logout 
+}
+
+mutation Register($email:String!, $username:String!, $password:String!, $firstName:String!, $lastName:String! ) {
+  register(userinfo: {username:$username, email:$email, password:$password, firstName:$firstName, lastName:$lastName} ) {
+    errors {
+      field
+      message
+    } 
+    user {
+      id
+      username
+      firstName
+      lastName
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
+  }
+}
+
+query Me {
+  me {
+    user {
+      id
+      username
+    }
+    tokenInfo {
+      token
+      userInfo
+      expiresAt
+    }
+  }
+}
+

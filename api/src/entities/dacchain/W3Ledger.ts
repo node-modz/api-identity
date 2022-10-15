@@ -1,6 +1,6 @@
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, CreateDateColumn, Entity, Long, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
-import { Tenant } from '../core/Tenant';
+import { Tenant } from '../identity/Tenant';
 import { W3LedgerAccount } from './W3LedgerAccount';
 
 export enum AccountType {

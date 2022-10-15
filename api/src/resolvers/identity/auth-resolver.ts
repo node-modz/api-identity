@@ -1,32 +1,32 @@
-import { User } from "../entities/core/User";
+import { User } from "../../entities/identity/User";
 import argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { getConnection } from "typeorm";
-import { RequestContext } from "../app/request-context";
+import { RequestContext } from "../../app/request-context";
 import {
   __CONFIG__,
   __COOKIE_NAME__,
   __JWT_SECRET__,
-} from "../app/app-constants";
+} from "../../app/app-constants";
 import "reflect-metadata";
+import {FieldError} from '../FieldError'
 import {
   UserResponse,
   RegisterUserInput,
-  FieldError,
   Token,
   ForgotPasswordResponse,
   ChangePasswordResponse,
   ChangePasswordInput,
 } from "./models";
 import { v4 } from "uuid";
-import { EmailNotifierService } from "../services/notifier/EmailNotifierService";
+import { EmailNotifierService } from "../../services/notifier/EmailNotifierService";
 
 @Resolver()
-export class UserResolver {
+export class AuthResolver {
   @Mutation(() => ForgotPasswordResponse)
-  async IdForgotPassword(
+  async forgotPassword(
     @Arg("email") email: string,
     @Ctx() reqCtxt: RequestContext
   ): Promise<ForgotPasswordResponse> {
@@ -56,7 +56,7 @@ export class UserResolver {
   }
 
   @Mutation(() => ChangePasswordResponse)
-  async identityChangePassword(
+  async changePassword(
     @Arg("input") input: ChangePasswordInput,
     @Ctx() reqCtxt: RequestContext
   ) {

@@ -1,8 +1,8 @@
 
 import React, { createContext, ReactNode, useEffect, useState } from 'react'
 import { useClient } from 'urql';
-import { MeDocument, MeQuery, MeQueryVariables, Token } from '../generated/graphql';
-import { useMeQuery } from "../generated/graphql"
+import { MeDocument, MeQuery, MeQueryVariables, Token, useMeQuery } from '../graphql/identity/graphql';
+
 
 const TOKEN_KEY = "ldgr.token";
 const USERINFO_KEY = "ldgr.userInfo";

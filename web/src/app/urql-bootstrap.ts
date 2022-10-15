@@ -11,7 +11,7 @@ import {
   MeDocument,
   MeQuery,
   RegisterMutation,
-} from "../generated/graphql";
+} from "../graphql/identity/graphql";
 import { __GRAPHQL_API_SERVER__ } from "./app-constants";
 import { devtoolsExchange } from "@urql/devtools";
 import { isServerSide } from "../utils/utils";

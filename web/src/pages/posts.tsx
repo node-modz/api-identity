@@ -1,6 +1,6 @@
 import TopNavBar from "../components/TopNavBar"
 import SimpleSidebar from "../components/Sidebar"
-import { usePostsQuery } from '../generated/graphql'
+import { usePostsQuery } from '../graphql/identity/graphql'
 import { createUrqlClient } from '../app/urql-bootstrap'
 import { withUrqlClient } from 'next-urql'
 

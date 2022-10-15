@@ -15,7 +15,7 @@ import {
 import { MODULE_CONFIG } from '../../app/ModuleConfig';
 import { AuthContext } from '../../app/AuthContext';
 import NextLink from 'next/link'
-import { useForgotPasswordMutation } from '../../generated/graphql';
+import { useForgotPasswordMutation } from '../../graphql/identity/graphql';
 import { useState } from 'react';
 
 export const ForgotPassword = () => {

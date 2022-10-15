@@ -3,8 +3,10 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start",
-    "gen": "graphql-codegen --config codegen.yml"
+    "start": "next start",    
+    "gql:gen:all":"npm run gql:gen:identity || npm run gql:gen:accounting",
+    "gql:gen:identity": "graphql-codegen --config graphql-config/identity-codegen.yml",
+    "gql:gen:accounting": "graphql-codegen --config graphql-config/accounting-codegen.yml"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.2",

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
-import { useLoginMutation } from '../../generated/graphql';
+import { useLoginMutation } from '../../graphql/identity/graphql';
 import { toErrorMap } from '../../utils/utils';
 import { InputField } from '../InputField';
 import {

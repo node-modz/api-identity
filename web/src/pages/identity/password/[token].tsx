@@ -18,7 +18,7 @@ import {
 import { MODULE_CONFIG } from '../../../app/ModuleConfig';
 import { AuthContext } from '../../../app/AuthContext';
 import NextLink from 'next/link'
-import { useChangePasswordMutation } from '../../../generated/graphql';
+import { useChangePasswordMutation } from '../../../graphql/identity/graphql';
 import TopNavBar from '../../../components/TopNavBar';
 import { useContext, useState } from 'react';
 

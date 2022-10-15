@@ -10,7 +10,7 @@ import {
   GraphQLTimestamp,
 } from "type-graphql";
 import "reflect-metadata";
-import { BankActivity } from "../entities/accounting/BankActivity";
+import { BankActivity } from "../../entities/accounting/BankActivity";
 
 @ObjectType()
 class PaginatedBankActivity {

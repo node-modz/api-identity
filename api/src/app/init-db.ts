@@ -13,7 +13,7 @@ const init = async (appCtxt: AppContext) => {
     migrations: [path.join(__dirname, "../migrations/*")],
     // entities: [User, Post, BankActivity,Tenant],
     entities: [
-      path.join(__dirname, '../entities/core/*'),
+      path.join(__dirname, '../entities/identity/*'),
       path.join(__dirname, '../entities/dacchain/*'),
       path.join(__dirname, '../entities/accounting/*'),
       path.join(__dirname, '../entities/dacns/*'),

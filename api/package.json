@@ -6,18 +6,18 @@
   "scripts": {
     "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
     "watch": "tsc -w",
-    "devall": "concurrently \"nodemon dist/oauth-server.js\" \"nodemon dist/api-server.js\"",
-    "dev": "nodemon dist/oauth-server.js",
+    "run:dev:all": "concurrently \"nodemon dist/oauth-server.js\" \"nodemon dist/api-server.js\"",
+    "run:dev:oauth2": "nodemon dist/oauth-server.js",
+    "run:dev:api": "nodemon dist/api-server.js",
     "start": "node dist/index.js",
     "start2": "ts-node src/index.ts",
     "dev2": "nodemon --exec ts-node src/index.ts",
-
-    "migrate":"typeorm migration:run -c ledgers",
-    "core:generate":"typeorm migration:generate -c core -d src/migrations/core -f ormconfig.json -n ",
-    "oauth2:generate":"typeorm migration:generate -c oauth2 -d src/migrations/oauth2 -f ormconfig.json -n ",
-    "accounting:generate":"typeorm migration:generate -c accounting -d src/migrations/accounting -f ormconfig.json -n ",
-    "dacchain:generate":"typeorm migration:generate -c dacchain -d src/migrations/dacchain -f ormconfig.json -n "
-
+    "mig:gen:all": "npm run mig:gen:core $npm_config_first || npm run mig:gen:oauth2 $npm_config_first || npm run mig:gen:accounting $npm_config_first || npm run mig:gen:dacchain $npm_config_first",
+    "mig:run": "typeorm migration:run -c ledgers",
+    "mig:gen:core": "typeorm migration:generate -c core -d src/migrations/core -f ormconfig.json -n ",
+    "mig:gen:oauth2": "typeorm migration:generate -c oauth2 -d src/migrations/oauth2 -f ormconfig.json -n ",
+    "mig:gen:accounting": "typeorm migration:generate -c accounting -d src/migrations/accounting -f ormconfig.json -n ",
+    "mig:gen:dacchain": "typeorm migration:generate -c dacchain -d src/migrations/dacchain -f ormconfig.json -n "
   },
   "keywords": [],
   "author": "",
@@ -32,7 +32,7 @@
     "@types/jwt-decode": "^3.1.0",
     "@types/minimist": "^1.2.2",
     "@types/n-readlines": "^1.0.3",
-    "@types/node": "^14.0.27",
+    "@types/node": "^14.18.32",
     "@types/nodemailer": "^6.4.0",
     "@types/redis": "^2.8.25",
     "@types/uuid": "^8.0.1",

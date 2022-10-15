@@ -13,7 +13,7 @@ import {
 } from "../../entities/dacchain/index";
 import { getConnection } from "typeorm";
 import { Md5 } from 'ts-md5'
-import { User } from "../../entities/core/index";
+import { User } from "../../entities/identity/index";
 import { randomUUID } from "crypto";
 
 

@@ -1,10 +1,12 @@
 
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
 import 'reflect-metadata'
-import { Post } from "../entities/core/Post";
+import { Post } from "../../entities/identity/Post";
 
 const doSleep = (ms:number) => new Promise((res)=>setTimeout(res,ms))
-
+//
+// TODO: find a new home for this.  identity is not the right place
+//
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])

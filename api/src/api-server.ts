@@ -16,8 +16,9 @@ const main = async () => {
     await require(file).default(appCtxt)
   }
      
-  appCtxt.http.listen(4000, () => {
-    console.log("ledgers-api listening on: 4000");
+  const port = 4000;
+  appCtxt.http.listen(port, () => {
+    console.log("ledgers-api listening on: ", port);
   });
 };
 

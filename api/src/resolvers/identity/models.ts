@@ -1,10 +1,11 @@
-import { User } from "../entities/core/User";
+import { User } from "../../entities/identity/User";
+import { FieldError } from '../FieldError'
 import {
   Field,
   InputType,  
   ObjectType,  
 } from "type-graphql";
-import { __COOKIE_NAME__, __JWT_SECRET__ } from "../app/app-constants";
+import { __COOKIE_NAME__, __JWT_SECRET__ } from "../../app/app-constants";
 import "reflect-metadata";
 
 @InputType()
@@ -49,19 +50,7 @@ export class RegisterUserInput {
   }
 }
 
-@ObjectType()
-export class FieldError {
-  @Field()
-  field: string;
 
-  @Field()
-  message: string;
-
-  constructor(field: string, message: string) {
-    this.field = field;
-    this.message = message;
-  }
-}
 
 @ObjectType()
 export class Token {

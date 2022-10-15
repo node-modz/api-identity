@@ -13,7 +13,7 @@ $ yarn dev;  //http://localhost:3000
 
 update src/graphql/mutations or src/graphql/queries to get the appropriate info
 ```bash
-$ yarn gen
+$ yarn gql:gen
 ```
 
 

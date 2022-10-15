@@ -6,7 +6,7 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/**/*.js","dist/entities/Post.js"],
+    "entities": ["dist/entities/**/*.js"],
     "migrations": ["dist/migrations/**/*.js"]
 },{
     "name":"core",
@@ -46,6 +46,6 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/dacchain/*.js","dist/entities/core/*.js"],
+    "entities": ["dist/entities/dacchain/*.js","dist/entities/identity/*.js"],
     "migrations": ["dist/migrations/*.js"]
 }]

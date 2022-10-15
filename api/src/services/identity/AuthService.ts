@@ -1,7 +1,7 @@
-import { RegisterUserInput, Token } from "src/resolvers/models";
+import { RegisterUserInput, Token } from "src/resolvers/identity/models";
 import argon2 from "argon2";
 import { getConnection } from "typeorm";
-import { User } from "../../entities/core/User";
+import { User } from "../../entities/identity/User";
 import {
     __CONFIG__,
     __COOKIE_NAME__,

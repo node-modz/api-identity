@@ -197,14 +197,6 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string } | null, tokenInfo?: { __typename?: 'Token', token: string, userInfo: string, expiresAt: number } | null } };
 
-export type BankActivityQueryVariables = Exact<{
-  offset: Scalars['Int'];
-  limit: Scalars['Int'];
-}>;
-
-
-export type BankActivityQuery = { __typename?: 'Query', bankActivity: { __typename?: 'PaginatedBankActivity', hasMore: boolean, activity: Array<{ __typename?: 'BankActivity', id: string, activityDate: any, activityType: string, amount: number, reference?: string | null, description?: string | null, createdAt: any }> } };
-
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -311,26 +303,6 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
-};
-export const BankActivityDocument = gql`
-    query BankActivity($offset: Int!, $limit: Int!) {
-  bankActivity(offset: $offset, limit: $limit) {
-    activity {
-      id
-      activityDate
-      activityType
-      amount
-      reference
-      description
-      createdAt
-    }
-    hasMore
-  }
-}
-    `;
-
-export function useBankActivityQuery(options: Omit<Urql.UseQueryArgs<BankActivityQueryVariables>, 'query'>) {
-  return Urql.useQuery<BankActivityQuery, BankActivityQueryVariables>({ query: BankActivityDocument, ...options });
 };
 export const MeDocument = gql`
     query Me {

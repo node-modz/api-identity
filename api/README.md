@@ -39,7 +39,8 @@
 ```bash    
   $ export wip_feature=dac
   $ npx typeorm migration:revert -c ledgers
-  $ rm dist/migrations/*${wip_feature}*/* src/migrations/*${wip_feature}*/*  
-  $ npx typeorm migration:generate -c ledgers -d src/migrations/oauth2 -f orm/oauth2-ormconfig.json -n $wip_feature
+  $ rm dist/migrations/*/*-${wip_feature}* src/migrations/*/*-${wip_feature}*
+  $ yarn mig:gen:all $wip_feature
+  $ yarn mig:run
   $ npx typeorm migration:run -c ledgers  -f ormconfig.json
 ```  

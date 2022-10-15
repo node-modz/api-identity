@@ -30,7 +30,7 @@ import {
 } from '@chakra-ui/icons';
 import NextLink from 'next/link'
 import { NextRouter, Router, useRouter } from "next/router"
-import { useLogoutMutation, useMeQuery } from "../generated/graphql"
+import { useLogoutMutation, useMeQuery } from "../graphql/identity/graphql"
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../app/AuthContext';
 import { MODULE_CONFIG, NavItem } from '../app/ModuleConfig';
