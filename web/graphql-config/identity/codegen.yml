@@ -1,8 +1,8 @@
 overwrite: true
 schema: "http://localhost:4000/graphql"
-documents: "src/graphql/identity/*.graphql"
+documents: "graphql-config/identity/*.graphql"
 generates:
-  src/generated/identity/graphql.tsx:
+  src/graphql/identity/graphql.tsx:
     plugins:
       - "typescript"
       - "typescript-operations"
