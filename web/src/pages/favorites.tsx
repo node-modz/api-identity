@@ -1,12 +1,11 @@
-import TopNavBar from "../components/TopNavBar"
-import SimpleSidebar from "../components/Sidebar"
+import * as shell from '../components/shell'
 
 const Favorites = () => (
     <>
-      <TopNavBar />    
-      <SimpleSidebar>
+      <shell.TopNavBar />    
+      <shell.SimpleSidebar>
         <>Hello Favorites</>
-      </SimpleSidebar>         
+      </shell.SimpleSidebar>         
     </>
   )
 

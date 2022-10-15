@@ -2,7 +2,7 @@ import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
 import { useRegisterMutation } from '../../graphql/identity/graphql';
 import { toErrorMap } from '../../utils/utils';
-import { InputField, PasswordField } from '../InputField';
+import { InputField, PasswordField } from '../core/InputField';
 import NextLink from 'next/link';
 import {
   Flex,

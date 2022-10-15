@@ -1,7 +1,7 @@
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
 import { toErrorMap } from '../../utils/utils';
-import { InputField } from '../InputField';
+import { InputField } from '../core/InputField';
 import {
     Flex,
     Box, Checkbox,

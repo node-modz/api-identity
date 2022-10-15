@@ -25,11 +25,11 @@ import {
   FiMenu,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
-import { AuthContext } from '../app/AuthContext';
-import { MODULE_CONFIG } from '../app/ModuleConfig';
+import { AuthContext } from '../../app/AuthContext';
+import { MODULE_CONFIG } from '../../app/ModuleConfig';
 
 
-export default function SimpleSidebar({ children }: { children: ReactNode }) {
+export function SimpleSidebar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH="100vh">

@@ -1,6 +1,5 @@
 
-import SimpleSidebar from '../components/Sidebar'
-import TopNavBar from '../components/TopNavBar'
+import * as shell from '../components/shell'
 import { ChakraContainer } from '../components/sample/ChakraContainer'
 import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../app/urql-bootstrap'
@@ -11,10 +10,10 @@ import { createUrqlClient } from '../app/urql-bootstrap'
 // - /dasboard, /settinngs, /explore etc..
 const Index = () => (
   <>
-    <TopNavBar />    
-    <SimpleSidebar>
+    <shell.TopNavBar />    
+    <shell.SimpleSidebar>
       <ChakraContainer/>     
-    </SimpleSidebar>         
+    </shell.SimpleSidebar>         
   </>
 )
 export default withUrqlClient(createUrqlClient,{ssr:true})(Index)

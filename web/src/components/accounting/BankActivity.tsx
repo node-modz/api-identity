@@ -5,8 +5,8 @@ import { useState } from "react";
 import CurrencyFormat from 'react-currency-format';
 
 
-import { useBankActivityQuery } from "../graphql/accounting/graphql";
-import { createUrqlClient } from '../app/urql-bootstrap'
+import { useBankActivityQuery } from "../../graphql/accounting/graphql";
+import { createUrqlClient } from '../../app/urql-bootstrap'
 import { format } from "date-fns";
 
 

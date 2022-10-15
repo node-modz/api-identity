@@ -1,12 +1,13 @@
 import { createUrqlClient } from '../../../app/urql-bootstrap';
 import { withUrqlClient } from 'next-urql';
-import TopNavBar from '../../../components/TopNavBar';
+import * as shell from '../../../components/shell';
+
 import { ForgotPassword } from '../../../components/identity/ForgotPassword';
 
 const ForgotPasswordPage = () => {
     return (
         <>
-          <TopNavBar/>
+          <shell.TopNavBar/>
           <ForgotPassword/>
         </> 
       );

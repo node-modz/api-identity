@@ -1,5 +1,4 @@
-import TopNavBar from "../components/TopNavBar"
-import SimpleSidebar from "../components/Sidebar"
+import * as shell from '../components/shell'
 import { usePostsQuery } from '../graphql/identity/graphql'
 import { createUrqlClient } from '../app/urql-bootstrap'
 import { withUrqlClient } from 'next-urql'
@@ -8,15 +7,15 @@ import { withUrqlClient } from 'next-urql'
 const Posts = () => {
   const [{ data, fetching }] = usePostsQuery();
   return (<>
-    <TopNavBar />
-    <SimpleSidebar>
+    <shell.TopNavBar />
+    <shell.SimpleSidebar>
       <>Hello Posts</>
       <br />
       {!data
         ? <>Loading .. </>
         : data.posts.map(post => <div key={post.id}>{post.title}</div>)
       }
-    </SimpleSidebar>
+    </shell.SimpleSidebar>
   </>
   );
 }

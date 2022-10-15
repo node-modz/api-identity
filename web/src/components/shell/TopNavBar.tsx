@@ -30,13 +30,13 @@ import {
 } from '@chakra-ui/icons';
 import NextLink from 'next/link'
 import { NextRouter, Router, useRouter } from "next/router"
-import { useLogoutMutation, useMeQuery } from "../graphql/identity/graphql"
+import { useLogoutMutation, useMeQuery } from "../../graphql/identity/graphql"
 import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../app/AuthContext';
-import { MODULE_CONFIG, NavItem } from '../app/ModuleConfig';
-import { AuthContent } from './identity/AuthInfo';
+import { AuthContext } from '../../app/AuthContext';
+import { MODULE_CONFIG, NavItem } from '../../app/ModuleConfig';
+import { AuthContent } from '../identity/AuthInfo';
 
-export default function TopNavBar() {
+export function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();
     return (
         <Box>
@@ -364,3 +364,4 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         </Stack>
     );
 };
+

@@ -29,7 +29,7 @@ export interface NavItem {
 export const MODULE_CONFIG = {
     identity: {
         postLogin: {
-            href:"/dashboard"
+            href:"/accounting/dashboard"
         },
         postSignup: {
             href:"/dashboard"
@@ -49,7 +49,7 @@ export const MODULE_CONFIG = {
     },
     SideBar: {
         Items: [
-            { href: '/dashboard', name: 'Dasboard', icon: FiHome },
+            { href: '/accounting/dashboard', name: 'Dasboard', icon: FiHome },
             { href: '/trending', name: 'Trending', icon: FiTrendingUp },
             { href: '/posts', name: 'Posts', icon: FiCompass },
             { href: '/favorites', name: 'Favourites', icon: FiStar },

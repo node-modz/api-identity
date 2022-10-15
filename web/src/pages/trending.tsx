@@ -1,12 +1,11 @@
-import TopNavBar from "../components/TopNavBar"
-import SimpleSidebar from "../components/Sidebar"
+import * as shell from '../components/shell'
 
 const Trending = () => (
     <>
-      <TopNavBar />    
-      <SimpleSidebar>
+      <shell.TopNavBar />    
+      <shell.SimpleSidebar>
         <>Hello Trending</>
-      </SimpleSidebar>         
+      </shell.SimpleSidebar>         
     </>
   )
 
