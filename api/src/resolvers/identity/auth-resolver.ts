@@ -2,7 +2,7 @@ import { User } from "../../entities/identity/User";
 import argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { getConnection } from "typeorm";
 import { RequestContext } from "../../app/request-context";
 import {
@@ -22,10 +22,12 @@ import {
 } from "./models";
 import { v4 } from "uuid";
 import { EmailNotifierService } from "../../services/notifier/EmailNotifierService";
+import { isUserAuth } from "../Auth";
 
 @Resolver()
 export class AuthResolver {
   @Mutation(() => ForgotPasswordResponse)
+  @UseMiddleware([])
   async forgotPassword(
     @Arg("email") email: string,
     @Ctx() reqCtxt: RequestContext
@@ -56,6 +58,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => ChangePasswordResponse)
+  @UseMiddleware([isUserAuth])
   async changePassword(
     @Arg("input") input: ChangePasswordInput,
     @Ctx() reqCtxt: RequestContext

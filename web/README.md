@@ -6,7 +6,7 @@ $ yarn install
 
 ```
 ```bash
-$ yarn dev;  //http://localhost:3000
+$ yarn run:dev;  //http://localhost:3000
 ```
 
 # Generating new graphql queries/mutations

@@ -8,9 +8,13 @@ import {
   InputType,
   ObjectType,
   GraphQLTimestamp,
+  UseMiddleware,
+  MiddlewareFn,
 } from "type-graphql";
 import "reflect-metadata";
 import { BankActivity } from "../../entities/accounting/BankActivity";
+import { isUserAuth } from '../Auth'
+
 
 @ObjectType()
 class PaginatedBankActivity {
@@ -23,11 +27,12 @@ class PaginatedBankActivity {
 @Resolver()
 export class BankActivityResolver {
   @Query(() => PaginatedBankActivity)
+  @UseMiddleware([isUserAuth])
   async bankActivity(
     @Arg("offset", () => Int) offset: number,
     @Arg("limit", () => Int) limit: number
   ): Promise<PaginatedBankActivity> {
-    
+
     const realLimit = Math.min(100, limit);
     const reaLimitPlusOne = realLimit + 1;
 

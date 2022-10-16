@@ -7,7 +7,7 @@ import { withUrqlClient } from 'next-urql'
 const Posts = () => {
   const [{ data, fetching }] = usePostsQuery();
   return (<>
-    <shell.TopNavBar />
+    <shell.TopNavBar/>
     <shell.SimpleSidebar>
       <>Hello Posts</>
       <br />

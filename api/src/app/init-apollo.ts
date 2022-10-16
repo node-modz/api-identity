@@ -5,6 +5,7 @@ import { HelloResolver } from "../resolvers/identity/hello-resolver";
 import { AuthResolver } from "../resolvers/identity/auth-resolver";
 import { AppContext } from "./init-context";
 import { BankActivityResolver } from "../resolvers/accounting/bank-activity-resolver";
+import { User } from "../entities/identity";
 
 const init = async (ctx: AppContext) => {
   console.log(ctx.name, ": init apollo: ");
@@ -15,9 +16,17 @@ const init = async (ctx: AppContext) => {
       resolvers: [HelloResolver, AuthResolver, PostResolver, BankActivityResolver],
       validate: false,
     }),
-    context: (props) => {
+    context: async (props) => {
       const { req, res } = props;
-      return { req, res, redis:redisClient };
+      const userId = req.session.userId
+      const user = (!userId) ? null : await User.findOne({ where: { id: userId } });
+      console.log("context: user:", {userId})
+      return { 
+        req, 
+        res, 
+        redis:redisClient,
+        user: user,
+      };
     },
   });
   server.applyMiddleware({ app, cors: false });

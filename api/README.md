@@ -10,11 +10,11 @@
 
 ```
   $ npx typeorm migration:run -c ledgers
-  $ npx ts-node src/seed/dbseed.ts --clean --tenants --users --activity
+  $ npx ts-node src/seeder/seeder.ts --clean --tenants --users --activity
 ```
 
 ```bash
-  $ yarn dev; // this should start on localhost:4000
+  $ yarn run:dev; // this should start on localhost:4000
 ```
 
 

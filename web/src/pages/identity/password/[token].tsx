@@ -4,7 +4,7 @@ import { NextPage } from 'next';
 import { Form, Formik } from 'Formik';
 import { useRouter } from "next/router";
 import { toErrorMap } from '../../../utils/utils';
-import { InputField, PasswordField } from '../../../components/InputField'
+import { InputField, PasswordField } from '../../../components/core/InputField'
 import {
     Flex,
     Box, Checkbox,

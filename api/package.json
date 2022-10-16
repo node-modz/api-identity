@@ -6,7 +6,7 @@
   "scripts": {
     "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
     "watch": "tsc -w",
-    "run:dev:all": "concurrently \"nodemon dist/oauth-server.js\" \"nodemon dist/api-server.js\"",
+    "run:dev": "concurrently \"nodemon dist/oauth-server.js\" \"nodemon dist/api-server.js\"",
     "run:dev:oauth2": "nodemon dist/oauth-server.js",
     "run:dev:api": "nodemon dist/api-server.js",
     "start": "node dist/index.js",

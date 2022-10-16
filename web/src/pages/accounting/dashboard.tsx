@@ -6,14 +6,14 @@ import BankActivity from "../../components/accounting/BankActivity"
 
 const Dasboard = () => (
   <>
-    <shell.TopNavBar />
+    <shell.TopNavBar/>
     <shell.SimpleSidebar>
-      <AuthContent />
+      <AuthContent/>
       <HStack>
-        <Card />
-        <Card />
+        <Card/>
+        <Card/>
       </HStack>
-      <BankActivity />
+      <BankActivity/>
 
     </shell.SimpleSidebar>
   </>

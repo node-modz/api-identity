@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next",
+    "run:dev": "next",
     "build": "next build",
     "start": "next start",    
     "gql:gen:all": "npm run gql:gen:identity && npm run gql:gen:accounting",
@@ -20,7 +20,7 @@
     "formik": "^2.1.5",
     "framer-motion": "^6.3.0",
     "graphql": "^16.5.0",
-    "next": "latest",
+    "next": "^12.2.3",
     "next-urql": "^4.0.0",
     "react": "^18.2.0",
     "react-currency-format": "^1.1.0",
