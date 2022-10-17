@@ -6,7 +6,8 @@ $ yarn install
 
 ```
 ```bash
-$ yarn run:dev;  //http://localhost:3000
+$ yarn run:dev;     // or "electron:dev"  //http://localhost:3000 
+$ yarn electron:dev // runs http server, starts compiler & then electron app
 ```
 
 # Generating new graphql queries/mutations
