@@ -12,6 +12,7 @@ const Index = () => (
   <>
     <shell.TopNavBar/>    
     <shell.SimpleSidebar>
+      <>Hello Index</>
       <ChakraContainer/>     
     </shell.SimpleSidebar>         
   </>

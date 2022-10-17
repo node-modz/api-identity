@@ -1,12 +1,30 @@
 {
+  "description": "w3 ledgers",
+  "author": "Vineel Nalla",
+  "version": "0.1.0",
+  "name": "w3l",
+  "homepage": ".",
+  "main": "build/electron/main.js",
   "private": true,
   "scripts": {
     "run:dev": "next",
     "build": "next build",
-    "start": "next start",    
+    "start": "next start",
     "gql:gen:all": "npm run gql:gen:identity && npm run gql:gen:accounting",
     "gql:gen:identity": "graphql-codegen --config graphql-config/identity/codegen.yml",
-    "gql:gen:accounting": "graphql-codegen --config graphql-config/accounting/codegen.yml"
+    "gql:gen:accounting": "graphql-codegen --config graphql-config/accounting/codegen.yml",
+    "postinstall": "electron-builder install-app-deps",
+    "electron:dev": "concurrently \"cross-env BROWSER=none yarn run:dev\" \"wait-on http://127.0.0.1:3000 && tsc -p electron -w\" \"wait-on http://127.0.0.1:3000 && tsc -p electron && electron .\"",
+    "electron:build": "yarn build && tsc -p electron && electron-builder"
+  },
+  "build": {
+    "extends": null,
+    "files": [
+      "build/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.2",
@@ -14,9 +32,13 @@
     "@chakra-ui/theme-tools": "^2.0.2",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.9.0",
+    "@types/electron-devtools-installer": "^2.2.2",
     "@urql/devtools": "^2.0.3",
     "@urql/exchange-graphcache": "^4.4.3",
     "date-fns": "^2.29.2",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-reload": "^2.0.0-alpha.1",
     "formik": "^2.1.5",
     "framer-motion": "^6.3.0",
     "graphql": "^16.5.0",
@@ -39,6 +61,11 @@
     "@types/react": "^18.0.0",
     "@types/react-currency-format": "^1.0.0",
     "@types/react-dom": "^18.0.0",
-    "typescript": "^4.7.2"
+    "concurrently": "^7.4.0",
+    "cross-env": "^7.0.3",
+    "electron": "^21.1.1",
+    "electron-builder": "^23.6.0",
+    "typescript": "^4.7.2",
+    "wait-on": "^6.0.1"
   }
 }
