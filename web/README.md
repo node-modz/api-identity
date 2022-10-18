@@ -6,8 +6,12 @@ $ yarn install
 
 ```
 ```bash
-$ yarn run:dev;     // or "electron:dev"  //http://localhost:3000 
-$ yarn electron:dev // runs http server, starts compiler & then electron app
+$ yarn run:dev;         // or "nextron:dev"  //http://localhost:3000 
+$ yarn nextron:dev;     // starts electron in dev mode.
+$ yarn nextron:build;   // builds native packates; "open dist/mac/w3l.app"
+
+$ yarn electron:dev     // runs http server, starts compiler & then electron app;
+$ yarn electron:build   // this is NOT working, need to figure out why in spare time.
 ```
 
 # Generating new graphql queries/mutations
@@ -16,6 +20,8 @@ update src/graphql/mutations or src/graphql/queries to get the appropriate info
 ```bash
 $ yarn gql:gen
 ```
+
+
 
 
 # chakra react-app guide

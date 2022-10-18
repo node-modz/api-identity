@@ -14,8 +14,10 @@ function createWindow() {
 
   if (app.isPackaged) {
     // 'build/index.html'
-    console.log("its packaged;");
-    win.loadURL(`file://${__dirname}/../index.html`);
+    // TODO: had an issue with getting it to work in packaged mode, it wouldn't load the js files
+    console.log("running in packaged mode");
+    win.webContents.openDevTools();    
+    win.loadURL(`file://${__dirname}/index.html`);        
   } else {
     console.log("its dev mode;");
     win.loadURL('http://localhost:3000/');

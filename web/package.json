@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "name": "w3l",
   "homepage": ".",
-  "main": "build/electron/main.js",
+  "main": "app/background.js",
   "private": true,
   "scripts": {
     "run:dev": "next",
@@ -15,12 +15,15 @@
     "gql:gen:accounting": "graphql-codegen --config graphql-config/accounting/codegen.yml",
     "postinstall": "electron-builder install-app-deps",
     "electron:dev": "concurrently \"cross-env BROWSER=none yarn run:dev\" \"wait-on http://127.0.0.1:3000 && tsc -p electron -w\" \"wait-on http://127.0.0.1:3000 && tsc -p electron && electron .\"",
-    "electron:build": "yarn build && tsc -p electron && electron-builder"
+    "electron:build": "yarn build && tsc -p electron && electron-builder",
+    "nextron:build": "nextron build",
+    "nextron:dev": "nextron dev --port 3000"
   },
   "build": {
     "extends": null,
     "files": [
-      "build/**/*"
+      "build/**/*",
+      "app"
     ],
     "directories": {
       "buildResources": "assets"
@@ -39,11 +42,14 @@
     "electron-devtools-installer": "^3.2.0",
     "electron-is-dev": "^2.0.0",
     "electron-reload": "^2.0.0-alpha.1",
+    "electron-serve": "^1.1.0",
+    "electron-store": "^8.1.0",
     "formik": "^2.1.5",
     "framer-motion": "^6.3.0",
     "graphql": "^16.5.0",
     "next": "^12.2.3",
     "next-urql": "^4.0.0",
+    "nextron": "../../nextron/nextron-8.2.2.tgz",
     "react": "^18.2.0",
     "react-currency-format": "^1.1.0",
     "react-dom": "^18.2.0",

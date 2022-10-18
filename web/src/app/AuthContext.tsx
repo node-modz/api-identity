@@ -6,7 +6,8 @@ import { MeDocument, MeQuery, MeQueryVariables, Token, useMeQuery } from '../gra
 
 const TOKEN_KEY = "ldgr.token";
 const USERINFO_KEY = "ldgr.userInfo";
-const EXPIRESAT_KEY = "ldgr.expiresAt"
+const EXPIRESAT_KEY = "ldgr.expiresAt";
+const IS_ELECTRON = "ldgr.app.isElectron";
 
 interface AuthState {
     token: string;
@@ -79,6 +80,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem(TOKEN_KEY, token);
         localStorage.setItem(USERINFO_KEY, JSON.stringify(userInfo));
         localStorage.setItem(EXPIRESAT_KEY, expiresAt.toString());
+        localStorage.setItem(IS_ELECTRON,process.versions.hasOwnProperty('electron')?"true":"false");
 
         setAuthState({ token, userInfo, expiresAt })
     }
