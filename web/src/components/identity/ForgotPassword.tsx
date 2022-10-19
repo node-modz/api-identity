@@ -12,7 +12,7 @@ import {
     Text,
     useColorModeValue
 } from '@chakra-ui/react';
-import { MODULE_CONFIG } from '../../app/ModuleConfig';
+import { APP_CONFIG } from '../../app/AppConfig';
 import { AuthContext } from '../../app/AuthContext';
 import NextLink from 'next/link'
 import { useForgotPasswordMutation } from '../../graphql/identity/graphql';
@@ -69,8 +69,8 @@ export const ForgotPassword = () => {
                                                 direction={{ base: 'column', sm: 'row' }}
                                                 align={'start'}
                                                 justify={'space-between'}>
-                                                <NextLink href={MODULE_CONFIG.identity.login.href}>
-                                                    <Link href={MODULE_CONFIG.identity.login.href}
+                                                <NextLink href={APP_CONFIG.identity.login.href}>
+                                                    <Link href={APP_CONFIG.identity.login.href}
                                                         ml={'auto'}
                                                         color={'blue.400'}>
                                                         Sign In?

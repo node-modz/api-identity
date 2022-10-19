@@ -13,7 +13,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
-import { MODULE_CONFIG } from '../../app/ModuleConfig';
+import { APP_CONFIG } from '../../app/AppConfig';
 import { AuthContext } from '../../app/AuthContext';
 
 
@@ -36,7 +36,7 @@ export const Signup = () => {
         } else if (response.data?.register.tokenInfo) {          
           authContext.setAuthState?.(response.data?.register.tokenInfo)
           console.log("postsignup: isAuthenticated:",authContext.isAuthenticated?.())
-          router.push(MODULE_CONFIG.identity.postSignup.href);
+          router.push(APP_CONFIG.identity.postSignup.href);
         }
       }}>
       {({ isSubmitting }) => {

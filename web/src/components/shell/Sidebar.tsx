@@ -26,7 +26,7 @@ import {
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { AuthContext } from '../../app/AuthContext';
-import { MODULE_CONFIG } from '../../app/ModuleConfig';
+import { APP_CONFIG } from '../../app/AppConfig';
 
 
 export function SimpleSidebar({ children }: { children: ReactNode }) {
@@ -87,7 +87,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
 
-      {MODULE_CONFIG.SideBar.Items.map((link) => (
+      {APP_CONFIG.SideBar.Items.map((link) => (
         <NavItem key={link.name} icon={link.icon} href={link.href}>
           {link.name}
         </NavItem>

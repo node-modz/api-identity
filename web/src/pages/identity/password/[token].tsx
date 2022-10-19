@@ -15,7 +15,7 @@ import {
     Text,
     useColorModeValue
 } from '@chakra-ui/react';
-import { MODULE_CONFIG } from '../../../app/ModuleConfig';
+import { APP_CONFIG } from '../../../app/AppConfig';
 import { AuthContext } from '../../../app/AuthContext';
 import NextLink from 'next/link'
 import { useChangePasswordMutation } from '../../../graphql/identity/graphql';
@@ -76,7 +76,7 @@ const ChangePassword = () => {
                             authContext.setAuthState?.(response.data?.changePassword.tokenInfo)
                             console.log("postlogin: isAuthenticated:", authContext.isAuthenticated?.())
                         }
-                        router.push(MODULE_CONFIG.identity.postLogin.href);
+                        router.push(APP_CONFIG.identity.postLogin.href);
                     }
                 }
             }}>
@@ -110,8 +110,8 @@ const ChangePassword = () => {
                                                 direction={{ base: 'column', sm: 'row' }}
                                                 align={'start'}
                                                 justify={'space-between'}>
-                                                <NextLink href={MODULE_CONFIG.identity.login.href}>
-                                                    <Link href={MODULE_CONFIG.identity.login.href}
+                                                <NextLink href={APP_CONFIG.identity.login.href}>
+                                                    <Link href={APP_CONFIG.identity.login.href}
                                                         ml={'auto'}
                                                         color={'blue.400'}>
                                                         Sign In?

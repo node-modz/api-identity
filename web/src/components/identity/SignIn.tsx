@@ -14,7 +14,7 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react';
-import { MODULE_CONFIG } from '../../app/ModuleConfig';
+import { APP_CONFIG } from '../../app/AppConfig';
 import { AuthContext } from '../../app/AuthContext';
 import NextLink from 'next/link'
 
@@ -37,7 +37,7 @@ export const SignIn = () => {
             authContext.setAuthState?.(response.data?.login.tokenInfo)
             console.log("postlogin: isAuthenticated:", authContext.isAuthenticated?.())
           }
-          router.push(MODULE_CONFIG.identity.postLogin.href);
+          router.push(APP_CONFIG.identity.postLogin.href);
         }
       }}>
       {({ isSubmitting }) => {
@@ -69,8 +69,8 @@ export const SignIn = () => {
                         align={'start'}
                         justify={'space-between'}>
                         <Checkbox>Remember me</Checkbox>
-                        <NextLink href={MODULE_CONFIG.identity.forgotPassword.href}>
-                          <Link href={MODULE_CONFIG.identity.forgotPassword.href} color={'blue.400'}>Forgot password?</Link>
+                        <NextLink href={APP_CONFIG.identity.forgotPassword.href}>
+                          <Link href={APP_CONFIG.identity.forgotPassword.href} color={'blue.400'}>Forgot password?</Link>
                         </NextLink>
                       </Stack>
                       <Button

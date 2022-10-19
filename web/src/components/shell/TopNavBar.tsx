@@ -33,7 +33,7 @@ import { NextRouter, Router, useRouter } from "next/router"
 import { useLogoutMutation, useMeQuery } from "../../graphql/identity/graphql"
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../app/AuthContext';
-import { MODULE_CONFIG, NavItem } from '../../app/ModuleConfig';
+import { APP_CONFIG, NavItem } from '../../app/AppConfig';
 import { AuthContent } from '../identity/AuthInfo';
 
 export function TopNavBar() {
@@ -111,7 +111,7 @@ const LoggedInState = () => {
         console.log("clicked logout")
         await logoutAPI({});
         authContext.logout?.();
-        router.push(MODULE_CONFIG.identity.postLogout.href);
+        router.push(APP_CONFIG.identity.postLogout.href);
     }
     console.log("In LoggedInState: isAuthenticated", authContext.isAuthenticated?.())
 
@@ -159,7 +159,7 @@ const LoggedInState = () => {
 }
 const Login = () => {
     return (
-        <NextLink href={MODULE_CONFIG.identity.login.href}>
+        <NextLink href={APP_CONFIG.identity.login.href}>
             <Button
                 as={'a'}
                 fontSize={'sm'}
@@ -172,7 +172,7 @@ const Login = () => {
 }
 const Register = () => {
     return (
-        <NextLink href={MODULE_CONFIG.identity.register.href}>
+        <NextLink href={APP_CONFIG.identity.register.href}>
             <Button
                 as={'a'}
                 display={{ base: 'none', md: 'inline-flex' }}
@@ -206,7 +206,7 @@ const UserProfile = () => {
             </MenuButton>
             <MenuList>
                 //TODO: onClick of logout call logout function above
-                {MODULE_CONFIG.UserProfile.Items.map((navItem) => {
+                {APP_CONFIG.UserProfile.Items.map((navItem) => {
                     if (navItem.href) {
                         return (
                             <NextLink key={navItem.label} href={navItem.href}>
@@ -228,7 +228,7 @@ const DesktopNav = () => {
 
     return (
         <Stack direction={'row'} spacing={4}>
-            {MODULE_CONFIG.TopNav.Items.map((navItem) => (
+            {APP_CONFIG.TopNav.Items.map((navItem) => (
                 <Box key={navItem.label}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
                         <PopoverTrigger>
@@ -308,7 +308,7 @@ const MobileNav = () => {
             bg={useColorModeValue('white', 'gray.800')}
             p={4}
             display={{ md: 'none' }}>
-            {MODULE_CONFIG.TopNav.Items.map((navItem) => (
+            {APP_CONFIG.TopNav.Items.map((navItem) => (
                 <MobileNavItem key={navItem.label} {...navItem} />
             ))}
         </Stack>
