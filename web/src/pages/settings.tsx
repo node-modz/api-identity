@@ -1,12 +1,9 @@
 import * as shell from '../components/shell'
 
 const Settings = () => (
-    <>
-      <shell.TopNavBar/>    
-      <shell.SimpleSidebar>
-        <>Hello Settings</>
-      </shell.SimpleSidebar>         
-    </>
-  )
+  <>
+    <>Hello Settings</>
+  </>
+)
 
-  export default Settings
+export default Settings

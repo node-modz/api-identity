@@ -7,17 +7,14 @@ import { withUrqlClient } from 'next-urql'
 const Posts = () => {
   const [{ data, fetching }] = usePostsQuery();
   return (<>
-    <shell.TopNavBar/>
-    <shell.SimpleSidebar>
-      <>Hello Posts</>
-      <br />
-      {!data
-        ? <>Loading .. </>
-        : data.posts.map(post => <div key={post.id}>{post.title}</div>)
-      }
-    </shell.SimpleSidebar>
+    <>Hello Posts</>
+    <br />
+    {!data
+      ? <>Loading .. </>
+      : data.posts.map(post => <div key={post.id}>{post.title}</div>)
+    }
   </>
   );
 }
 
-export default withUrqlClient(createUrqlClient,{ssr:true})(Posts)
+export default withUrqlClient(createUrqlClient, { ssr: true })(Posts)

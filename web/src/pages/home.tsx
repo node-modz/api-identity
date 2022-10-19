@@ -10,11 +10,7 @@ import { createUrqlClient } from '../app/urql-bootstrap'
 // - /dasboard, /settinngs, /explore etc..
 const Index = () => (
   <>
-    <shell.TopNavBar/>    
-    <shell.SimpleSidebar>
-      <>Hello Index</>
-      <ChakraContainer/>     
-    </shell.SimpleSidebar>         
+    <>Hello Home</>
   </>
 )
-export default withUrqlClient(createUrqlClient,{ssr:true})(Index)
+export default withUrqlClient(createUrqlClient, { ssr: true })(Index)

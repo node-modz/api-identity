@@ -55,7 +55,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         console.log("In provider:useEffect()", "token=", state.token);       
         client
-            .query<MeQuery, MeQueryVariables>(MeDocument)
+            .query<MeQuery, MeQueryVariables>(MeDocument,{})
             .toPromise()
             .then(result => {
                 const { data } = result

@@ -109,7 +109,7 @@ const LoggedInState = () => {
     // TODO: is it possible to assign this as action in MODULE_CONFIG
     const doLogut = async () => {
         console.log("clicked logout")
-        await logoutAPI();
+        await logoutAPI({});
         authContext.logout?.();
         router.push(MODULE_CONFIG.identity.postLogout.href);
     }

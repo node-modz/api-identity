@@ -1,12 +1,9 @@
 import * as shell from '../components/shell'
 
 const Favorites = () => (
-    <>
-      <shell.TopNavBar/>    
-      <shell.SimpleSidebar>
-        <>Hello Favorites</>
-      </shell.SimpleSidebar>         
-    </>
-  )
+  <>
+    <>Hello Favorites</>
+  </>
+)
 
-  export default Favorites
+export default Favorites

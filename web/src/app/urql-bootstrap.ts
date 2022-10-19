@@ -1,4 +1,10 @@
-import { createClient, dedupExchange, fetchExchange, ssrExchange } from "urql";
+import { createClient, dedupExchange, Exchange, fetchExchange, ssrExchange, errorExchange } from "urql";
+import { authExchange } from '@urql/exchange-auth';
+import {
+  makeOperation,
+  OperationContext,
+  Operation
+} from '@urql/core';
 import {
   cacheExchange,
   Cache,
@@ -18,7 +24,7 @@ import { isServerSide } from "../utils/utils";
 
 declare global {
   interface Window {
-    __URQL_DATA__:any
+    __URQL_DATA__: any
   }
 }
 
@@ -36,7 +42,7 @@ function updateCache<R, Q>(
 //cache lookup doesn't seem to work, its fetching all the time.
 export const caccheExchangeConfig = {
   keys: {
-    PaginatedBankActivity: () =>  null,
+    PaginatedBankActivity: () => null,
   },
   updates: {
     Mutation: {
@@ -88,22 +94,78 @@ export const caccheExchangeConfig = {
   },
 } as CacheExchangeOpts;
 
-export const createUrqlClient = (ssrExchange: any) => ({
-  url: __GRAPHQL_API_SERVER__,
-  //requestPolicy:'network-only',
-  fetchOptions: {
-    credentials: "include" as const,
-  },
-  exchanges: [
-    devtoolsExchange,
-    dedupExchange,
-    cacheExchange(caccheExchangeConfig),
-    ssrExchange,
-    fetchExchange,
-  ],
-});
 
 
+type AuthState = {
+  token: string
+};
+
+const urqlErrorExchange = () => {
+  return errorExchange({
+    onError: (error) => {
+      // we only get an auth error here when the auth exchange had attempted to refresh auth and getting an auth error again for the second time
+      const isAuthError = error.graphQLErrors.some(
+        e => e.extensions?.code === 'UNAUTHENTICATED',
+      );
+
+      if (isAuthError) {
+        console.log("received Auth Error")        
+      }
+    }
+  })
+}
+const urqlAuthConfig = () => {
+  return authExchange<AuthState>({
+    //addAuthToOperation:null,
+    addAuthToOperation: ({ authState, operation }) => {
+      console.log("adding authorization ", authState?.token)
+      if (!authState || !authState.token) {
+        return operation;
+      }
+
+      const fetchOptions =
+        typeof operation.context.fetchOptions === 'function'
+          ? operation.context.fetchOptions()
+          : operation.context.fetchOptions || {};
+
+      const op: Operation = makeOperation(
+        operation.kind,
+        operation, {
+        ...operation.context,
+        fetchOptions: {
+          ...fetchOptions,
+          headers: {
+            ...fetchOptions.headers,
+            Authorization: authState.token,
+          },
+        },
+      });
+      return op;
+    },
+    getAuth: async ({ authState }) => {
+      if (!authState) {
+        const token = typeof window !== 'undefined' ? localStorage.getItem("ldgr.token") : null;        //const refreshToken = localStorage.getItem('refreshToken');
+        if (token) {
+          console.log("urql -> getAuth: ", token)
+          return { token };
+        }
+      }
+      console.log("urql -> getAuth: ", null)
+      return null;
+    },
+    didAuthError: ({ error }) => {
+      return error.graphQLErrors.some(e => e.extensions?.code === 'UNAUTHENTICATED');
+    },
+    willAuthError: ({ authState }) => {
+      // for now let the backend API respond with appropriate error.
+      // || /* JWT is expired */
+      // if (!authState) return true;
+      return false;
+    },
+  });
+}
+
+// TODO: merge UrqlClientConfig & createUrqlClient
 export const UrqlClientConfig = () => {
   //const isServerSide = typeof window === "undefined";
 
@@ -114,16 +176,32 @@ export const UrqlClientConfig = () => {
   });
   return {
     url: __GRAPHQL_API_SERVER__,
-    //requestPolicy:'network-only',
     fetchOptions: {
       credentials: "include" as const,
     },
     exchanges: [
       devtoolsExchange,
-      dedupExchange,
-      cacheExchange(caccheExchangeConfig),
+      dedupExchange,    
+      urqlErrorExchange(),
+      urqlAuthConfig(),
       ssr,
       fetchExchange,
     ],
   };
 };
+
+export const createUrqlClient = (ssrExchange: any) => ({
+  url: __GRAPHQL_API_SERVER__,
+  fetchOptions: {
+    credentials: "include" as const,
+  },
+  exchanges: [
+    devtoolsExchange,
+    dedupExchange,
+    cacheExchange(caccheExchangeConfig),
+    urqlErrorExchange(),
+    urqlAuthConfig(),
+    ssrExchange,
+    fetchExchange,
+  ],
+});

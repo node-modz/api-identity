@@ -18,9 +18,13 @@ const init = async (ctx: AppContext) => {
     }),
     context: async (props) => {
       const { req, res } = props;
+      const authorization = req.headers.authorization !== undefined ? req.headers.authorization : ""
       const userId = req.session.userId
       const user = (!userId) ? null : await User.findOne({ where: { id: userId } });
-      console.log("context: user:", {userId})
+      console.log("context: user:", {
+        authorization:authorization.substring(0,5), 
+        userId
+      })
       return { 
         req, 
         res, 

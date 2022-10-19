@@ -1,13 +1,8 @@
-import { Box, Button, Flex, Heading, HStack, Link, Stack, Table, TableCaption, TableContainer, Tbody, Td, Text, Tfoot, Th, Thead, Tr } from "@chakra-ui/react";
-import { withUrqlClient } from "next-urql";
-import NextLink from "next/link";
+import { Button, Flex, HStack, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from "@chakra-ui/react";
+import { format } from "date-fns";
 import { useState } from "react";
 import CurrencyFormat from 'react-currency-format';
-
-
 import { useBankActivityQuery } from "../../graphql/accounting/graphql";
-import { createUrqlClient } from '../../app/urql-bootstrap'
-import { format } from "date-fns";
 
 
 export default function BankActivity() {

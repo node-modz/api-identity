@@ -1,12 +1,9 @@
 import * as shell from '../components/shell'
 
 const Explore = () => (
-    <>
-      <shell.TopNavBar/>    
-      <shell.SimpleSidebar>
-        <>Hello Explore</>
-      </shell.SimpleSidebar>         
-    </>
-  )
+  <>
+    <>Hello Explore</>
+  </>
+)
 
-  export default Explore
+export default Explore
