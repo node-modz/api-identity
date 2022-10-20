@@ -222,6 +222,8 @@ const UserProfile = () => {
     )
 }
 const DesktopNav = () => {
+    console.log("loading topnav: items:", APP_CONFIG.TopNav.Items.length);
+    
     const linkColor = useColorModeValue('gray.600', 'gray.200');
     const linkHoverColor = useColorModeValue('gray.800', 'white');
     const popoverContentBgColor = useColorModeValue('white', 'gray.800');

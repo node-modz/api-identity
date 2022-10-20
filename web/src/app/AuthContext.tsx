@@ -46,7 +46,7 @@ function loadAuthState(): AuthState {
 // TODO: secure routes..
 const AuthProvider = ({ children }: { children: ReactNode }) => {
     
-    console.log("In auth provider");
+    console.log("loading application auth provider/context");
     const client = useClient()    
     let state = loadAuthState()
     const [authState, setAuthState] = useState(state)

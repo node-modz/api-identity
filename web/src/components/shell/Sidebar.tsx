@@ -63,6 +63,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  console.log("loading sidebar: items: ", APP_CONFIG.SideBar.Items.length)
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -102,8 +103,7 @@ interface NavItemProps extends FlexProps {
   children: React.ReactNode;
 }
 const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
-  const authContext = useContext(AuthContext);
-  console.log("loading sidebar")
+  const authContext = useContext(AuthContext);  
   return (
     <NextLink href={rest.href}>
       <Link href={rest.href} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>

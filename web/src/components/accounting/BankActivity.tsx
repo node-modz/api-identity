@@ -3,16 +3,18 @@ import { format } from "date-fns";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import CurrencyFormat from 'react-currency-format';
-import { useBankActivityQueryWrapper } from "../../graphql/accounting/wrapper";
+import { BankActivityQuery, BankActivityQueryVariables, useBankActivityQuery } from "../../graphql/accounting/graphql";
+import { useQueryWrapper } from "../../graphql/Wrapper";
 
 
 export default function BankActivity() {
     const router = useRouter();
     const [variables, setVariables] = useState({ 'offset': 0, 'limit': 50 })
 
-    const [{ data, error, fetching }] = useBankActivityQueryWrapper({
-        variables: variables
-    }, { router: router });
+    const [{ data, error, fetching }] = useQueryWrapper<BankActivityQuery, BankActivityQueryVariables>(
+        useBankActivityQuery,
+        { variables: variables },
+        { router: router });
 
     if (!fetching && !data) {
         return (

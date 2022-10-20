@@ -1,5 +1,6 @@
 import { NextRouter } from "next/router";
 import { CombinedError } from "urql";
+import { APP_CONFIG } from "../app/AppConfig";
 import { isAuthError } from "../utils/utils";
 
 //
@@ -22,7 +23,7 @@ export const authCheck = (
     if (!fetching && error) {
         if (isAuthError(error)) {
             console.log("auth error: redirecting to login page.");
-            context.router.push("/identity/login");
+            context.router.push(APP_CONFIG.identity.login);
         }
     }
 }
