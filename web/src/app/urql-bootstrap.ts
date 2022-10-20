@@ -7,7 +7,6 @@ import {
   Cache, cacheExchange, CacheExchangeOpts, QueryInput
 } from "@urql/exchange-graphcache";
 import { dedupExchange, errorExchange, fetchExchange, ssrExchange } from "urql";
-import { appHistory } from '../components/core/History';
 import {
   LoginMutation,
   MeDocument,
