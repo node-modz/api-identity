@@ -16,7 +16,7 @@ export type ViewContext = {
 
 
 export const authCheck = (
-    { context, error, fetching }: { context: ViewContext, fetching: boolean, error: CombinedError }) => {
+    { context, error, fetching }: { context: ViewContext, fetching: boolean, error?: CombinedError }) => {
 
     // TODO: could there will be race condition here, what if the this check is done while data is being fetched.
     if (!fetching && error) {

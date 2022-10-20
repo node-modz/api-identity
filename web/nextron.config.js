@@ -5,4 +5,5 @@ module.exports = {
     },
   }),
   rendererSrcDir:'src',
+  mainSrcDir:'main'
 };
