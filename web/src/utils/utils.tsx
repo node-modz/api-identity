@@ -1,3 +1,4 @@
+import { CombinedError } from "urql";
 import { FieldError } from "../graphql/identity/graphql";
 
 export const toErrorMap = (errors:FieldError[]) => {
@@ -9,3 +10,9 @@ export const toErrorMap = (errors:FieldError[]) => {
 }
 
 export const isServerSide = () => typeof window === "undefined";
+
+export const isAuthError = (error:CombinedError) => {
+    return error.graphQLErrors.some(
+        e => e.extensions?.code === 'UNAUTHENTICATED',
+    );
+}

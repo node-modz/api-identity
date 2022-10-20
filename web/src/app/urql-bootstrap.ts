@@ -1,26 +1,22 @@
-import { createClient, dedupExchange, Exchange, fetchExchange, ssrExchange, errorExchange } from "urql";
+import {
+  makeOperation, Operation
+} from '@urql/core';
+import { devtoolsExchange } from "@urql/devtools";
 import { authExchange } from '@urql/exchange-auth';
 import {
-  makeOperation,
-  OperationContext,
-  Operation
-} from '@urql/core';
-import {
-  cacheExchange,
-  Cache,
-  QueryInput,
-  query,
-  CacheExchangeOpts,
+  Cache, cacheExchange, CacheExchangeOpts, QueryInput
 } from "@urql/exchange-graphcache";
+import { dedupExchange, errorExchange, fetchExchange, ssrExchange } from "urql";
+import { appHistory } from '../components/core/History';
 import {
   LoginMutation,
   MeDocument,
   MeQuery,
-  RegisterMutation,
+  RegisterMutation
 } from "../graphql/identity/graphql";
-import { __GRAPHQL_API_SERVER__ } from "./app-constants";
-import { devtoolsExchange } from "@urql/devtools";
 import { isServerSide } from "../utils/utils";
+import { __GRAPHQL_API_SERVER__ } from "./app-constants";
+
 
 declare global {
   interface Window {
@@ -109,14 +105,19 @@ const urqlErrorExchange = () => {
       );
 
       if (isAuthError) {
-        console.log("received Auth Error")        
+        // console.log("received Auth Error")        
+        // appHistory.push("/identity/login");
+        // appHistory.push("/identity/login");
+        // not a real good option ideally the above appHistory.push() should have worked
+        //window.location.href = "http://localhost:3000/identity/login"
+        // refer: src/graphql/GraphQLAuth.ts
       }
     }
   })
 }
 const urqlAuthConfig = () => {
   return authExchange<AuthState>({
-    //addAuthToOperation:null,
+    // adds authorization header to outgoing requests
     addAuthToOperation: ({ authState, operation }) => {
       console.log("adding authorization ", authState?.token)
       if (!authState || !authState.token) {
@@ -143,13 +144,20 @@ const urqlAuthConfig = () => {
       return op;
     },
     getAuth: async ({ authState }) => {
-      if (!authState) {
-        const token = typeof window !== 'undefined' ? localStorage.getItem("ldgr.token") : null;        //const refreshToken = localStorage.getItem('refreshToken');
+      if (isServerSide()){
+        return null;
+      }
+
+      if (!authState) {        
+        // urql cache doesn't have it, lets return what exists in localStorate.
+        const token = typeof window !== 'undefined' ? localStorage.getItem("ldgr.token") : null;                
         if (token) {
-          console.log("urql -> getAuth: ", token)
           return { token };
         }
+        return null;
       }
+      // authState.token exists, gets called when there is an error
+      // opportunity to refresh token here.
       console.log("urql -> getAuth: ", null)
       return null;
     },
@@ -166,8 +174,7 @@ const urqlAuthConfig = () => {
 }
 
 // TODO: merge UrqlClientConfig & createUrqlClient
-export const UrqlClientConfig = () => {
-  //const isServerSide = typeof window === "undefined";
+export const UrqlClientConfig = () => {  
 
   // The `ssrExchange` must be initialized with `isClient` and `initialState`
   const ssr = ssrExchange({

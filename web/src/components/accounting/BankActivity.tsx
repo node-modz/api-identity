@@ -1,15 +1,18 @@
 import { Button, Flex, HStack, Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr } from "@chakra-ui/react";
 import { format } from "date-fns";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import CurrencyFormat from 'react-currency-format';
-import { useBankActivityQuery } from "../../graphql/accounting/graphql";
+import { useBankActivityQueryWrapper } from "../../graphql/accounting/wrapper";
 
 
 export default function BankActivity() {
+    const router = useRouter();
     const [variables, setVariables] = useState({ 'offset': 0, 'limit': 50 })
-    const [{ data, error, fetching }] = useBankActivityQuery({
+
+    const [{ data, error, fetching }] = useBankActivityQueryWrapper({
         variables: variables
-    });
+    }, { router: router });
 
     if (!fetching && !data) {
         return (
