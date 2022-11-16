@@ -12,11 +12,16 @@ import {
   Button,
   Heading,
   Text,
+  Divider,
+  Center,
   useColorModeValue
 } from '@chakra-ui/react';
 import { APP_CONFIG } from '../../app/AppConfig';
 import { AuthContext } from '../../app/AuthContext';
 import NextLink from 'next/link'
+import { FcGoogle } from 'react-icons/fc';
+import { FaFacebook, FaGithub } from 'react-icons/fa';
+import { SiLinkedin, SiMessenger } from 'react-icons/si';
 
 export const SignIn = () => {
   const authContext = useContext(AuthContext)
@@ -42,18 +47,17 @@ export const SignIn = () => {
       }}>
       {({ isSubmitting }) => {
         return (
-          <Flex
-            minH={'100vh'}
-            align={'center'}
-            justify={'center'}
-            bg={useColorModeValue('gray.50', 'gray.800')}>
+          <Flex p={8}>
             <Stack spacing={8} mx={'auto'} maxW={'lg'} py={4} px={6}>
               <Stack align={'center'}>
-                <Heading fontSize={'4xl'}>Sign in to your account</Heading>
-                <Text fontSize={'lg'} color={'gray.600'}>
-                  to enjoy all of our cool <Link color={'blue.400'}>features</Link> ✌️
-                </Text>
+                <Text fontSize={'2xl'}>Sign in with Social Accounts</Text>
               </Stack>
+              <SocialLogin />
+              <Divider />
+              <Stack align={'center'}>
+                <Text fontSize={'2xl'}> or Login </Text>
+              </Stack>
+              <Divider />
               <Box
                 rounded={'lg'}
                 bg={useColorModeValue('white', 'gray.700')}
@@ -94,3 +98,42 @@ export const SignIn = () => {
     </Formik>
   );
 };
+
+const SocialLogin = () => {
+  return (
+    <Center p={1}>
+      <Stack spacing={2} align={'center'} maxW={'md'} w={'full'}>
+        {/* Facebook */}
+        {/* <Button w={'full'} colorScheme={'facebook'} leftIcon={<FaFacebook />}>
+          <Center>
+            <Text>Sign in with Facebook</Text>
+          </Center>
+        </Button> */}
+
+        {/* LinkedIn */}
+        {/* <Button w={'full'} colorScheme={'messenger'} leftIcon={<SiLinkedin />}>
+          <Center>
+            <Text>Signin with Linkedin</Text>
+          </Center>
+        </Button> */}
+
+        {/* Google */}
+        <NextLink href={APP_CONFIG.apiHost + "/login/federated/google"}>
+          <Button w={'full'} variant={'outline'} leftIcon={<FcGoogle />}>
+            <Center>
+              <Text>Sign in with Google</Text>
+            </Center>
+          </Button>
+        </NextLink>
+        {/* Github */}
+        <NextLink href={APP_CONFIG.apiHost + "/login/federated/github"}>
+          <Button w={'full'} colorScheme={'blackAlpha'} leftIcon={<FaGithub />}>
+            <Center>
+              <Text>Sign in with Github</Text>
+            </Center>
+          </Button>
+        </NextLink>
+      </Stack>
+    </Center>
+  );
+}

@@ -1,30 +1,37 @@
-import { User, Post, Tenant } from "../../entities/identity/index";
-import { createConnection, Db, getConnection, QueryRunner } from "typeorm";
+import * as process from 'process';
+import { Inject, Service } from 'typedi';
+import { getConnection } from "typeorm";
+import { Login, Tenant, User, IdpConnect } from "../../entities/identity/index";
+import { AuthService } from "../../services/identity/AuthService";
 import { Seeder } from "../seeder";
-import argon2 from "argon2";
-import * as path from 'path'
-import * as process from 'process'
+import Logger from "../../lib/Logger";
+
+const logger = Logger(module)
 
 
 type UserData = {
-    email: string, firstName: string, lastName: string, password: string,
-    posts: [
-        { title: string, text: string },
-    ]
+    email: string, firstName: string, lastName: string, password: string, avatar:string    
 }
 
+@Service()
 export class IdentityUserSeeder implements Seeder {
+
+    @Inject()
+    private authService: AuthService
+
     async setup(file: string): Promise<void> {
-        
+
         if (!file.endsWith(".ts")) {
             throw new Error(`unknown file type, expecting .ts file: ${file}`);
         }
 
-        console.log(process.cwd())
-        console.log(__dirname)
-        const data = require(process.cwd()+"/"+file.replace(/\.[^/.]+$/, "")).default as UserData[];
+        //const authService = new AuthService()
 
-        console.log(data);
+        logger.info(process.cwd())
+        logger.info(__dirname)
+        const data = require(process.cwd() + "/" + file.replace(/\.[^/.]+$/, "")).default as UserData[];
+
+        logger.info(data);
         //if( true ) return;
         for (var u of data) {
             let user = await User.findOne({
@@ -33,42 +40,24 @@ export class IdentityUserSeeder implements Seeder {
                 },
             });
             if (!user) {
-                const hashedPWD = await argon2.hash(u.password);
-
-                const result = await getConnection()
-                    .createQueryBuilder()
-                    .insert()
-                    .into(User)
-                    .values({
-                        username: u.email,
-                        email: u.email,
-                        firstName: u.firstName,
-                        lastName: u.lastName,
-                        password: hashedPWD,
-                    })
-                    .execute();
-                user = result.raw[0];
-            }
-            if (u.posts != undefined) {
-                for (var p of u.posts) {
-                    const post = await Post.findOne({
-                        where: {
-                            title: p.title,
-                        },
-                    });
-                    if (!post) {
-                        Post.create({ creator: user, ...p }).save();
-                    }
-                }
+                user = await this.authService.createLogin({
+                    username: u.email,
+                    email: u.email,
+                    firstName: u.firstName,
+                    lastName: u.lastName,
+                    password: u.password,
+                    avatar:u.avatar,
+                })
             }
         }
 
     }
     async tearDown(): Promise<void> {
         const qb = getConnection().createQueryBuilder()
-        await qb.delete().from(Post).execute();
-        await qb.delete().from(User).execute();        
-        await qb.delete().from(Tenant).execute();
+        await qb.delete().from(Login).execute();
+        await qb.delete().from(IdpConnect).execute();        
+        await qb.delete().from(User).execute();                
+        await qb.delete().from(Tenant).execute();        
     }
 
 }

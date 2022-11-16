@@ -7,7 +7,12 @@ import csv from "csv-parser";
 import fs from "fs";
 import moment from "moment";
 import { createConnection, Db, getConnection, QueryRunner } from "typeorm";
+import { Service } from 'typedi';
+import Logger from "../../lib/Logger";
 
+const logger = Logger(module)
+
+@Service()
 export class BankActivitySeeder implements Seeder {
     async setup(path: string): Promise<void> {
         const files = fs.readdirSync(path)
@@ -39,7 +44,7 @@ export class BankActivitySeeder implements Seeder {
         // - it became sequential after returning the promise & await on the outside.
 
         const promise = new Promise((resolve, _) => {
-            console.log("Loading file:", file);
+            logger.info("Loading file:", file);
             fs.createReadStream(file)
                 .pipe(csv({}))
                 .on("data", async (data: any) => {
@@ -69,7 +74,7 @@ export class BankActivitySeeder implements Seeder {
                     resolve("completed");
                 });
         }).then((val) => {
-            console.log("Loading file:", file, ": ", val);
+            logger.info("Loading file:", file, ": ", val);
         });
 
         return promise

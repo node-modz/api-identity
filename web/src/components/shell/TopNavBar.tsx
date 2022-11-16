@@ -1,40 +1,17 @@
 import {
-    Box,
-    Flex,
-    Text,
-    IconButton,
-    Button,
-    Stack,
-    Collapse,
-    Icon,
-    Link,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    useColorModeValue,
-    useBreakpointValue,
-    useDisclosure,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    MenuDivider,
-    Avatar,
-} from '@chakra-ui/react';
-import {
-    HamburgerIcon,
-    CloseIcon,
     ChevronDownIcon,
-    ChevronRightIcon,
-    AddIcon,
+    ChevronRightIcon, CloseIcon, HamburgerIcon
 } from '@chakra-ui/icons';
-import NextLink from 'next/link'
-import { NextRouter, Router, useRouter } from "next/router"
-import { useLogoutMutation, useMeQuery } from "../../graphql/identity/graphql"
+import {
+    Avatar, Box, Button, Collapse, Flex, Icon, IconButton, Link, Menu,
+    MenuButton, MenuDivider, MenuItem, MenuList, Popover, PopoverContent, PopoverTrigger, Stack, Text, useBreakpointValue, useColorModeValue, useDisclosure
+} from '@chakra-ui/react';
+import NextLink from 'next/link';
+import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../../app/AuthContext';
 import { APP_CONFIG, NavItem } from '../../app/AppConfig';
-import { AuthContent } from '../identity/AuthInfo';
+import { AuthContext } from '../../app/AuthContext';
+import { useLogoutMutation } from "../../graphql/identity/graphql";
 
 export function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();
@@ -113,13 +90,13 @@ const LoggedInState = () => {
         authContext.logout?.();
         router.push(APP_CONFIG.identity.postLogout.href);
     }
-    console.log("In LoggedInState: isAuthenticated", authContext.isAuthenticated?.())
+    console.log("In LoggedInState: isAuthenticated", authContext.isAuthenticated())
 
     let view = null;
-    if (authContext.isAuthenticated?.()) {
+    if (authContext.isAuthenticated()) {
         view = (
-            <>                
-                <UserProfile />
+            <>
+                <UserProfile logout={doLogut} />
                 <Button onClick={async () => {
                     doLogut();
                 }} variant="link" mr={12}>logout
@@ -133,29 +110,8 @@ const LoggedInState = () => {
                 <Register />
             </>
         )
-    }
-    //const [{ data, fetching }] = useMeQuery();
-    // if (!fetching && !data?.me) {
-    //     view = (
-    //         <>
-    //             <Login />
-    //             <Register />
-    //         </>
-    //     )
-    // } else if (!fetching && data?.me) {           
-    //     view = (
-    //         <>
-    //             <UserProfile />
-    //             <Button onClick={() => { 
-    //                 doLogut();
-    //             }} variant="link" mr={12}>logout
-    //             </Button>
-    //         </>
-    //     )
-    // }
+    }    
     return (<>{view}</>);
-
-
 }
 const Login = () => {
     return (
@@ -188,7 +144,8 @@ const Register = () => {
         </NextLink>
     )
 }
-const UserProfile = () => {
+const UserProfile = ({ logout }) => {
+    const authContext = useContext(AuthContext)
     return (
         <Menu>
             <MenuButton
@@ -200,12 +157,13 @@ const UserProfile = () => {
                 <Avatar
                     size={'sm'}
                     src={
-                        'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
+                        authContext.authState?.userInfo.avatar
                     }
+                    referrerPolicy="no-referrer"
                 />
             </MenuButton>
             <MenuList>
-                //TODO: onClick of logout call logout function above
+                {/* //TODO: onClick of logout call logout function above */}
                 {APP_CONFIG.UserProfile.Items.map((navItem) => {
                     if (navItem.href) {
                         return (
@@ -217,13 +175,18 @@ const UserProfile = () => {
                         return (<MenuDivider key={navItem.label} />)
                     }
                 })}
+                <MenuItem key="logout" onClick={async () => {
+                    logout();
+                }}>
+                    logout
+                </MenuItem>
             </MenuList>
         </Menu>
     )
 }
 const DesktopNav = () => {
     console.log("loading topnav: items:", APP_CONFIG.TopNav.Items.length);
-    
+
     const linkColor = useColorModeValue('gray.600', 'gray.200');
     const linkHoverColor = useColorModeValue('gray.800', 'white');
     const popoverContentBgColor = useColorModeValue('white', 'gray.800');

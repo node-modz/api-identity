@@ -1,27 +1,35 @@
+import dotenv from 'dotenv-safe';
+import minimist from 'minimist';
 import initApp from "./app/init-context";
-import minimist from 'minimist'
+import Logger from './lib/Logger'
+
+const logger = Logger(module);
 
 const main = async () => {
   const argv = minimist(process.argv.slice(2));
-  console.log("start api-server:",__dirname);  
-  console.dir(argv)
+  dotenv.config();
+  logger.info("start api-server:", __dirname);
+  //console.dir(argv)
 
   const appCtxt = initApp("ledgers-api");
-  for ( const file of [
+  for (const file of [
     "./app/init-db",
     "./app/init-http",
-    "./app/init-redis",
+    "./app/init-session",
     "./app/init-apollo",
+    "./app/init-identity",
+    "./app/init-oauth2",
   ]) {
     await require(file).default(appCtxt)
   }
-     
+
   const port = 4000;
   appCtxt.http.listen(port, () => {
-    console.log("ledgers-api listening on: ", port);
+    logger.info("ledgers-api listening on: ", port);
   });
 };
 
 main().catch((e) => {
   console.error("ledgers-api error:", e);
 });
+

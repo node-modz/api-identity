@@ -14,6 +14,10 @@ import {
 import "reflect-metadata";
 import { BankActivity } from "../../entities/accounting/BankActivity";
 import { isUserAuth } from '../Auth'
+import { Service } from "typedi";
+import Logger from '../../lib/Logger'
+
+const logger = Logger(module);
 
 
 @ObjectType()
@@ -24,6 +28,7 @@ class PaginatedBankActivity {
   hasMore: boolean;
 }
 
+@Service()
 @Resolver()
 export class BankActivityResolver {
   @Query(() => PaginatedBankActivity)
@@ -59,7 +64,7 @@ export class BankActivityResolver {
     //     activity[activity.length - 1].createdAt
     //     );
     // }
-    console.log("offset:", offset, " limit:", limit, " activity:", activity.length);
+    logger.info("offset:", offset, " limit:", limit, " activity:", activity.length);
 
     return {
       activity: activity.slice(0, realLimit),

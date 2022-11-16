@@ -1,31 +1,28 @@
 
-import {
-    W3Chain,
-    W3Ledger,
-    AccountType,
-    W3LedgerAccount,
-    W3LedgerAccountActivity,
-    ActivityType,
-    LedgerRules,
-    Payment,
-    __LEDGER_RULES__,
-    LedgerType
-} from "../../entities/dacchain/index";
-import { getConnection } from "typeorm";
-import { Md5 } from 'ts-md5'
-import { User } from "../../entities/identity/index";
 import { randomUUID } from "crypto";
+import { Md5 } from 'ts-md5';
+import { Inject, Service } from 'typedi';
+import { getConnection } from "typeorm";
+import {
+    AccountType, ActivityType, LedgerType, Payment, W3Chain,
+    W3Ledger, W3LedgerAccount,
+    W3LedgerAccountActivity, __LEDGER_RULES__
+} from "../../entities/dacchain/index";
+import { User } from "../../entities/identity/index";
+import { UserService } from "../identity/UserService";
+import Logger from "../../lib/Logger";
 
+const logger = Logger(module)
 
+@Service()
 export class W3ChainService {
 
+    @Inject()
+    private userService: UserService
+
     async findChainByEmail(email: string): Promise<W3Chain | undefined> {
-        const activityRepo = getConnection().getRepository(W3LedgerAccountActivity)
-        const userRepo = getConnection().getRepository(User)
-        const user = await userRepo.findOne({
-            where: { username: email },
-            relations: ["tenant"]
-        })        
+        
+        const user = await this.userService.findByUsername(email)
         if( user == undefined ) {
             return undefined
         }
@@ -128,7 +125,7 @@ export class W3ChainService {
         ledgerEntityRefId: string): Promise<W3Ledger> {
         const ledger = await this.createLedger(owner, partnerChainId, ledgerEntityRefId)
 
-        console.log("created source ledger: ", {
+        logger.info("created source ledger: ", {
             id: ledger.id,
             ledgerId: ledger.ledgerId,
             ownerChainId: ledger.ownerChainId,
@@ -192,7 +189,7 @@ export class W3ChainService {
         })
 
         if (!chain) {
-            console.log("error: chain not found trying to process W3LedgerConnect")
+            logger.info("error: chain not found trying to process W3LedgerConnect")
             return undefined
         }
 
@@ -204,7 +201,7 @@ export class W3ChainService {
             }
         })
         if( ledger != undefined ) {
-            console.log("found ledger on other side: not creating one.")
+            logger.info("found ledger on other side: not creating one.")
             return ledger
         }
 
@@ -229,7 +226,7 @@ export class W3ChainService {
             acct.accountHash = Md5.hashAsciiStr(ledger.ledgerId)
             l.accounts.push(await acctRepo.save(acct))
         }
-        console.log("created destination ledger: ", {
+        logger.info("created destination ledger: ", {
             id: l.id,
             ledgerId: l.ledgerId,
             ownerChainId: l.ownerChainId,
@@ -256,7 +253,7 @@ export class W3ChainService {
 
         const ledgerRule = __LEDGER_RULES__.get(txnType)
         if (ledgerRule == undefined) {
-            console.log("error: invalid transaction type", txnType);
+            logger.warn("error: invalid transaction type", txnType);
             return undefined
         }
         /**
@@ -272,7 +269,7 @@ export class W3ChainService {
         })
 
         if (!partnerLedger) {
-            console.log("error: partner ledger not found");
+            logger.warn("error: partner ledger not found");
             return undefined
         }
 
@@ -318,13 +315,13 @@ export class W3ChainService {
                 if (rule != undefined) {
                     const acct = fromLedger.findAccount(rule.acctType)
                     if (!acct) {
-                        console.log("error: account not found, ledger:", {
+                        logger.warn("error: account not found, ledger:", {
                             ledgerId: fromLedger.ledgerId,
                             accountType: rule.acctType
                         });
                         return
                     }
-                    console.log("apply txn at source:", {
+                    logger.info("apply txn at source:", {
                         acct: {
                             id: acct.id,
                             accountType: acct.accountType
@@ -347,13 +344,13 @@ export class W3ChainService {
                     const peerAccountType = (rule.isTransfer) ? rule.acctType : W3Ledger.peerAccountType(rule.acctType)
                     const partnerAcct = partnerLedger.findAccount(peerAccountType)
                     if (!partnerAcct) {
-                        console.log("error: partner account not found:", {
+                        logger.error("error: partner account not found:", {
                             ledgerId: partnerLedger.ledgerId,
                             accountType: peerAccountType
                         });
                         return
                     }
-                    console.log("apply txn at destination:", {
+                    logger.info("apply txn at destination:", {
                         acct: {
                             id: partnerAcct.id,
                             accountType: partnerAcct.accountType

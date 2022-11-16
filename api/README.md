@@ -32,15 +32,43 @@
 
 ### Seeding Database
 ```bash
-  $ npx ts-node src/seed/dbseed.ts --clean --tenants --users --activity --dacchain
+  $ npx ts-node src/seeder/seeder.ts --clean --all | [ --tenants --users --activity --dacchain ]
 ```  
 
 ### Working on new domains
 ```bash    
   $ export wip_feature=dac
-  $ npx typeorm migration:revert -c ledgers
-  $ rm dist/migrations/*/*-${wip_feature}* src/migrations/*/*-${wip_feature}*
-  $ yarn mig:gen:all $wip_feature
+  
+  $ yarn mig:gen:all $wip_feature ;  "all|identity|oauth2|accounting|dacchain"
+  $ yarn mig:gen:identity $wip_feature
+  $ yarn mig:gen:oauth2 $wip_feature
+  $ yarn mig:gen:accounting $wip_feature
+  $ yarn mig:gen:dacchain $wip_feature
   $ yarn mig:run
   $ npx typeorm migration:run -c ledgers  -f ormconfig.json
+
+  #
+  # any issues, revert the recent migration & redo.
+  #
+  $ npx typeorm migration:revert -c ledgers
+  $ rm dist/migrations/*/*-${wip_feature}* src/migrations/*/*-${wip_feature}*
 ```  
+
+### CURL oauth requests
+```
+curl -s -d 'token='$token'' \
+  http://localhost:4000/oauth2/verify | jq 
+
+curl -s -d grant_type=client_credentials \
+  -d client_id=service-to-service \
+  -d client_secret=sts-secret \
+  http://localhost:4000/oauth2/token | jq '.access_token' | xargs ~/bin/jwt.sh
+
+curl -s -d grant_type=password \
+  -d username=vn1@gmail.com \
+  -d password=aaa \
+  -d client_id=password-client \
+  -d client_secret=pc-secret \
+  http://localhost:4000/oauth2/token  | jq '.access_token' | xargs ~/bin/jwt.sh
+
+```

@@ -34,7 +34,7 @@ export const NavBar: React.FC<NavBarProps> = (props) => {
                 <NextLink href="/register">
                     <Link color="white" mr={12}>register</Link>
                 </NextLink>
-                <Box mr={4}><div>{data.me?.user?.username}</div></Box>
+                <Box mr={4}><div>{data.me?.user?.firstName}</div></Box>
                 <Button onClick={async () => {
                     console.log("clicked logout")
                     await logout({});

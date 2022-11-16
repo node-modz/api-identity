@@ -1,5 +1,6 @@
 import { Field, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { BaseEntity, Column, CreateDateColumn, Entity, OneToOne, JoinColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { User } from './User';
 
 
 @ObjectType()
@@ -39,5 +40,12 @@ export class Login extends BaseEntity {
 
     @Column()
     passwordExpired: boolean = false;
+
+    @OneToOne(()=>User)
+    @JoinColumn()
+    user: User
+
+    @Column({type:'uuid'})
+    userId: string
 
 }

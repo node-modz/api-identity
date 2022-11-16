@@ -6,7 +6,9 @@ mutation changePassword($token:String!,$password:String!) {
     }
     user{
       id
-      username
+      firstName
+      lastName
+      avatar
     }
     tokenInfo {
       token
@@ -33,7 +35,9 @@ mutation Login($username:String!, $password:String!) {
     } 
     user {
       id
-      username
+      firstName
+      lastName
+      avatar
     }
     tokenInfo {
       token
@@ -54,10 +58,10 @@ mutation Register($email:String!, $username:String!, $password:String!, $firstNa
       message
     } 
     user {
-      id
-      username
+      id      
       firstName
       lastName
+      avatar
     }
     tokenInfo {
       token
@@ -71,7 +75,9 @@ query Me {
   me {
     user {
       id
-      username
+      firstName
+      lastName
+      avatar
     }
     tokenInfo {
       token

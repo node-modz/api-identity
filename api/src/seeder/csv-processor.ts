@@ -1,5 +1,8 @@
 import fs from "fs";
 import csv from "csv-parser";
+import Logger from "../lib/Logger";
+
+const logger = Logger(module)
 
 export class CsvProcessor {
 
@@ -13,7 +16,7 @@ export class CsvProcessor {
         const dataList: any[] = [];
       
         const promise = new Promise((resolve, _) => {
-          console.log("Loading file:", file);
+          logger.info("Loading file:", file);
           fs.createReadStream(file)
             .pipe(csv({}))
             .on("data", async (data: any) => {
@@ -37,7 +40,7 @@ export class CsvProcessor {
               resolve("completed");
             });
         }).then((val) => {
-          console.log("Loading file:", file, ": ", val);
+          logger.info("Loading file:", file, ": ", val);
         });
       
         // TODO: neither of the following seem to wait for promise to finish

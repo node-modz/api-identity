@@ -1,11 +1,16 @@
 import * as nodemailer from 'nodemailer'
-import { __CONFIG__ } from '../../app/app-constants';
+import { __SERVER_CONFIG__ } from '../../app/app-constants';
+import { Service } from "typedi";
+import Logger from "../../lib/Logger";
 
+const logger = Logger(module)
+
+@Service()
 export class EmailNotifierService {
     
     createTestAccount = async () => {    
         let testAccount = await nodemailer.createTestAccount();
-        console.log(testAccount)
+        logger.info(testAccount)
     }
 
     // async..await is not allowed in global scope, must use a wrapper
@@ -13,12 +18,12 @@ export class EmailNotifierService {
     
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
-            host: __CONFIG__.email.auth.host,
-            port: __CONFIG__.email.auth.port,
-            secure:__CONFIG__.email.auth.secure, 
+            host: __SERVER_CONFIG__.notifier.email.host,
+            port: __SERVER_CONFIG__.notifier.email.port,
+            secure:__SERVER_CONFIG__.notifier.email.secure, 
             auth: {
-            user: __CONFIG__.email.auth.user, // generated ethereal user
-            pass: __CONFIG__.email.auth.password, // generated ethereal password
+            user: __SERVER_CONFIG__.notifier.email.user, // generated ethereal user
+            pass: __SERVER_CONFIG__.notifier.email.password, // generated ethereal password
             },
         });
 
@@ -30,11 +35,11 @@ export class EmailNotifierService {
             html: html
         });
 
-        console.log("Message sent: %s", info.messageId);
+        logger.debug("Message sent: %s", info.messageId);
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
         // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        logger.debug("Preview URL: %s", nodemailer.getTestMessageUrl(info));
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
     }
 }

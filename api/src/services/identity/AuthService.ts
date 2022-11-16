@@ -1,61 +1,81 @@
-import { RegisterUserInput, Token } from "src/resolvers/identity/models";
 import argon2 from "argon2";
-import { getConnection } from "typeorm";
-import { User } from "../../entities/identity/User";
-import {
-    __CONFIG__,
-    __COOKIE_NAME__,
-    __JWT_SECRET__,
-} from "../../app/app-constants";
-import jwtDecode from "jwt-decode";
 import * as jwt from "jsonwebtoken";
+import jwtDecode from "jwt-decode";
+import { Service } from 'typedi';
+import {
+  __JWT_SECRET__
+} from "../../app/app-constants";
+import { Login, User } from '../../entities/identity';
+import { Token } from "../../resolvers/identity/models";
+import { Repository } from "typeorm";
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import Logger from "../../lib/Logger";
 
+const logger = Logger(module)
+
+@Service()
 export class AuthService {
-    async createLogin(userinfo: RegisterUserInput): Promise<User> {
-        const hashedPWD = await argon2.hash(userinfo.password);
-        console.log(
-            "registering user: ",
-            userinfo.username,
-            "password:",
-            userinfo.password
-          );
-        const result = await getConnection()
-            .createQueryBuilder()
-            .insert()
-            .into(User)
-            .values({
-                lastName: userinfo.lastName,
-                firstName: userinfo.firstName,
-                username: userinfo.username,
-                email: userinfo.email,
-                password: hashedPWD,
-            })
-            .returning("*")
-            .execute();
-        let user = result.raw[0];
-        return user
-    }
-    createToken(user: User): Token {
-        const token = jwt.sign(
-          {
-            sub: user.id,
-            email: user.email,
-            role: user.email.startsWith("vn1") ? "admin" : "user",
-            iss: "api.ledgers",
-            aud: "api.ledgers",
-          },
-          __JWT_SECRET__,
-          { algorithm: "HS256", expiresIn: "1h" }
-        );
-        const decodedToken = jwtDecode<{ sub: string; exp: number }>(token);
-        const userInfo = (({ firstName, lastName }) => ({ firstName, lastName }))(
-          user
-        );
-      
-        const t = new  Token()
-        t.token=token;
-        t.userInfo=JSON.stringify(userInfo)
-        t.expiresAt=decodedToken.exp
-        return t;
-      };
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+
+    @InjectRepository(Login)
+    private readonly loginRepo: Repository<Login>
+  ) { }
+
+  async createLogin(userinfo: {
+    email: string,
+    username: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    avatar?:string,
+  }): Promise<User> {
+    const hashedPWD = await argon2.hash(userinfo.password);
+    logger.info(
+      "registering user: ",
+      userinfo.username,
+      "password:",
+      userinfo.password
+    );
+    let user = await User.create({
+      lastName: userinfo.lastName,
+      firstName: userinfo.firstName,
+      email: userinfo.email,
+      avatar: userinfo.avatar ? userinfo.avatar : "",
+    }).save();
+
+    let login = await Login.create({
+      username: userinfo.username,
+      password: hashedPWD,
+      user: user,
+    }).save();
+    
+    return user
+  }
+
+  createToken(user: User): Token {
+    const token = jwt.sign(
+      {
+        sub: user.id,
+        email: user.email,
+        avatar: user.avatar,
+        role: user.email.startsWith("vn1") ? "admin" : "user",        
+        iss: "api.ledgers",
+        aud: "api.ledgers",
+      },
+      __JWT_SECRET__,
+      { algorithm: "HS256", expiresIn: "1h" }
+    );
+    const decodedToken = jwtDecode<{ sub: string; exp: number }>(token);
+    const userInfo = (({ firstName, lastName, avatar }) => ({ firstName, lastName, avatar }))(
+      user
+    );
+
+    const t = new Token()
+    t.token = token;
+    t.userInfo = JSON.stringify(userInfo)
+    t.expiresAt = decodedToken.exp
+    return t;
+  };
 }

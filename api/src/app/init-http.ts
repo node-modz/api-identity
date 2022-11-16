@@ -2,34 +2,77 @@ import cors, { CorsOptionsDelegate } from "cors";
 import express from "express";
 import { __CORS_ALLOW_DOMAINS__ } from "./app-constants";
 import { AppContext } from "./init-context";
+import morgan from 'morgan';
+import path from 'path';
+import Logger from "../lib/Logger";
+
+const logger = Logger(module)
+
 
 const init = async (ctx: AppContext) => {
 
-  console.log(ctx.name,": init http: ")
-  const app = express();
-  console.log(ctx.name,"cors domains:", __CORS_ALLOW_DOMAINS__)
-  
-  const  corsOptionsDelegate:CorsOptionsDelegate = function (req: cors.CorsRequest, callback) {
+  logger.info(ctx.name, ": init http: ")
+  const app = ctx.http = express();
+
+  app.set('view engine', 'ejs');
+  app.set('views', path.join(__dirname, '../views'));
+
+  applyMorganMiddleWare(ctx);
+  applyCorsMiddleWare(ctx);
+
+  app.set("trust proxy", 1);
+  ctx.http = app;
+  logger.info(ctx.name, ": init http: done");
+}
+
+
+const applyMorganMiddleWare = (ctx: AppContext) => {
+  const app = ctx.http;
+
+  // app.use(morgan('dev'))
+  // https://github.com/expressjs/morgan#immediate
+  app.use(morgan(':method :url ', {
+    immediate: true,
+    stream: {
+      write: (message) => {
+        logger.http(message.trim());
+      }
+    }
+  }));
+
+  // Logs responses
+  app.use(morgan(':method :url  :status :res[content-length] :response-time ms', {
+    stream: {
+      write: (message) => {
+        logger.http(message.trim());
+      }
+    }
+  }));
+}
+
+const applyCorsMiddleWare = (ctx: AppContext) => {
+  const app = ctx.http;
+
+  const corsOptionsDelegate: CorsOptionsDelegate = function (req: cors.CorsRequest, callback) {
     const origin = req.headers.origin!
 
-    // https://expressjs.com/en/resources/middleware/cors.html#configuring-cors-w-dynamic-origin  
     const allowlist = [
       __CORS_ALLOW_DOMAINS__,   // from the web. TODO: move this to process.env variable.
       'app://',                 // requests from packaged electron app
-    ]    
-    const exists = allowlist.findIndex((s)=>{return origin.includes(s)})
-    var corsOptions = (exists != -1 ) 
-      ? { origin: true, methods:['GET','POST'], credentials: true } 
-      : { origin: false } // disable CORS for this request
-    callback(null, corsOptions) // callback expects two parameters: error and options
+    ]
+    const exists =
+      (origin === undefined)
+        ? -1
+        : allowlist.findIndex((s) => { return origin.includes(s) });
+
+    var corsOptions =
+      (exists != -1)
+        ? { origin: true, methods: ['GET', 'POST'], credentials: true }   // allow the request. 
+        : { origin: false };                                              // disable CORS for this request
+    callback(null, corsOptions); // callback expects two parameters: error and options
   }
 
-  app.use(
-    cors(corsOptionsDelegate)
-  );
-  app.set("trust proxy", 1);
-  ctx.http = app;
-  console.log(ctx.name, ": init http: done")
+  app.use(cors(corsOptionsDelegate));
 }
 
 export { init as initHttp }

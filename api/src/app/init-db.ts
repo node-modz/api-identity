@@ -1,10 +1,15 @@
 import path from "path";
-import { createConnection } from "typeorm";
+import { createConnection, useContainer } from "typeorm";
 import { AppContext } from "./init-context";
 import { __LEDGERS_DB__ } from "./app-constants";
+import { Container } from 'typeorm-typedi-extensions';
+import Logger from '../lib/Logger'
+
+const logger = Logger(module);
 
 const init = async (appCtxt: AppContext) => {
-  console.log(appCtxt.name, ": init db:", __LEDGERS_DB__);
+  logger.info(appCtxt.name, ": init db:", __LEDGERS_DB__);
+  useContainer(Container);
   const conn = await createConnection({
     type: "postgres",
     url: __LEDGERS_DB__,
@@ -21,7 +26,7 @@ const init = async (appCtxt: AppContext) => {
       path.join(__dirname, '../entities/*')
     ],
   });  
-  console.log(appCtxt.name, ": init db: done");
+  logger.info(appCtxt.name, ": init db: done");
 };
 
 

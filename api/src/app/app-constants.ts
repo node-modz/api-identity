@@ -10,9 +10,15 @@ export const __REDIS_SERVER__ = "localhost:6389"
 export const __JWT_SECRET__ = "some-xyz-seccret"
 
 
-export const __CONFIG__ = {
-    email: {
-        auth: {
+export const __SERVER_CONFIG__ = {
+    // this host.
+    // TODO: this can support multiple hosts.
+    host: "http://localhost:4000", 
+    // application host for redirect post login.
+    // TODO: we should get this from redirect_uri on initial login request.
+    appHost: "http://localhost:3000", 
+    notifier: {
+        email: {
             host:"smtp.ethereal.email",
             port:587,
             secure:false, // true for 465, false for other ports
@@ -20,8 +26,40 @@ export const __CONFIG__ = {
             password: "cpTDqQpQ8WGDttRs2z",
         }
     },
-    auth : {
-        forgot_password_prefix:'forgot-password:'
+    identity : {
+        forgot_password_prefix:'forgot-password:',
+        oauth2 : {
+            jwks_file: 'keys.json'
+        },        
+        social: {
+            google:{
+                type: 'google',
+                client_id: process.env.GOOGLE_CLIENT_ID as string,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET as string,
+                scopes:['email', 'profile']
+            },
+            github: {
+                type: 'github',
+                client_id: process.env.GITHUB_CLIENT_ID as string,
+                client_secret: process.env.GITHUB_CLIENT_SECRET as string,
+                scopes:['user:email']
+            },
+            w3l: {
+                type: 'w3l',
+                client_id: process.env.W3L_CLIENT_ID as string,
+                client_secret: process.env.W3L_CLIENT_SECRET as string,
+                scopes:['identity:profile', 'accounting:*']
+            }
+        } as Record<string,{
+            type:string,
+            client_id:string,
+            client_secret:string
+            authorize_url?:string
+            token_url?:string
+            profile_url?:string
+            callback_url?:string,
+            scopes:string[]
+        }>
     }
 }
 

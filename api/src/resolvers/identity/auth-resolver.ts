@@ -1,38 +1,47 @@
-import { User } from "../../entities/identity/User";
 import argon2 from "argon2";
-import * as jwt from "jsonwebtoken";
-import jwtDecode from "jwt-decode";
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
-import { getConnection } from "typeorm";
-import { RequestContext } from "../../app/request-context";
-import {
-  __CONFIG__,
-  __COOKIE_NAME__,
-  __JWT_SECRET__,
-} from "../../app/app-constants";
 import "reflect-metadata";
-import {FieldError} from '../FieldError'
-import {
-  UserResponse,
-  RegisterUserInput,
-  Token,
-  ForgotPasswordResponse,
-  ChangePasswordResponse,
-  ChangePasswordInput,
-} from "./models";
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Service } from "typedi";
 import { v4 } from "uuid";
+import {
+  __SERVER_CONFIG__
+} from "../../app/app-constants";
+import { RequestContext } from "../../app/request-context";
+import { Login, User } from "../../entities/identity";
+import { AuthService } from "../../services/identity/AuthService";
+import { LoginService } from "../../services/identity/LoginService";
+import { SecurityService } from "../../services/identity/SecurityService";
+import { SessionService } from "../../services/identity/SessionService";
+import { UserService } from "../../services/identity/UserService";
 import { EmailNotifierService } from "../../services/notifier/EmailNotifierService";
 import { isUserAuth } from "../Auth";
+import { FieldError } from '../FieldError';
+import {
+  ChangePasswordInput, ChangePasswordResponse, ForgotPasswordResponse, RegisterUserInput, UserResponse
+} from "./models";
 
+import Logger from "../../lib/Logger";
+
+const logger = Logger(module)
+
+@Service()
 @Resolver()
 export class AuthResolver {
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly notifierService: EmailNotifierService,
+    private readonly userService: UserService,
+    private readonly loginService: LoginService,
+    private readonly securityService: SecurityService) { }
+
   @Mutation(() => ForgotPasswordResponse)
   @UseMiddleware([])
   async forgotPassword(
     @Arg("email") email: string,
     @Ctx() reqCtxt: RequestContext
   ): Promise<ForgotPasswordResponse> {
-    console.log("begin forgot password");
+    logger.info("begin forgot password");
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
       return {
@@ -42,14 +51,13 @@ export class AuthResolver {
 
     const token = v4();
     await reqCtxt.redis.set(
-      __CONFIG__.auth.forgot_password_prefix + token,
+      __SERVER_CONFIG__.identity.forgot_password_prefix + token,
       user.id,
       "ex",
       1000 * 60 * 60 * 24 * 3 // 3days
     );
 
-    const notifier = new EmailNotifierService();
-    await notifier.notify(
+    await this.notifierService.notify(
       email,
       `<a href="http://localhost:3000/identity/password/${token}">reset password</a>`
     );
@@ -64,7 +72,7 @@ export class AuthResolver {
     @Ctx() reqCtxt: RequestContext
   ) {
     const { token, password } = input;
-    const { req, redis } = reqCtxt;
+    const { req, res, redis } = reqCtxt;
 
     if (password.length <= 2) {
       return {
@@ -72,7 +80,7 @@ export class AuthResolver {
       };
     }
 
-    let key = __CONFIG__.auth.forgot_password_prefix + token;
+    let key = __SERVER_CONFIG__.identity.forgot_password_prefix + token;
     const userId = await redis.get(key);
     if (!userId) {
       return {
@@ -87,8 +95,9 @@ export class AuthResolver {
       };
     }
 
-    await User.update(
-      { id: userId },
+    // TODO: use user.LoginId
+    await Login.update(
+      { user: { id: user.id } },
       {
         password: await argon2.hash(password),
       }
@@ -97,9 +106,9 @@ export class AuthResolver {
     await redis.del(key);
 
     // log in user after change password
-    req.session.userId = user.id;
+    this.securityService.createUserSession(req, res, user);
 
-    const tokenInfo = createToken(user);
+    const tokenInfo = this.authService.createToken(user);
     return { user, tokenInfo };
   }
 
@@ -107,15 +116,15 @@ export class AuthResolver {
   async me(@Ctx() { req }: RequestContext) {
     const userId = req.session.userId;
     if (!userId) {
-      console.log("session no active session:");
+      logger.info("session no active session:");
       return null;
     }
 
-    console.log("session user found: ", userId);
+    logger.debug("session user found: ", userId);
     const user = await User.findOne({ where: { id: userId } });
 
     if (user) {
-      const tokenInfo = createToken(user);
+      const tokenInfo = this.authService.createToken(user);
       return { user, tokenInfo };
     }
 
@@ -125,41 +134,30 @@ export class AuthResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("userinfo") userinfo: RegisterUserInput,
-    @Ctx() { req }: RequestContext
+    @Ctx() { req, res }: RequestContext
   ): Promise<UserResponse> {
+
     const errors = userinfo.validate();
     if (errors) {
       return { errors };
     }
-    const hashedPWD = await argon2.hash(userinfo.password);
+
     let user, tokenInfo;
     try {
-      console.log(
+      logger.debug(
         "registering user: ",
         userinfo.username,
         "password:",
         userinfo.password
       );
-      const result = await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values({
-          lastName: userinfo.lastName,
-          firstName: userinfo.firstName,
-          username: userinfo.username,
-          email: userinfo.email,
-          password: hashedPWD,
-        })
-        .returning("*")
-        .execute();
-      user = result.raw[0];
 
-      tokenInfo = createToken(user);
-      console.log("token: ", tokenInfo);
+      user = await this.authService.createLogin(userinfo)
+      tokenInfo = this.authService.createToken(user);
+
+      logger.debug("token: ", tokenInfo);
     } catch (err) {
       let error = err as { code: string; message: string };
-      console.log(
+      logger.error(
         "unable to save user:code=",
         error.code,
         ",message=",
@@ -175,9 +173,9 @@ export class AuthResolver {
         };
       }
     }
-    console.log("tokenInfo:", tokenInfo);
-    req.session!.userId = user.id;
-    console.log("session save:", req.session);
+    logger.debug("tokenInfo:", tokenInfo);
+    this.securityService.createUserSession(req, res, user);
+    logger.debug("session save:", req.session);
     return { user, tokenInfo };
   }
 
@@ -185,67 +183,27 @@ export class AuthResolver {
   async login(
     @Arg("username") username: string,
     @Arg("password") password: string,
-    @Ctx() { req }: RequestContext
+    @Ctx() { req, res }: RequestContext
   ): Promise<UserResponse> {
-    console.log("login user: ", username, "password:", password);
-    const user = await User.findOne({ where: { username: username } });
+    logger.debug("login user: ", username, "password:", password);
+
+    const user = await this.userService.findByCredentials(username, password);
     if (!user) {
-      return {
-        errors: [new FieldError("username", "invalid Username/password")],
-      };
-    }
-    const valid = await argon2.verify(user.password, password);
-    if (!valid) {
       return {
         errors: [new FieldError("username", "invalid username/Password")],
       };
     }
-    const tokenInfo = createToken(user);
-    req.session!.userId = user.id;
 
-    console.log("tokenInfo:", tokenInfo);
-    console.log("session save:", req.session);
+    const tokenInfo = this.authService.createToken(user);
+    this.securityService.createUserSession(req, res, user);
+
+    logger.debug("tokenInfo:", tokenInfo);
+    logger.debug("session save:", req.session);
     return { user, tokenInfo };
   }
 
   @Mutation(() => Boolean)
   async logout(@Ctx() { req, res }: RequestContext): Promise<Boolean> {
-    const userId = req.session.userId;
-    console.log("logging out user: ", userId);
-    res.clearCookie(__COOKIE_NAME__);
-    return new Promise<Boolean>((res) => {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("unable to destroy session", err);
-          res(false);
-          return;
-        }
-        res(true);
-      });
-    });
+    return this.securityService.clearSession(req, res);
   }
 }
-
-const createToken = (user: User): Token => {
-  const token = jwt.sign(
-    {
-      sub: user.id,
-      email: user.email,
-      role: user.email.startsWith("vn1") ? "admin" : "user",
-      iss: "api.ledgers",
-      aud: "api.ledgers",
-    },
-    __JWT_SECRET__,
-    { algorithm: "HS256", expiresIn: "1h" }
-  );
-  const decodedToken = jwtDecode<{ sub: string; exp: number }>(token);
-  const userInfo = (({ firstName, lastName }) => ({ firstName, lastName }))(
-    user
-  );
-
-  const t = new  Token()
-  t.token=token;
-  t.userInfo=JSON.stringify(userInfo)
-  t.expiresAt=decodedToken.exp
-  return t;
-};

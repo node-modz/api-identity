@@ -55,7 +55,6 @@ export type ForgotPasswordResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   changePassword: ChangePasswordResponse;
-  createPost: Post;
   forgotPassword: ForgotPasswordResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -65,12 +64,6 @@ export type Mutation = {
 
 export type MutationChangePasswordArgs = {
   input: ChangePasswordInput;
-};
-
-
-export type MutationCreatePostArgs = {
-  text: Scalars['String'];
-  title: Scalars['String'];
 };
 
 
@@ -95,34 +88,17 @@ export type PaginatedBankActivity = {
   hasMore: Scalars['Boolean'];
 };
 
-export type Post = {
-  __typename?: 'Post';
-  createdAt: Scalars['String'];
-  creator: User;
-  id: Scalars['String'];
-  text: Scalars['String'];
-  title: Scalars['String'];
-  updatedAt: Scalars['String'];
-};
-
 export type Query = {
   __typename?: 'Query';
   bankActivity: PaginatedBankActivity;
   hello: Scalars['String'];
   me?: Maybe<UserResponse>;
-  post?: Maybe<Post>;
-  posts: Array<Post>;
 };
 
 
 export type QueryBankActivityArgs = {
   limit: Scalars['Int'];
   offset: Scalars['Int'];
-};
-
-
-export type QueryPostArgs = {
-  id: Scalars['String'];
 };
 
 export type RegisterUserInput = {
@@ -142,13 +118,12 @@ export type Token = {
 
 export type User = {
   __typename?: 'User';
+  avatar: Scalars['String'];
   createdAt: Scalars['String'];
   firstName: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
-  posts: Array<Post>;
   updatedAt: Scalars['String'];
-  username: Scalars['String'];
 };
 
 export type UserResponse = {

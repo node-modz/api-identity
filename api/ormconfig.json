@@ -9,14 +9,14 @@
     "entities": ["dist/entities/**/*.js"],
     "migrations": ["dist/migrations/**/*.js"]
 },{
-    "name":"core",
+    "name":"identity",
     "type": "postgres",
     "host": "localhost",
     "port": 5433,
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/core/*.js"],
+    "entities": ["dist/entities/identity/*.js"],
     "migrations": ["dist/migrations/*.js"]
 },{
     "name":"oauth2",
@@ -26,7 +26,7 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/oauth2/*.js"],
+    "entities": ["dist/entities/oauth2/*.js","dist/entities/identity/*.js"],
     "migrations": ["dist/migrations/*.js"]
 },{
     "name":"accounting",

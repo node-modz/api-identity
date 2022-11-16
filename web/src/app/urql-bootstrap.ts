@@ -14,7 +14,8 @@ import {
   RegisterMutation
 } from "../graphql/identity/graphql";
 import { isServerSide } from "../utils/utils";
-import { __GRAPHQL_API_SERVER__ } from "./app-constants";
+import { APP_CONFIG } from './AppConfig';
+import { TOKEN_KEY } from './AuthContext'
 
 
 declare global {
@@ -104,6 +105,7 @@ const urqlErrorExchange = () => {
       );
 
       if (isAuthError) {
+        console.log("in urql exchange: auth error");
         // console.log("received Auth Error")        
         // appHistory.push("/identity/login");
         // appHistory.push("/identity/login");
@@ -118,7 +120,12 @@ const urqlAuthConfig = () => {
   return authExchange<AuthState>({
     // adds authorization header to outgoing requests
     addAuthToOperation: ({ authState, operation }) => {
-      console.log("adding authorization ", authState?.token)
+      
+      if( !authState && !isServerSide() ) {
+        authState = { token:localStorage.getItem(TOKEN_KEY)}
+      }
+      console.log("urql: adding authorization ", authState)
+      //console.log("urql: operation:",operation);
       if (!authState || !authState.token) {
         return operation;
       }
@@ -149,15 +156,17 @@ const urqlAuthConfig = () => {
 
       if (!authState) {        
         // urql cache doesn't have it, lets return what exists in localStorate.
-        const token = typeof window !== 'undefined' ? localStorage.getItem("ldgr.token") : null;                
+        const token = localStorage.getItem(TOKEN_KEY);       
+        console.log("urql:getAuth token from storage:",token)         
         if (token) {
           return { token };
         }
+        console.log("urql:getAuth: returning null")         
         return null;
       }
       // authState.token exists, gets called when there is an error
       // opportunity to refresh token here.
-      console.log("urql -> getAuth: ", null)
+      console.log("urql ->getAuth: authState exists, returning null:", authState)
       return null;
     },
     didAuthError: ({ error }) => {
@@ -181,7 +190,7 @@ export const UrqlClientConfig = () => {
     initialState: !isServerSide() ? window.__URQL_DATA__ : undefined,
   });
   return {
-    url: __GRAPHQL_API_SERVER__,
+    url: APP_CONFIG.graphQLUrl,
     fetchOptions: {
       credentials: "include" as const,
     },
@@ -197,7 +206,7 @@ export const UrqlClientConfig = () => {
 };
 
 export const createUrqlClient = (ssrExchange: any) => ({
-  url: __GRAPHQL_API_SERVER__,
+  url: APP_CONFIG.graphQLUrl,
   fetchOptions: {
     credentials: "include" as const,
   },

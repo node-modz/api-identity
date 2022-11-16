@@ -22,8 +22,8 @@ export const authCheck = (
     // TODO: could there will be race condition here, what if the this check is done while data is being fetched.
     if (!fetching && error) {
         if (isAuthError(error)) {
-            console.log("auth error: redirecting to login page.");
-            context.router.push(APP_CONFIG.identity.login);
+            console.log("auth error: redirecting to login page: ",APP_CONFIG.identity.login.href );
+            context.router.push(APP_CONFIG.identity.login.href);
         }
     }
 }
