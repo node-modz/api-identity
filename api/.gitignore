@@ -1,6 +1,5 @@
 node_modules
 dist
 docker
-lib
 yarn-error.log
 .DS_*
