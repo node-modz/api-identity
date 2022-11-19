@@ -9,7 +9,7 @@ const init = async (ctx: AppContext) => {
     
   const app = ctx.http;
 
-  const identityRoutes = require('../routes/identity/identity-routes')
+  const identityRoutes = require('../components/identity/routes/identity-routes')
   app.use('/',identityRoutes);
   
   logger.info(ctx.name,": init identity: done")

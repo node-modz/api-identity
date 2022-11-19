@@ -118,7 +118,7 @@ const SocialLogin = () => {
         </Button> */}
 
         {/* Google */}
-        <NextLink href={APP_CONFIG.apiHost + "/login/federated/google"}>
+        <NextLink href={APP_CONFIG.apiHost + `/login/federated/google?cb_uri=${APP_CONFIG.appHost+APP_CONFIG.identity.postLogin.href}&err_cb_uri=${APP_CONFIG.appHost+APP_CONFIG.identity.login.href}`}>
           <Button w={'full'} variant={'outline'} leftIcon={<FcGoogle />}>
             <Center>
               <Text>Sign in with Google</Text>
@@ -126,7 +126,7 @@ const SocialLogin = () => {
           </Button>
         </NextLink>
         {/* Github */}
-        <NextLink href={APP_CONFIG.apiHost + "/login/federated/github"}>
+        <NextLink href={APP_CONFIG.apiHost + `/login/federated/github?cb_uri=${APP_CONFIG.appHost+APP_CONFIG.identity.postLogin.href}&err_c_uri=${APP_CONFIG.appHost+APP_CONFIG.identity.login.href}`}>
           <Button w={'full'} colorScheme={'blackAlpha'} leftIcon={<FaGithub />}>
             <Center>
               <Text>Sign in with Github</Text>

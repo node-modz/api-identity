@@ -6,6 +6,10 @@ declare module 'express-session' {
     oauth2: {
       request: any
     }
+    auth: {
+      cb_uri?:any
+      err_cb_uri?:any
+    }
   }
 }
 

@@ -9,6 +9,7 @@ const logger = Logger(module);
 
 const init = async (appCtxt: AppContext) => {
   logger.info(appCtxt.name, ": init oauth")
+  logger.info(appCtxt.name, ": init oauth jwt_secret:", __SERVER_CONFIG__.identity.oauth2.jwt_secret);
 
   const app = appCtxt.http;
 
@@ -17,7 +18,7 @@ const init = async (appCtxt: AppContext) => {
   app.use(json());
   app.use(urlencoded({ extended: false }));
 
-  const oauthRoutes = require('../routes/oauth2/oauth2-routes')
+  const oauthRoutes = require('../components/identity/routes/oauth2-routes')
   app.use(oauthRoutes("/oauth2",keyStore));
 
   logger.info(appCtxt.name, ": init oauth: done")
@@ -25,7 +26,7 @@ const init = async (appCtxt: AppContext) => {
 
 const initKeyStore = async (appCtxt: AppContext): Promise<jose.JWK.KeyStore> => {
 
-  const keyfile = __SERVER_CONFIG__.identity.oauth2.jwks_file;
+  const keyfile = __SERVER_CONFIG__.identity.oauth2.jwt_keys;
   let keyStore: jose.JWK.KeyStore;
   if (!fs.existsSync(keyfile)) {
     keyStore = jose.JWK.createKeyStore()

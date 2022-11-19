@@ -1,41 +1,39 @@
-import { AppContext } from "./init-context";
 import connectRedis from "connect-redis";
 import session from "express-session";
-import { __COOKIE_MAX_AGE__, __COOKIE_NAME__, __prod__, __REDIS_SERVER__, __SESSION_SECRET__ } from "./app-constants";
 import Redis from "ioredis";
 import Container from "typedi";
-import { SecurityService } from "../services/identity/SecurityService";
-import Logger from '../lib/Logger'
+import { SecurityService } from "../components/identity/services/identity/SecurityService";
+import Logger from '../lib/Logger';
+import { __prod__, __SERVER_CONFIG__ } from "./app-constants";
+import { AppContext } from "./init-context";
 
 const logger = Logger(module);
 
-
-
 const init = async (ctx: AppContext) => {
 
-  logger.info(ctx.name, ": init session: ", __REDIS_SERVER__);
+  logger.info(ctx.name, ": init session: ", __SERVER_CONFIG__.identity.session_store);
   logger.info(ctx.name, ": init session: connecting to redis client: ");
 
   const app = ctx.http;
   const RedisStore = connectRedis(session);
-  const redis = new Redis(__REDIS_SERVER__);
+  const redis = new Redis(__SERVER_CONFIG__.identity.session_store);
 
   app.use(
     session({
-      name: __COOKIE_NAME__,
+      name: __SERVER_CONFIG__.identity.cookie_name,
       store: new RedisStore({
         client: redis,
         disableTouch: true,
       }),
       cookie: {
-        maxAge: __COOKIE_MAX_AGE__,
+        maxAge: __SERVER_CONFIG__.identity.cookie_max_age,
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https
         domain: __prod__ ? ".w3l.com" : undefined,
       },
       saveUninitialized: false,
-      secret: __SESSION_SECRET__,
+      secret: __SERVER_CONFIG__.identity.session_secret,
       resave: false,
     })
   );

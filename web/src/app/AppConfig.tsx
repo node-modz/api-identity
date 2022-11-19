@@ -27,6 +27,7 @@ export interface NavItem {
 }
 
 export const APP_CONFIG = {
+    appHost : "http://localhost:3000",
     apiHost : "http://localhost:4000",
     graphQLUrl: "http://localhost:4000/graphql",
     identity: {        

@@ -6,7 +6,7 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/**/*.js"],
+    "entities": ["dist/entities/**/*.js","dist/components/identity/entities/**/*.js"],
     "migrations": ["dist/migrations/**/*.js"]
 },{
     "name":"identity",
@@ -16,7 +16,7 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/identity/*.js"],
+    "entities": ["dist/components/entities/identity/*.js"],
     "migrations": ["dist/migrations/*.js"]
 },{
     "name":"oauth2",
@@ -26,7 +26,7 @@
     "username": "docker",
     "password": "docker",
     "database": "ledgers",
-    "entities": ["dist/entities/oauth2/*.js","dist/entities/identity/*.js"],
+    "entities": ["dist/components/entities/oauth2/*.js","dist/components/entities/identity/*.js"],
     "migrations": ["dist/migrations/*.js"]
 },{
     "name":"accounting",

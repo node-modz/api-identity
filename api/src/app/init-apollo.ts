@@ -1,12 +1,11 @@
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { HelloResolver } from "../resolvers/identity/hello-resolver";
-import { AuthResolver } from "../resolvers/identity/auth-resolver";
-import { AppContext } from "./init-context";
-import { BankActivityResolver } from "../resolvers/accounting/bank-activity-resolver";
-import { User } from "../entities/identity";
 import { Container } from "typedi";
-import Logger from '../lib/Logger'
+import { BankActivityResolver } from "../components/accounting/revolvers/bank-activity-resolver";
+import { AuthResolver } from "../components/identity/resolvers/auth-resolver";
+import { HelloResolver } from "../components/identity/resolvers/hello-resolver";
+import Logger from '../lib/Logger';
+import { AppContext } from "./init-context";
 
 const logger = Logger(module);
 

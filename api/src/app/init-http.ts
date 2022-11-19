@@ -1,6 +1,6 @@
 import cors, { CorsOptionsDelegate } from "cors";
 import express from "express";
-import { __CORS_ALLOW_DOMAINS__ } from "./app-constants";
+import { __SERVER_CONFIG__ } from "./app-constants";
 import { AppContext } from "./init-context";
 import morgan from 'morgan';
 import path from 'path';
@@ -56,10 +56,7 @@ const applyCorsMiddleWare = (ctx: AppContext) => {
   const corsOptionsDelegate: CorsOptionsDelegate = function (req: cors.CorsRequest, callback) {
     const origin = req.headers.origin!
 
-    const allowlist = [
-      __CORS_ALLOW_DOMAINS__,   // from the web. TODO: move this to process.env variable.
-      'app://',                 // requests from packaged electron app
-    ]
+    const allowlist = __SERVER_CONFIG__.identity.cors_allow_domains
     const exists =
       (origin === undefined)
         ? -1
