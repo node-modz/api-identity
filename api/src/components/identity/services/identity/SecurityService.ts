@@ -27,7 +27,7 @@ export class SecurityService {
     ): Promise<Boolean> {
         const userId = req.session.userId;
         logger.debug("logging out user: ", userId);
-        res.clearCookie(__SERVER_CONFIG__.identity.cookie_name);
+        res.clearCookie(__SERVER_CONFIG__.http.session.cookie_name);
         return new Promise<Boolean>((res) => {
             req.session.destroy((err) => {
                 if (err) {

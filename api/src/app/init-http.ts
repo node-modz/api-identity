@@ -1,24 +1,34 @@
 import cors, { CorsOptionsDelegate } from "cors";
 import express from "express";
-import { __SERVER_CONFIG__ } from "./app-constants";
-import { AppContext } from "./init-context";
 import morgan from 'morgan';
 import path from 'path';
 import Logger from "../lib/Logger";
+import { __SERVER_CONFIG__ } from "./app-constants";
+import { AppContext } from "./init-context";
 
 const logger = Logger(module)
 
+export type HttpConfigOptions = {
+  cors_allow_domains?: string[]
+  views?: string
+  session: {
+    redis_store: string,
+    cookie_secret: string,
+    cookie_name: string,
+    cookie_max_age: number
+  }
+}
 
-const init = async (ctx: AppContext) => {
+const init = async (ctx: AppContext, config:HttpConfigOptions) => {
 
   logger.info(ctx.name, ": init http: ")
   const app = ctx.http = express();
 
   app.set('view engine', 'ejs');
-  app.set('views', path.join(__dirname, '../views'));
+  app.set('views', config.views);
 
-  applyMorganMiddleWare(ctx);
-  applyCorsMiddleWare(ctx);
+  applyMorganMiddleWare(ctx,config);
+  applyCorsMiddleWare(ctx,config);
 
   app.set("trust proxy", 1);
   ctx.http = app;
@@ -26,7 +36,7 @@ const init = async (ctx: AppContext) => {
 }
 
 
-const applyMorganMiddleWare = (ctx: AppContext) => {
+const applyMorganMiddleWare = (ctx: AppContext, config:HttpConfigOptions) => {
   const app = ctx.http;
 
   // app.use(morgan('dev'))
@@ -50,27 +60,31 @@ const applyMorganMiddleWare = (ctx: AppContext) => {
   }));
 }
 
-const applyCorsMiddleWare = (ctx: AppContext) => {
+const applyCorsMiddleWare = (ctx: AppContext, config:HttpConfigOptions) => {
   const app = ctx.http;
 
-  const corsOptionsDelegate: CorsOptionsDelegate = function (req: cors.CorsRequest, callback) {
-    const origin = req.headers.origin!
-
-    const allowlist = __SERVER_CONFIG__.identity.cors_allow_domains
-    const exists =
-      (origin === undefined)
-        ? -1
-        : allowlist.findIndex((s) => { return origin.includes(s) });
-
-    var corsOptions =
-      (exists != -1)
-        ? { origin: true, methods: ['GET', 'POST'], credentials: true }   // allow the request. 
-        : { origin: false };                                              // disable CORS for this request
-    callback(null, corsOptions); // callback expects two parameters: error and options
-  }
-
-  app.use(cors(corsOptionsDelegate));
+  if ( config.cors_allow_domains ) {
+    const corsOptionsDelegate: CorsOptionsDelegate = function (req: cors.CorsRequest, callback) {
+      const origin = req.headers.origin!
+  
+      const allowlist = config.cors_allow_domains as string[]
+      const exists =
+        (origin === undefined)
+          ? -1
+          : allowlist.findIndex((s) => { return origin.includes(s) });
+  
+      var corsOptions =
+        (exists != -1)
+          ? { origin: true, methods: ['GET', 'POST'], credentials: true }   // allow the request. 
+          : { origin: false };                                              // disable CORS for this request
+      callback(null, corsOptions); // callback expects two parameters: error and options
+    }
+  
+    app.use(cors(corsOptionsDelegate));
+  }  
 }
 
-export { init as initHttp }
+
+
+export { init as initHttp };
 export default init

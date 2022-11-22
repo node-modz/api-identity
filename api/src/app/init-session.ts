@@ -6,34 +6,35 @@ import { SecurityService } from "../components/identity/services/identity/Securi
 import Logger from '../lib/Logger';
 import { __prod__, __SERVER_CONFIG__ } from "./app-constants";
 import { AppContext } from "./init-context";
+import { HttpConfigOptions } from "./init-http";
 
 const logger = Logger(module);
 
-const init = async (ctx: AppContext) => {
+const init = async (ctx: AppContext, config: HttpConfigOptions) => {
 
-  logger.info(ctx.name, ": init session: ", __SERVER_CONFIG__.identity.session_store);
+  logger.info(ctx.name, ": init session: ", config.session.redis_store);
   logger.info(ctx.name, ": init session: connecting to redis client: ");
 
   const app = ctx.http;
   const RedisStore = connectRedis(session);
-  const redis = new Redis(__SERVER_CONFIG__.identity.session_store);
+  const redis = new Redis(config.session.redis_store);
 
   app.use(
     session({
-      name: __SERVER_CONFIG__.identity.cookie_name,
+      name: config.session.cookie_name,
       store: new RedisStore({
         client: redis,
         disableTouch: true,
       }),
       cookie: {
-        maxAge: __SERVER_CONFIG__.identity.cookie_max_age,
+        maxAge: config.session.cookie_max_age,
         httpOnly: true,
         sameSite: "lax", // csrf
         secure: __prod__, // cookie only works in https
         domain: __prod__ ? ".w3l.com" : undefined,
       },
       saveUninitialized: false,
-      secret: __SERVER_CONFIG__.identity.session_secret,
+      secret: config.session.cookie_secret,
       resave: false,
     })
   );
