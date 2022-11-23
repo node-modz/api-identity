@@ -1,10 +1,10 @@
 
 import path from "path";
-import { DBConfigOptions } from "./init-db";
+import { DBConfigOptions } from "./app/init-db";
 import dotenv from 'dotenv-safe';
-import { GraphqQLConfig } from "./init-apollo";
-import { HttpConfigOptions } from "./init-http";
-import { IdentityConfigOptions } from "./init-identity";
+import { GraphqQLConfig } from "./app/init-apollo";
+import { HttpConfigOptions } from "./app/init-http";
+import { IdentityConfigOptions } from "./app/init-identity";
 
 dotenv.config();
 
@@ -31,25 +31,25 @@ export const __SERVER_CONFIG__ = {
         type: "postgres",
         url: process.env.DB_URL as string,
         entities: [
-            path.join(__dirname, '../components/identity/entities/**/*.js'),
-            path.join(__dirname, '../components/dacchain/entities/*'),
-            path.join(__dirname, '../components/accounting/entities/*'),
-            path.join(__dirname, '../entities/*')
+            path.join(__dirname, 'components/identity/entities/**/*.js'),
+            path.join(__dirname, 'components/dacchain/entities/*'),
+            path.join(__dirname, 'components/accounting/entities/*'),
+            path.join(__dirname, 'entities/*')
         ],
         migrations: [
-            path.join(__dirname, "../migrations/*"),
-            path.join(__dirname, "../components/identity/migrations/*"),
-            path.join(__dirname, "../components/dacchain/migrations/*"),
-            path.join(__dirname, "../components/accounting/migrations/*"),
+            path.join(__dirname, "migrations/*"),
+            path.join(__dirname, "components/identity/migrations/*"),
+            path.join(__dirname, "components/dacchain/migrations/*"),
+            path.join(__dirname, "components/accounting/migrations/*"),
         ]
     } as DBConfigOptions,
 
     // resolvers
     apollo: {
         resolvers: [
-            path.join(__dirname, "../components/dacchain/resolvers/*.js"),
-            path.join(__dirname, "../components/identity/resolvers/*.js"),
-            path.join(__dirname, "../components/accounting/revolvers/*.js"),
+            path.join(__dirname, "components/dacchain/resolvers/*.js"),
+            path.join(__dirname, "components/identity/resolvers/*.js"),
+            path.join(__dirname, "components/accounting/revolvers/*.js"),
         ]
     } as GraphqQLConfig,
 

@@ -5,8 +5,8 @@ import { Service } from "typedi";
 import { v4 } from "uuid";
 import {
   __SERVER_CONFIG__
-} from "../../../app/app-constants";
-import { RequestContext } from "../../../app/request-context";
+} from "../../../api-config";
+import { GraphQLReqContext } from "../../../lib/graphql/GraphQLReqContext";
 import { isUserAuth } from "../../../lib/graphql/Auth";
 import { FieldError } from '../../../lib/graphql/FieldError';
 import { EmailNotifierService } from "../../notifier/services/EmailNotifierService";
@@ -38,7 +38,7 @@ export class AuthResolver {
   @UseMiddleware([])
   async forgotPassword(
     @Arg("email") email: string,
-    @Ctx() reqCtxt: RequestContext
+    @Ctx() reqCtxt: GraphQLReqContext
   ): Promise<ForgotPasswordResponse> {
     logger.info("begin forgot password");
     const user = await User.findOne({ where: { email: email } });
@@ -68,7 +68,7 @@ export class AuthResolver {
   @UseMiddleware([isUserAuth])
   async changePassword(
     @Arg("input") input: ChangePasswordInput,
-    @Ctx() reqCtxt: RequestContext
+    @Ctx() reqCtxt: GraphQLReqContext
   ) {
     const { token, password } = input;
     const { req, res, redis } = reqCtxt;
@@ -112,7 +112,7 @@ export class AuthResolver {
   }
 
   @Query(() => UserResponse, { nullable: true })
-  async me(@Ctx() { req }: RequestContext) {
+  async me(@Ctx() { req }: GraphQLReqContext) {
     const userId = req.session.userId;
     if (!userId) {
       logger.info("session no active session:");
@@ -133,7 +133,7 @@ export class AuthResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("userinfo") userinfo: RegisterUserInput,
-    @Ctx() { req, res }: RequestContext
+    @Ctx() { req, res }: GraphQLReqContext
   ): Promise<UserResponse> {
 
     const errors = userinfo.validate();
@@ -182,7 +182,7 @@ export class AuthResolver {
   async login(
     @Arg("username") username: string,
     @Arg("password") password: string,
-    @Ctx() { req, res }: RequestContext
+    @Ctx() { req, res }: GraphQLReqContext
   ): Promise<UserResponse> {
     logger.debug("login user: ", username, "password:", password);
 
@@ -202,7 +202,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Ctx() { req, res }: RequestContext): Promise<Boolean> {
+  async logout(@Ctx() { req, res }: GraphQLReqContext): Promise<Boolean> {
     return this.securityService.clearSession(req, res);
   }
 }

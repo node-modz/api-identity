@@ -2,7 +2,7 @@ import { default as express, default as Express, Router } from 'express';
 import * as jose from 'node-jose';
 import { Container, Inject, Service } from 'typedi';
 import { EntityNotFoundError } from "typeorm";
-import { __SERVER_CONFIG__ } from '../../../app/app-constants';
+import { __SERVER_CONFIG__ } from '../../../api-config';
 import { User } from "../entities/identity/User";
 import { AuthorizationServer, DateInterval, JwtKeyStoreService, OAuthException } from "../lib/oauth2";
 import {

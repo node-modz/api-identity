@@ -3,7 +3,7 @@ import express from "express";
 import morgan from 'morgan';
 import path from 'path';
 import Logger from "../lib/Logger";
-import { __SERVER_CONFIG__ } from "./app-constants";
+import { __SERVER_CONFIG__ } from "../api-config";
 import { AppContext } from "./init-context";
 
 const logger = Logger(module)

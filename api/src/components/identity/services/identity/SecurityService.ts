@@ -1,7 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { User } from "../../entities/identity";
 import express from "express";
-import { __SERVER_CONFIG__ } from '../../../../app/app-constants';
+import { __SERVER_CONFIG__ } from '../../../../api-config';
 import Logger from "../../../../lib/Logger";
 import { JwtKeyStoreService } from '../../lib/oauth2';
 

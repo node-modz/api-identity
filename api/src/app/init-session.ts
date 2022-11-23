@@ -4,7 +4,7 @@ import Redis from "ioredis";
 import Container from "typedi";
 import { SecurityService } from "../components/identity/services/identity/SecurityService";
 import Logger from '../lib/Logger';
-import { __prod__, __SERVER_CONFIG__ } from "./app-constants";
+import { __prod__, __SERVER_CONFIG__ } from "../api-config";
 import { AppContext } from "./init-context";
 import { HttpConfigOptions } from "./init-http";
 

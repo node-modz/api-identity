@@ -1,7 +1,7 @@
 
 import { ConnectionOptions, createConnection, useContainer } from "typeorm";
 import { AppContext } from "./init-context";
-import { __SERVER_CONFIG__ } from "./app-constants";
+import { __SERVER_CONFIG__ } from "../api-config";
 import { Container } from 'typeorm-typedi-extensions';
 import Logger from '../lib/Logger'
 

@@ -2,7 +2,7 @@ import argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
 import { Service } from 'typedi';
-import { __SERVER_CONFIG__ } from "../../../../app/app-constants";
+import { __SERVER_CONFIG__ } from "../../../../api-config";
 import { Login, User } from '../../entities/identity';
 import { Token } from "../../resolvers/models";
 import { Repository } from "typeorm";

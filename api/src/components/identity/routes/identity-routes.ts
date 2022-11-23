@@ -5,7 +5,7 @@ import * as github from 'passport-github2';
 import * as google from 'passport-google-oauth20';
 import OAuth2Strategy, * as oauth2 from 'passport-oauth2';
 import Container from 'typedi';
-import { __SERVER_CONFIG__ } from '../../../app/app-constants';
+import { __SERVER_CONFIG__ } from '../../../api-config';
 import Logger from "../../../lib/Logger";
 import { IdpConnect } from '../entities/identity/IdpConnect';
 import { AuthorizationServer } from '../lib/oauth2';

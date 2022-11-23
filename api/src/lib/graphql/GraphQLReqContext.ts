@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as ioRedis from "ioredis";
 
-export type RequestContext = {
+export type GraphQLReqContext = {
   req: Request;
   res: Response;
   redis: ioRedis.Redis;

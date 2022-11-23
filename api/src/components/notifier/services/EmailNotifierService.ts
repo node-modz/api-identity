@@ -1,5 +1,5 @@
 import * as nodemailer from 'nodemailer'
-import { __SERVER_CONFIG__ } from '../../../app/app-constants';
+import { __SERVER_CONFIG__ } from '../../../api-config';
 import { Service } from "typedi";
 import Logger from "../../../lib/Logger";
 

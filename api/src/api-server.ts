@@ -8,7 +8,7 @@ import http from './app/init-http'
 import httpSession from './app/init-session'
 import identity from './app/init-identity'
 
-import { __SERVER_CONFIG__ } from './app/app-constants';
+import { __SERVER_CONFIG__ } from './api-config';
 
 const logger = Logger(module);
 
