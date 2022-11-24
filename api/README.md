@@ -10,7 +10,8 @@
 
 ```
   $ npx typeorm migration:run -c ledgers
-  $ npx ts-node src/seeder/seeder.ts --clean --tenants --users --activity
+  $ node dist/seeder/seeder.js --clean
+  $ node dist/seeder/seeder.js
 ```
 
 ```bash

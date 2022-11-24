@@ -15,7 +15,7 @@ export const __SERVER_CONFIG__ = {
     host: "http://localhost:4000",
     http:{
         cors_allow_domains: process.env.HTTP_CORS_ALLOW_DOMAINS?.split(",") as string[],
-        views: path.join(__dirname,'../views'),
+        views: path.join(__dirname,'views'),
         session: {
             redis_store: process.env.HTTP_SESSION_REDIS_STORE as string,
             cookie_secret: process.env.HTTP_SESSION_COOKIE_SECRET as string,

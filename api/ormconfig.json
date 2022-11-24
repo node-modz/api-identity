@@ -7,7 +7,7 @@
     "password": "docker",
     "database": "ledgers",
     "entities": ["dist/entities/**/*.js","dist/components/identity/entities/**/*.js"],
-    "migrations": ["dist/migrations/**/*.js"]
+    "migrations": ["dist/components/**/migrations/*.js"]
 },{
     "name":"identity",
     "type": "postgres",
