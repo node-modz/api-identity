@@ -4,11 +4,11 @@ import Redis from "ioredis";
 import Container from "typedi";
 import { SecurityService } from "../components/identity/services/identity/SecurityService";
 import Logger from '../lib/Logger';
-import { __prod__, __SERVER_CONFIG__ } from "../api-config";
 import { AppContext } from "./init-context";
 import { HttpConfigOptions } from "./init-http";
 
 const logger = Logger(module);
+const __prod__ = process.env.NODE_ENV === 'production'
 
 const init = async (ctx: AppContext, config: HttpConfigOptions) => {
 

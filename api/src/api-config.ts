@@ -1,8 +1,8 @@
 
-import path from "path";
-import { DBConfigOptions } from "./app/init-db";
 import dotenv from 'dotenv-safe';
+import path from "path";
 import { GraphqQLConfig } from "./app/init-apollo";
+import { DBConfigOptions } from "./app/init-db";
 import { HttpConfigOptions } from "./app/init-http";
 import { IdentityConfigOptions } from "./app/init-identity";
 
@@ -10,12 +10,20 @@ dotenv.config();
 
 export const __prod__ = process.env.NODE_ENV === 'production'
 export const __SERVER_CONFIG__ = {
+    modules: [
+        { module: "./app/init-db", config: 'db' },
+        { module: "./app/init-http", config: 'http' },
+        { module: "./app/init-session", config: 'http' },
+        { module: "./app/init-apollo", config: 'apollo' },
+        { module: "./app/init-identity", config: 'identity' },
+    ],
     // this host.
     // TODO: this can support multiple hosts.
     host: "http://localhost:4000",
-    http:{
+    port: 4000,
+    http: {
         cors_allow_domains: process.env.HTTP_CORS_ALLOW_DOMAINS?.split(",") as string[],
-        views: path.join(__dirname,'views'),
+        views: path.join(__dirname, 'views'),
         session: {
             redis_store: process.env.HTTP_SESSION_REDIS_STORE as string,
             cookie_secret: process.env.HTTP_SESSION_COOKIE_SECRET as string,
@@ -30,6 +38,7 @@ export const __SERVER_CONFIG__ = {
     db: {
         type: "postgres",
         url: process.env.DB_URL as string,
+        logging: false,
         entities: [
             path.join(__dirname, 'components/identity/entities/**/*.js'),
             path.join(__dirname, 'components/dacchain/entities/*'),
@@ -65,7 +74,7 @@ export const __SERVER_CONFIG__ = {
     },
 
     // identity component config
-    identity: {                
+    identity: {
         forgot_password_prefix: 'forgot-password:',
         oauth2: {
             jwt_keys: process.env.IDENTITY_OAUTH2_JWT_KEYS || 'keys.json',
@@ -90,7 +99,7 @@ export const __SERVER_CONFIG__ = {
                 client_secret: process.env.W3L_CLIENT_SECRET as string,
                 scopes: ['identity:profile', 'accounting:*']
             }
-        } 
+        }
     } as IdentityConfigOptions
 }
 

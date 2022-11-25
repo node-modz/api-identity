@@ -25,7 +25,7 @@ const clientList = [
   { 
     name: "react-oidc-client", 
     id: "react-oidc-client",
-    redirectUris:["http://localhost:3000/signin-callback.html"],
+    redirectUris:["http://localhost:3000/signin-callback.html","http://localhost:3000/identity/signin-callback"],
     allowedGrants: [ "authorization_code", "refresh_token" ],
     scopes:[
       { name:"openid" },

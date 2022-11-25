@@ -21,7 +21,7 @@ const init = async (appCtxt: AppContext, dbConfig: DBConfigOptions ) => {
   const conn = await createConnection({
     type: dbConfig.type as any,
     url: dbConfig.url,
-    // logging: true,
+    logging: dbConfig.logging,
     // synchronize: true,
     migrations: dbConfig.migrations,    
     entities: dbConfig.entities,

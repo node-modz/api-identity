@@ -13,7 +13,6 @@
     "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
     "watch": "tsc -w & tscp -w",
     "run:dev": "nodemon dist/api-server.js",
-    "run:dev:oauth2": "nodemon dist/oauth-server.js",
     "run:dev:api": "nodemon dist/api-server.js",
     "mig:run": "typeorm migration:run -c ledgers -f ormconfig.json",
     "mig:gen:all": "npm run mig:gen:identity $npm_config_first || npm run mig:gen:oauth2 $npm_config_first || npm run mig:gen:accounting $npm_config_first || npm run mig:gen:dacchain $npm_config_first",

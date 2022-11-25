@@ -9,9 +9,10 @@
 ```
 
 ```
-  $ npx typeorm migration:run -c ledgers
-  $ node dist/seeder/seeder.js --clean
-  $ node dist/seeder/seeder.js
+  $ npx typeorm migration:run -c ledgers  
+
+  $ node dist/lib/seeder/seeder-run.js --loaders dist/seed-data/seed-loaders --clean
+  $ node dist/lib/seeder/seeder-run.js --loaders dist/seed-data/seed-loaders 
 ```
 
 ```bash
