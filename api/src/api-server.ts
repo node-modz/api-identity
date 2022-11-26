@@ -12,21 +12,18 @@ const main = async () => {
   dotenv.config();
   logger.info("start api-server:", __dirname);
 
-  const appCtxt = initApp("ledgers-api");
-
   const file = argv["init"];
+  const rfile = (file) ? process.cwd() + "/" + file.replace(/\.[^/.]+$/, "") : '';
   if ( !file ) {
     logger.error("server config missing: --init <file>")
     return;
   }
-  const rfile = process.cwd() + "/" + file.replace(/\.[^/.]+$/, "")
-
   logger.info("starting server using config:", rfile);
   
   const config = require(rfile).__SERVER_CONFIG__;
-
-  for (const mod of config.modules as { module: string, config: string }[]) {
-    await require(mod.module).default(appCtxt, (config as any)[mod.config])
+  const appCtxt = initApp("ledgers-api");
+  for (const mod of config.setup as { init: string, config: string }[]) {
+    await require(mod.init).default(appCtxt, (config as any)[mod.config])
   }
 
   const serverConfig:ServerConfigOptions = Container.get('ServerConfigOptions')

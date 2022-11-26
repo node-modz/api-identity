@@ -12,14 +12,14 @@ dotenv.config();
 
 export const __prod__ = process.env.NODE_ENV === 'production'
 export const __SERVER_CONFIG__ = {
-    modules: [
-        { module: "./app/init-server", config: 'server' },
-        { module: "./app/init-db", config: 'db' },
-        { module: "./app/init-http", config: 'http' },
-        { module: "./app/init-session", config: 'http' },
-        { module: "./app/init-apollo", config: 'apollo' },
-        { module: "./app/init-notifier", config: 'notifier' },
-        { module: "./app/init-identity", config: 'identity' },
+    setup: [
+        { init: "./app/init-server", config: 'server' },
+        { init: "./app/init-db", config: 'db' },
+        { init: "./app/init-http", config: 'http' },
+        { init: "./app/init-session", config: 'http' },
+        { init: "./app/init-apollo", config: 'apollo' },
+        { init: "./app/init-notifier", config: 'notifier' },
+        { init: "./app/init-identity", config: 'identity' },
     ],
     // this host.
     // TODO: this can support multiple hosts.
