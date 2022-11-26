@@ -1,14 +1,11 @@
 import argon2 from "argon2";
 import "reflect-metadata";
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
 import { v4 } from "uuid";
-import {
-  __SERVER_CONFIG__
-} from "../../../api-config";
-import { GraphQLReqContext } from "../../../lib/graphql/GraphQLReqContext";
 import { isUserAuth } from "../../../lib/graphql/Auth";
 import { FieldError } from '../../../lib/graphql/FieldError';
+import { GraphQLReqContext } from "../../../lib/graphql/GraphQLReqContext";
 import { EmailNotifierService } from "../../notifier/services/EmailNotifierService";
 import { Login, User } from "../entities/identity";
 import { AuthService } from "../services/identity/AuthService";
@@ -16,6 +13,7 @@ import {
   ChangePasswordInput, ChangePasswordResponse, ForgotPasswordResponse, RegisterUserInput, UserResponse
 } from "./models";
 
+import { IdentityConfigOptions } from "../../../app/init-identity";
 import Logger from "../../../lib/Logger";
 import { LoginService } from "../services/identity/LoginService";
 import { SecurityService } from "../services/identity/SecurityService";
@@ -26,6 +24,10 @@ const logger = Logger(module)
 @Service()
 @Resolver()
 export class AuthResolver {
+  
+  @Inject('IdentityConfigOptions')
+  private readonly identityConfig: IdentityConfigOptions
+
 
   constructor(
     private readonly authService: AuthService,
@@ -50,7 +52,7 @@ export class AuthResolver {
 
     const token = v4();
     await reqCtxt.redis.set(
-      __SERVER_CONFIG__.identity.forgot_password_prefix + token,
+      this.identityConfig.forgot_password_prefix + token,
       user.id,
       "ex",
       1000 * 60 * 60 * 24 * 3 // 3days
@@ -72,14 +74,14 @@ export class AuthResolver {
   ) {
     const { token, password } = input;
     const { req, res, redis } = reqCtxt;
-
+        
     if (password.length <= 2) {
       return {
         errors: [new FieldError("password", "length must be greater than 2")],
       };
     }
 
-    let key = __SERVER_CONFIG__.identity.forgot_password_prefix + token;
+    let key = this.identityConfig.forgot_password_prefix + token;
     const userId = await redis.get(key);
     if (!userId) {
       return {
@@ -113,6 +115,7 @@ export class AuthResolver {
 
   @Query(() => UserResponse, { nullable: true })
   async me(@Ctx() { req }: GraphQLReqContext) {
+    
     const userId = req.session.userId;
     if (!userId) {
       logger.info("session no active session:");

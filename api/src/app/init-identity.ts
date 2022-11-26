@@ -1,6 +1,7 @@
 import { json, urlencoded } from "body-parser";
 import * as fs from 'fs';
 import * as jose from 'node-jose';
+import Container from "typedi";
 import Logger from '../lib/Logger';
 import { AppContext } from "./init-context";
 
@@ -26,8 +27,10 @@ export type IdentityConfigOptions = {
 
 const init = async (ctx: AppContext, config: IdentityConfigOptions) => {
   logger.info(ctx.name, ": init identity: ");
-
   logger.info(ctx.name, ": init oauth jwt_secret:", config.oauth2.jwt_secret);
+
+  Container.set('IdentityConfigOptions',config);
+
   const keyStore = await initKeyStore(ctx,config);
 
   const app = ctx.http;

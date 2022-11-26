@@ -38,7 +38,7 @@ export class UserTransactionSeeder implements Seeder {
             const fromChain = await this.chainService.findChainByEmail(txn.from);
             const toChain = await this.chainService.findChainByEmail(txn.to);
             if (fromChain === undefined || toChain === undefined) {
-                logger.info("error chain not found were they created earlier:", { fromChain, toChain })
+                logger.warn("error chain not found were they created earlier:", { fromChain, toChain })
             } else {
                 /**
                  * create NetworkLedgers

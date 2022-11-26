@@ -25,8 +25,6 @@ export class IdentityUserSeeder implements Seeder {
             throw new Error(`unknown file type, expecting .ts file: ${file}`);
         }
 
-        //const authService = new AuthService()
-
         logger.info(process.cwd())
         logger.info(__dirname)
         const data = require(process.cwd() + "/" + file.replace(/\.[^/.]+$/, "")).default as UserData[];

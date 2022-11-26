@@ -73,4 +73,9 @@ curl -s -d grant_type=password \
   -d client_secret=pc-secret \
   http://localhost:4000/oauth2/token  | jq '.access_token' | xargs ~/bin/jwt.sh
 
+curl -s -d 'refresh_token='$ref_token'' \
+  -d grant_type=refresh_token \
+  -d client_id=password-client \
+  -d client_secret=pc-secret \
+  http://localhost:4000/oauth2/token  | jq '.access_token' 
 ```

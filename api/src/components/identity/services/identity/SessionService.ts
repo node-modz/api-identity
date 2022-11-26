@@ -1,13 +1,16 @@
-import { Service } from 'typedi';
-import { User } from "../../entities/identity";
 import express from "express";
-import { __SERVER_CONFIG__ } from '../../../../api-config';
+import { Inject, Service } from 'typedi';
+import { HttpConfigOptions } from '../../../../app/init-http';
 import Logger from "../../../../lib/Logger";
+import { User } from "../../entities/identity";
 
 const logger = Logger(module)
 
 @Service()
 export class SessionService {
+    @Inject('HttpConfigOptions')
+    private readonly httpConfigOptions: HttpConfigOptions
+
     createUserSession(
         req: express.Request,
         res: express.Response,
@@ -22,7 +25,7 @@ export class SessionService {
     ): Promise<Boolean> {
         const userId = req.session.userId;
         logger.debug("logging out user: ", userId);
-        res.clearCookie( __SERVER_CONFIG__.http.session.cookie_name );
+        res.clearCookie( this.httpConfigOptions.session.cookie_name );
         return new Promise<Boolean>((res) => {
             req.session.destroy((err) => {
                 if (err) {

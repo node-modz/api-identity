@@ -1,9 +1,8 @@
 import cors, { CorsOptionsDelegate } from "cors";
 import express from "express";
 import morgan from 'morgan';
-import path from 'path';
+import Container from "typedi";
 import Logger from "../lib/Logger";
-import { __SERVER_CONFIG__ } from "../api-config";
 import { AppContext } from "./init-context";
 
 const logger = Logger(module)
@@ -22,6 +21,9 @@ export type HttpConfigOptions = {
 const init = async (ctx: AppContext, config:HttpConfigOptions) => {
 
   logger.info(ctx.name, ": init http: ")
+  
+  Container.set('HttpConfigOptions',config);
+
   const app = ctx.http = express();
 
   app.set('view engine', 'ejs');

@@ -1,12 +1,15 @@
-import * as nodemailer from 'nodemailer'
-import { __SERVER_CONFIG__ } from '../../../api-config';
-import { Service } from "typedi";
+import * as nodemailer from 'nodemailer';
+import { NotifierConfigOptions } from '../../../app/init-notifier';
+import { Inject, Service } from "typedi";
 import Logger from "../../../lib/Logger";
 
 const logger = Logger(module)
 
 @Service()
 export class EmailNotifierService {
+
+    @Inject('NotifierConfigOptions')
+    private readonly notifierConfig: NotifierConfigOptions
     
     createTestAccount = async () => {    
         let testAccount = await nodemailer.createTestAccount();
@@ -15,15 +18,17 @@ export class EmailNotifierService {
 
     // async..await is not allowed in global scope, must use a wrapper
     notify = async (to:string, html:string) => {
+
+        logger.info("notifier config:", this.notifierConfig);
     
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
-            host: __SERVER_CONFIG__.notifier.email.host,
-            port: __SERVER_CONFIG__.notifier.email.port,
-            secure:__SERVER_CONFIG__.notifier.email.secure, 
+            host: this.notifierConfig.email.host,
+            port: this.notifierConfig.email.port,
+            secure:this.notifierConfig.email.secure, 
             auth: {
-            user: __SERVER_CONFIG__.notifier.email.user, // generated ethereal user
-            pass: __SERVER_CONFIG__.notifier.email.password, // generated ethereal password
+            user: this.notifierConfig.email.user, // generated ethereal user
+            pass: this.notifierConfig.email.password, // generated ethereal password
             },
         });
 

@@ -1,18 +1,22 @@
 import argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import jwtDecode from "jwt-decode";
-import { Service } from 'typedi';
-import { __SERVER_CONFIG__ } from "../../../../api-config";
-import { Login, User } from '../../entities/identity';
-import { Token } from "../../resolvers/models";
+import { Inject, Service } from 'typedi';
 import { Repository } from "typeorm";
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { IdentityConfigOptions } from "../../../../app/init-identity";
 import Logger from "../../../../lib/Logger";
+import { Login, User } from '../../entities/identity';
+import { Token } from "../../resolvers/models";
 
 const logger = Logger(module)
 
 @Service()
 export class AuthService {
+
+  @Inject('IdentityConfigOptions')
+  private readonly identityConfig: IdentityConfigOptions
+
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
@@ -27,7 +31,7 @@ export class AuthService {
     password: string,
     firstName: string,
     lastName: string,
-    avatar?:string,
+    avatar?: string,
   }): Promise<User> {
     const hashedPWD = await argon2.hash(userinfo.password);
     logger.info(
@@ -48,7 +52,7 @@ export class AuthService {
       password: hashedPWD,
       user: user,
     }).save();
-    
+
     return user
   }
 
@@ -58,11 +62,11 @@ export class AuthService {
         sub: user.id,
         email: user.email,
         avatar: user.avatar,
-        role: user.email.startsWith("vn1") ? "admin" : "user",        
+        role: user.email.startsWith("vn1") ? "admin" : "user",
         iss: "api.ledgers",
         aud: "api.ledgers",
       },
-      __SERVER_CONFIG__.identity.oauth2.jwt_secret,
+      this.identityConfig.oauth2.jwt_secret,
       { algorithm: "HS256", expiresIn: "1h" }
     );
     const decodedToken = jwtDecode<{ sub: string; exp: number }>(token);

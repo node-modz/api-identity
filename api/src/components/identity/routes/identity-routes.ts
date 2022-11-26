@@ -5,7 +5,8 @@ import * as github from 'passport-github2';
 import * as google from 'passport-google-oauth20';
 import OAuth2Strategy, * as oauth2 from 'passport-oauth2';
 import Container from 'typedi';
-import { __SERVER_CONFIG__ } from '../../../api-config';
+import { IdentityConfigOptions } from '../../../app/init-identity';
+import { ServerConfigOptions } from '../../../app/init-server';
 import Logger from "../../../lib/Logger";
 import { IdpConnect } from '../entities/identity/IdpConnect';
 import { AuthorizationServer } from '../lib/oauth2';
@@ -15,7 +16,10 @@ import { UserService } from '../services/identity/UserService';
 
 const logger = Logger(module)
 
-const router = express.Router();
+const identityConfig: IdentityConfigOptions = Container.get('IdentityConfigOptions');
+const serverConfig: ServerConfigOptions = Container.get('ServerConfigOptions');
+
+
 
 function W3lOAuthStrategy(
     options: {
@@ -28,20 +32,22 @@ function W3lOAuthStrategy(
     },
     provider: string
 ): OAuth2Strategy {
-    const clientId = options.clientID || __SERVER_CONFIG__.identity.federated[provider].client_id as string;
-    const secret = options.clientSecret || __SERVER_CONFIG__.identity.federated[provider].client_secret;
+
+
+    const clientId = options.clientID || identityConfig.federated[provider].client_id as string;
+    const secret = options.clientSecret || identityConfig.federated[provider].client_secret;
     const userProfileURL = options.profileUrl
-        || __SERVER_CONFIG__.identity.federated[provider].profile_url
-        || __SERVER_CONFIG__.host + '/oauth2/userinfo';
+        || identityConfig.federated[provider].profile_url
+        || serverConfig.host + '/oauth2/userinfo';
     const authorizationURL = options.authorizationURL
-        || __SERVER_CONFIG__.identity.federated[provider].authorize_url
-        || __SERVER_CONFIG__.host + '/oauth2/authorize';
+        || identityConfig.federated[provider].authorize_url
+        || serverConfig.host + '/oauth2/authorize';
     const tokenURL = options.tokenURL
-        || __SERVER_CONFIG__.identity.federated[provider].token_url
-        || __SERVER_CONFIG__.host + '/oauth2/token';
+        || identityConfig.federated[provider].token_url
+        || serverConfig.host + '/oauth2/token';
     const callbackURL = options.callbackURL
-        || __SERVER_CONFIG__.identity.federated[provider].callback_url
-        || __SERVER_CONFIG__.host + `/login/${provider}/cb`;
+        || identityConfig.federated[provider].callback_url
+        || serverConfig.host + `/login/${provider}/cb`;
 
 
     const doIdpConnect = idpConnectCallback(provider)
@@ -198,45 +204,49 @@ const idpCallbackHandler = (provider: string): RequestHandler => {
 }
 const idpLoginHandler = (provider: string, scopes: string[]): RequestHandler => {
     return async (req, resp) => {
-        const callbackURI = req.query.cb_uri
-        const errorCallbackURI = req.query.err_cb_uri
-        if (!callbackURI) {
-            resp.status(400).json({ error: { message: 'missing query param "cb" i.e redirect url' } });
-            return
+        const oauthRequest = req.session.oauth2?.request
+        if (!oauthRequest) {
+            const callbackURI = req.query.cb_uri
+            const errorCallbackURI = req.query.err_cb_uri
+            if (!callbackURI) {
+                resp.status(400).json({ error: { message: 'missing query param "cb" i.e redirect url' } });
+                return
+            }
+            req.session.auth = {
+                cb_uri: callbackURI,
+                err_cb_uri: errorCallbackURI ? errorCallbackURI : callbackURI
+            }
         }
-        req.session.auth = {
-            cb_uri: callbackURI,
-            err_cb_uri: errorCallbackURI ? errorCallbackURI : callbackURI
-        }
-        
+
         passport.authenticate(provider, { session: false, scope: scopes })(req, resp);
     }
 }
 
-for (const providerName in __SERVER_CONFIG__.identity.federated) {
-    const providerConfig = __SERVER_CONFIG__.identity.federated[providerName];
+const router = express.Router();
+for (const providerName in identityConfig.federated) {
+    const providerConfig = identityConfig.federated[providerName];
     if (providerConfig.type === 'google') {
         passport.use(providerName,
             new google.Strategy({
-                clientID: __SERVER_CONFIG__.identity.federated[providerName].client_id,
-                clientSecret: __SERVER_CONFIG__.identity.federated[providerName].client_secret,
-                callbackURL: __SERVER_CONFIG__.host + `/login/${providerName}/cb`,
+                clientID: identityConfig.federated[providerName].client_id,
+                clientSecret: identityConfig.federated[providerName].client_secret,
+                callbackURL: serverConfig.host + `/login/${providerName}/cb`,
                 state: true
             }, idpConnectCallback(providerName))
         );
     } else if (providerConfig.type === 'github') {
         passport.use(providerName,
             new github.Strategy({
-                clientID: __SERVER_CONFIG__.identity.federated[providerName].client_id,
-                clientSecret: __SERVER_CONFIG__.identity.federated[providerName].client_secret,
-                callbackURL: __SERVER_CONFIG__.host + `/login/${providerName}/cb`
+                clientID: identityConfig.federated[providerName].client_id,
+                clientSecret: identityConfig.federated[providerName].client_secret,
+                callbackURL: serverConfig.host + `/login/${providerName}/cb`
             }, idpConnectCallback(providerName))
         );
     } else if (providerConfig.type === 'w3l') {
         passport.use(providerName, W3lOAuthStrategy({
-            clientID: __SERVER_CONFIG__.identity.federated[providerName].client_id,
-            clientSecret: __SERVER_CONFIG__.identity.federated[providerName].client_secret,
-            callbackURL: __SERVER_CONFIG__.host + `/login/${providerName}/cb`
+            clientID: identityConfig.federated[providerName].client_id,
+            clientSecret: identityConfig.federated[providerName].client_secret,
+            callbackURL: serverConfig.host + `/login/${providerName}/cb`
         }, providerName));
     }
 

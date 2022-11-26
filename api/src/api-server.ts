@@ -1,9 +1,9 @@
 import dotenv from 'dotenv-safe';
 import minimist from 'minimist';
+import Container from 'typedi';
 import initApp from "./app/init-context";
+import { ServerConfigOptions } from './app/init-server';
 import Logger from './lib/Logger';
-
-import { __SERVER_CONFIG__ } from './api-config';
 
 const logger = Logger(module);
 
@@ -14,15 +14,24 @@ const main = async () => {
 
   const appCtxt = initApp("ledgers-api");
 
-  const config = require('./api-config').__SERVER_CONFIG__;
+  const file = argv["init"];
+  if ( !file ) {
+    logger.error("server config missing: --init <file>")
+    return;
+  }
+  const rfile = process.cwd() + "/" + file.replace(/\.[^/.]+$/, "")
+
+  logger.info("starting server using config:", rfile);
+  
+  const config = require(rfile).__SERVER_CONFIG__;
 
   for (const mod of config.modules as { module: string, config: string }[]) {
-    await require(mod.module).default(appCtxt, (__SERVER_CONFIG__ as any)[mod.config])
+    await require(mod.module).default(appCtxt, (config as any)[mod.config])
   }
 
-  //const port = 4000;
-  appCtxt.http.listen(__SERVER_CONFIG__.port, () => {
-    logger.info("ledgers-api listening on: ", __SERVER_CONFIG__.port);
+  const serverConfig:ServerConfigOptions = Container.get('ServerConfigOptions')
+  appCtxt.http.listen(serverConfig.port, () => {
+    logger.info("ledgers-api listening on: ", serverConfig.port);
   });
 };
 

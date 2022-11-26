@@ -2,7 +2,6 @@ import { default as express, default as Express, Router } from 'express';
 import * as jose from 'node-jose';
 import { Container, Inject, Service } from 'typedi';
 import { EntityNotFoundError } from "typeorm";
-import { __SERVER_CONFIG__ } from '../../../api-config';
 import { User } from "../entities/identity/User";
 import { AuthorizationServer, DateInterval, JwtKeyStoreService, OAuthException } from "../lib/oauth2";
 import {
@@ -10,6 +9,8 @@ import {
     handleExpressResponse, requestFromExpress
 } from '../lib/oauth2/adapters/express';
 
+import { IdentityConfigOptions } from '../../../app/init-identity';
+import { ServerConfigOptions } from '../../../app/init-server';
 import Logger from "../../../lib/Logger";
 import { SecurityService } from '../services/identity/SecurityService';
 import { UserService } from '../services/identity/UserService';
@@ -27,6 +28,12 @@ const logger = Logger(module)
 
 @Service()
 class OAuthController {
+
+    @Inject('IdentityConfigOptions')
+    public readonly identityConfig: IdentityConfigOptions
+
+    @Inject('ServerConfigOptions')
+    public readonly serverConfig: ServerConfigOptions
 
     constructor(
         @Inject()
@@ -240,7 +247,7 @@ class OAuthController {
      */
     public wellKnown(prefix: string) {
         return async (req: Express.Request, res: Express.Response) => {
-            const host = __SERVER_CONFIG__.host + prefix
+            const host = this.serverConfig.host + prefix
             res.json(wellknown(host));
         }
     }
@@ -267,7 +274,7 @@ const initRoutes = (prefix: string, keyStore: jose.JWK.KeyStore): Router => {
         Container.get(TokenRepository),
         Container.get(ScopeRepository),
         Container.get(UserRepository),
-        Container.get('JwtService'),
+        Container.get('JwtService')
     );
     authorizationServer.enableGrantTypes(
         ["authorization_code", new DateInterval("15m")],
@@ -279,7 +286,7 @@ const initRoutes = (prefix: string, keyStore: jose.JWK.KeyStore): Router => {
     Container.set(AuthorizationServer, authorizationServer);
 
     const oauthController = Container.get(OAuthController);
-
+    
     /**
      * idp/login post
      */
@@ -294,6 +301,13 @@ const initRoutes = (prefix: string, keyStore: jose.JWK.KeyStore): Router => {
      *   /userinfo
      *   /verify
      *   /logout
+     * 
+     *   client ->   get: /authorize
+     *            render: /idp/login
+     *          ->  post: /idp/login username&password
+     *                    redir: client?code=xx
+     *          ->   get: /token?grant_type=authorization_code&code=xx ..
+     *                    return: { token... }
      */
     router.get(prefix + "/.well-known/openid-configuration", oauthController.wellKnown(prefix));
     router.get(prefix + "/.well-known/jwks.json", oauthController.jwks());

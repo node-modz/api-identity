@@ -5,22 +5,28 @@ import { GraphqQLConfig } from "./app/init-apollo";
 import { DBConfigOptions } from "./app/init-db";
 import { HttpConfigOptions } from "./app/init-http";
 import { IdentityConfigOptions } from "./app/init-identity";
+import { NotifierConfigOptions } from './app/init-notifier';
+import { ServerConfigOptions } from './app/init-server';
 
 dotenv.config();
 
 export const __prod__ = process.env.NODE_ENV === 'production'
 export const __SERVER_CONFIG__ = {
     modules: [
+        { module: "./app/init-server", config: 'server' },
         { module: "./app/init-db", config: 'db' },
         { module: "./app/init-http", config: 'http' },
         { module: "./app/init-session", config: 'http' },
         { module: "./app/init-apollo", config: 'apollo' },
+        { module: "./app/init-notifier", config: 'notifier' },
         { module: "./app/init-identity", config: 'identity' },
     ],
     // this host.
     // TODO: this can support multiple hosts.
-    host: "http://localhost:4000",
-    port: 4000,
+    server: {
+        host: "http://localhost:4000",
+        port: 4000,
+    } as ServerConfigOptions,    
     http: {
         cors_allow_domains: process.env.HTTP_CORS_ALLOW_DOMAINS?.split(",") as string[],
         views: path.join(__dirname, 'views'),
@@ -71,7 +77,7 @@ export const __SERVER_CONFIG__ = {
             user: "cejfsdvkagb6ktmb@ethereal.email",
             password: "cpTDqQpQ8WGDttRs2z",
         }
-    },
+    } as NotifierConfigOptions,
 
     // identity component config
     identity: {
