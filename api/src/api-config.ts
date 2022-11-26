@@ -73,9 +73,9 @@ export const __SERVER_CONFIG__ = {
         email: {
             host: "smtp.ethereal.email",
             port: 587,
-            secure: false, // true for 465, false for other ports
-            user: "cejfsdvkagb6ktmb@ethereal.email",
-            password: "cpTDqQpQ8WGDttRs2z",
+            secure: false, // true for 465, false for other ports            
+            user:"c4f3ln36njgg4upe@ethereal.email",
+            password:"fx8tR7V725vbbdwbZE"
         }
     } as NotifierConfigOptions,
 
