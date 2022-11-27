@@ -4,6 +4,8 @@ import * as jose from 'node-jose';
 import Container from "typedi";
 import Logger from '../lib/Logger';
 import { AppContext } from "./init-context";
+import * as oauth2Routes from '../components/identity/routes/oauth2-routes'
+import * as identityRoutes from '../components/identity/routes/identity-routes'
 
 const logger = Logger(module);
 
@@ -34,15 +36,11 @@ const init = async (ctx: AppContext, config: IdentityConfigOptions) => {
   const keyStore = await initKeyStore(ctx,config);
 
   const app = ctx.http;
-
-  const identityRoutes = require('../components/identity/routes/identity-routes')
-  app.use('/', identityRoutes);
-
+  
+  app.use('/', identityRoutes.initRoutes() );
   app.use(json());
   app.use(urlencoded({ extended: false }));
-
-  const oauthRoutes = require('../components/identity/routes/oauth2-routes')
-  app.use(oauthRoutes("/oauth2", keyStore));
+  app.use(oauth2Routes.initRoutes("/oauth2", keyStore));
 
   logger.info(ctx.name, ": init identity: done")
 };

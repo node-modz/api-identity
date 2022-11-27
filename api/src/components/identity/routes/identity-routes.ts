@@ -1,4 +1,4 @@
-import express, { RequestHandler } from 'express';
+import express, { RequestHandler, Router } from 'express';
 import { OAuth2 } from 'oauth';
 import passport from 'passport';
 import * as github from 'passport-github2';
@@ -16,8 +16,7 @@ import { UserService } from '../services/identity/UserService';
 
 const logger = Logger(module)
 
-const identityConfig: IdentityConfigOptions = Container.get('IdentityConfigOptions');
-const serverConfig: ServerConfigOptions = Container.get('ServerConfigOptions');
+
 
 
 
@@ -33,6 +32,8 @@ function W3lOAuthStrategy(
     provider: string
 ): OAuth2Strategy {
 
+    const identityConfig: IdentityConfigOptions = Container.get('IdentityConfigOptions');
+    const serverConfig: ServerConfigOptions = Container.get('ServerConfigOptions');
 
     const clientId = options.clientID || identityConfig.federated[provider].client_id as string;
     const secret = options.clientSecret || identityConfig.federated[provider].client_secret;
@@ -222,37 +223,44 @@ const idpLoginHandler = (provider: string, scopes: string[]): RequestHandler => 
     }
 }
 
-const router = express.Router();
-for (const providerName in identityConfig.federated) {
-    const providerConfig = identityConfig.federated[providerName];
-    if (providerConfig.type === 'google') {
-        passport.use(providerName,
-            new google.Strategy({
-                clientID: identityConfig.federated[providerName].client_id,
-                clientSecret: identityConfig.federated[providerName].client_secret,
-                callbackURL: serverConfig.host + `/login/${providerName}/cb`,
-                state: true
-            }, idpConnectCallback(providerName))
-        );
-    } else if (providerConfig.type === 'github') {
-        passport.use(providerName,
-            new github.Strategy({
+export const initRoutes = (): Router => {
+    const identityConfig: IdentityConfigOptions = Container.get('IdentityConfigOptions');
+    const serverConfig: ServerConfigOptions = Container.get('ServerConfigOptions');
+
+    const router = express.Router();
+    for (const providerName in identityConfig.federated) {
+        const providerConfig = identityConfig.federated[providerName];
+        if (providerConfig.type === 'google') {
+            passport.use(providerName,
+                new google.Strategy({
+                    clientID: identityConfig.federated[providerName].client_id,
+                    clientSecret: identityConfig.federated[providerName].client_secret,
+                    callbackURL: serverConfig.host + `/login/${providerName}/cb`,
+                    state: true
+                }, idpConnectCallback(providerName))
+            );
+        } else if (providerConfig.type === 'github') {
+            passport.use(providerName,
+                new github.Strategy({
+                    clientID: identityConfig.federated[providerName].client_id,
+                    clientSecret: identityConfig.federated[providerName].client_secret,
+                    callbackURL: serverConfig.host + `/login/${providerName}/cb`
+                }, idpConnectCallback(providerName))
+            );
+        } else if (providerConfig.type === 'w3l') {
+            passport.use(providerName, W3lOAuthStrategy({
                 clientID: identityConfig.federated[providerName].client_id,
                 clientSecret: identityConfig.federated[providerName].client_secret,
                 callbackURL: serverConfig.host + `/login/${providerName}/cb`
-            }, idpConnectCallback(providerName))
-        );
-    } else if (providerConfig.type === 'w3l') {
-        passport.use(providerName, W3lOAuthStrategy({
-            clientID: identityConfig.federated[providerName].client_id,
-            clientSecret: identityConfig.federated[providerName].client_secret,
-            callbackURL: serverConfig.host + `/login/${providerName}/cb`
-        }, providerName));
-    }
+            }, providerName));
+        }
 
-    router.get(`/login/federated/${providerName}`, idpLoginHandler(providerName, providerConfig.scopes));
-    router.get(`/login/${providerName}/cb`, idpCallbackHandler(providerName));
+        router.get(`/login/federated/${providerName}`, idpLoginHandler(providerName, providerConfig.scopes));
+        router.get(`/login/${providerName}/cb`, idpCallbackHandler(providerName));
+    }
+    return router;
 }
 
 
-module.exports = router
+
+//module.exports = initRoutes

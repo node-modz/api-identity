@@ -67,7 +67,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => ChangePasswordResponse)
-  @UseMiddleware([isUserAuth])
+  @UseMiddleware([])
   async changePassword(
     @Arg("input") input: ChangePasswordInput,
     @Ctx() reqCtxt: GraphQLReqContext

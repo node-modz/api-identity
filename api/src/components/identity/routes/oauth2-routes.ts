@@ -263,7 +263,7 @@ class OAuthController {
 }
 
 
-const initRoutes = (prefix: string, keyStore: jose.JWK.KeyStore): Router => {
+export const initRoutes = (prefix: string, keyStore: jose.JWK.KeyStore): Router => {
     const router = express.Router();
 
     Container.set('JwtService', new JwtKeyStoreService(keyStore));
@@ -319,5 +319,3 @@ const initRoutes = (prefix: string, keyStore: jose.JWK.KeyStore): Router => {
 
     return router;
 }
-
-module.exports = initRoutes;
