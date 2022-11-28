@@ -56,16 +56,18 @@ const logger = winston.createLogger({
     transports,
 });
 
-const Logger = (mod: NodeModule) => new Proxy(logger, {
-    get(target, propKey) {
-        const parts = mod.filename.split('/');
-        const fileName = parts[parts.length - 2] + '/' + parts.pop()
-        return (...args: any) => {
-            const msg = args.map(jsonStringify).join(' ');
-            target.log({ label: fileName, group: null, message: msg, level: String(propKey) })
+const Logger = (mod: NodeModule) => {
+    const parts = mod.filename.split('/');
+    const fileName = parts[parts.length - 2] + '/' + parts.pop()
+    return new Proxy(logger, {
+        get(target, propKey) {
+            return (...args: any) => {
+                const msg = args.map(jsonStringify).join(' ');
+                target.log({ label: fileName, group: null, message: msg, level: String(propKey) })
+            }
         }
-    }
-});
+    });
+};
 
 
 export default Logger
