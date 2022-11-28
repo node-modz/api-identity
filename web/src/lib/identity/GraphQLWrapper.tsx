@@ -1,6 +1,5 @@
-import { BankActivityQuery, BankActivityQueryVariables, useBankActivityQuery } from './accounting/graphql'
 import * as Urql from 'urql';
-import { ViewContext, authCheck } from './GraphQLAuth'
+import { authCheck, ViewContext } from './GraphQLAuth';
 
 
 export function useQueryWrapper<Query,Variables>(

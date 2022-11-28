@@ -76,7 +76,7 @@ class OAuthController {
                  * valid credentials, use the original authRequest & generate authCode
                  */
                 const authRequest = req.session.oauth2?.request;
-                if (!authRequest) {
+                if (!authRequest) {                    
                     res.render(
                         'idp/login', {
                         error: 'invalid oauth2 session, re-initiate authorize flow'
@@ -129,7 +129,16 @@ class OAuthController {
                     * record an oauth2 session, which is used on a successfull login to send to redirect_uri
                     */
                     req.session.oauth2 = { request: authRequest }
-                    res.render('idp/login', { error: false });
+                    logger.info('auth params:',{ui:req.query.ui,idp:req.query.idp});
+                    
+                    if( req.query.ui ) {
+                        logger.info('redirect to:',req.query.ui)
+                        res.redirect(req.query.ui as string)
+                    } else if ( req.query.idp ) {
+                        res.redirect(`/login/federated/${req.query.idp}`)
+                    } else {
+                        res.render('idp/login', { error: false });
+                    }                    
                 }
             } catch (e) {
                 logger.error("Exception while processing token:", e);

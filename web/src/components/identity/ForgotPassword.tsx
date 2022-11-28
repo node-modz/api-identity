@@ -44,12 +44,8 @@ export const ForgotPassword = () => {
             }}>
             {({ isSubmitting }) => {
                 return (
-                    <Flex
-                        minH={'100vh'}
-                        align={'center'}
-                        justify={'center'}
-                        bg={useColorModeValue('gray.50', 'gray.800')}>
-                        <Stack spacing={8} mx={'auto'} maxW={'lg'} py={4} px={6}>
+                    <Flex p={8}>
+                        <Stack spacing={2} mx={'auto'} maxW={'lg'} py={4} px={6}>
                             <Stack align={'center'}>
                             <Heading fontSize={'3xl'}>Enter Your Email</Heading>                                
                             </Stack>

@@ -5,11 +5,13 @@ import theme from '../theme';
 
 import { AuthProvider } from '../app/AuthContext';
 import * as urqlConfig from '../app/urql-bootstrap';
-import { ChakraContainer } from '../components/sample/ChakraContainer';
+import { ChakraContainer } from '../components/storybook/ChakraContainer';
 import * as shell from '../components/shell';
 
 import type { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
+import {Container} from 'typedi'
+import { AuthService } from '../lib/identity/services/AuthService';
 
 export type PageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -37,6 +39,10 @@ function MyApp({ Component, pageProps, router }: AppWithLayout) {
     )
   })
   console.log("loading _app");
+
+  if( !(typeof window === "undefined") ) {
+    Container.set(AuthService,new AuthService())
+  }
 
   const client = createClient(urqlConfig.UrqlClientConfig())  
   

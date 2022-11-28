@@ -1,8 +1,4 @@
 
-import * as shell from '../components/shell'
-import { ChakraContainer } from '../components/sample/ChakraContainer'
-import { withUrqlClient } from 'next-urql'
-import { createUrqlClient } from '../app/urql-bootstrap'
 
 //TODO: standard toast mechanism to show errors on api calls.
 //  : SignIn, Signup, ForgotPassword, ChangePassword
@@ -13,4 +9,5 @@ const Index = () => (
     <>Hello Index</>
   </>
 )
-export default withUrqlClient(createUrqlClient, { ssr: true })(Index)
+
+export default Index;

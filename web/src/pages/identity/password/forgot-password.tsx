@@ -1,17 +1,22 @@
-import { createUrqlClient } from '../../../app/urql-bootstrap';
-import { withUrqlClient } from 'next-urql';
-import * as shell from '../../../components/shell';
-
+import { ReactElement } from 'react';
 import { ForgotPassword } from '../../../components/identity/ForgotPassword';
+import * as shell from '../../../components/shell';
 
 const ForgotPasswordPage = () => {
     return (
         <>
-          <shell.TopNavBar/>
           <ForgotPassword/>
         </> 
       );
 }
 
+ForgotPasswordPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <>
+      <shell.TopNavBar />
+      {page}
+    </>
+  )
+}
 
-export default withUrqlClient(createUrqlClient, { ssr: false })(ForgotPasswordPage);
+export default ForgotPassword;

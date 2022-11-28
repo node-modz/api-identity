@@ -28,9 +28,13 @@ export interface NavItem {
 
 export const APP_CONFIG = {
     appHost : "http://localhost:3000",
-    apiHost : "http://localhost:4000",
     graphQLUrl: "http://localhost:4000/graphql",
-    identity: {        
+    identity: {
+        client: {
+            authority: 'http://localhost:4000/oauth2',
+            client_id: 'react-oidc-client',
+            scopes: 'openid profile identity:profile accounting:* dachain:*'
+        },
         postLogin: {
             href:"/accounting/dashboard"
         },

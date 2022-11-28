@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import CurrencyFormat from 'react-currency-format';
 import { BankActivityQuery, BankActivityQueryVariables, useBankActivityQuery } from "../../graphql/accounting/graphql";
-import { useQueryWrapper } from "../../graphql/Wrapper";
+import { useQueryWrapper } from "../../lib/identity/GraphQLWrapper";
 
 
 export default function BankActivity() {

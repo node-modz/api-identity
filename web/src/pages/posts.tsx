@@ -1,6 +1,3 @@
-import * as shell from '../components/shell'
-import { createUrqlClient } from '../app/urql-bootstrap'
-import { withUrqlClient } from 'next-urql'
 
 // TODO: figure out why i get hydration error on refresh of /posts page
 const Posts = () => {
@@ -16,4 +13,4 @@ const Posts = () => {
   );
 }
 
-export default withUrqlClient(createUrqlClient, { ssr: true })(Posts)
+export default Posts;

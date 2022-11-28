@@ -9,9 +9,11 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from 'react';
+import Container from 'typedi';
 import { APP_CONFIG, NavItem } from '../../app/AppConfig';
 import { AuthContext } from '../../app/AuthContext';
 import { useLogoutMutation } from "../../graphql/identity/graphql";
+import { AuthService } from '../../lib/identity/services/AuthService';
 
 export function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();
@@ -75,6 +77,7 @@ const LoggedInState = () => {
     const [response, logoutAPI] = useLogoutMutation();
     const authContext = useContext(AuthContext)
 
+
     useEffect(() => {
         setDomLoaded(true);
     }, []);
@@ -82,6 +85,8 @@ const LoggedInState = () => {
     if (!domLoaded) {
         return <></>
     }
+
+    const authService = Container.get(AuthService);
 
     // TODO: is it possible to assign this as action in MODULE_CONFIG
     const doLogut = async () => {
@@ -96,6 +101,10 @@ const LoggedInState = () => {
     if (authContext.isAuthenticated()) {
         view = (
             <>
+                {/* <Button onClick={async () => {
+                    authService.login({extraQueryParams:{ui:APP_CONFIG.appHost+APP_CONFIG.identity.login.href}});
+                }} variant="link" mr={12}>oidc-login
+                </Button> */}
                 <UserProfile logout={doLogut} />
                 <Button onClick={async () => {
                     doLogut();
@@ -106,11 +115,15 @@ const LoggedInState = () => {
     } else {
         view = (
             <>
+                <Button onClick={async () => {
+                    authService.login({extraQueryParams:{ui:APP_CONFIG.appHost+APP_CONFIG.identity.login.href}});
+                }} variant="link" mr={12}>oidc-login
+                </Button>
                 <Login />
                 <Register />
             </>
         )
-    }    
+    }
     return (<>{view}</>);
 }
 const Login = () => {

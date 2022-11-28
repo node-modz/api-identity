@@ -1,9 +1,6 @@
-import * as shell from '../../components/shell';
-import { Signup } from '../../components/identity/Signup';
-import { AuthProvider } from '../../app/AuthContext';
-import { createUrqlClient } from '../../app/urql-bootstrap';
-import { withUrqlClient } from 'next-urql';
 import { ReactElement } from 'react';
+import { Signup } from '../../components/identity/Signup';
+import * as shell from '../../components/shell';
 
 const Register = () => {
   return (
@@ -22,8 +19,6 @@ Register.getLayout = function getLayout(page: ReactElement) {
   )
 }
 
-export default withUrqlClient(createUrqlClient,{ssr:false})(Register)
-
-
+export default Register;
 
 

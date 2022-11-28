@@ -1,43 +1,34 @@
-import { createUrqlClient } from '../../../app/urql-bootstrap';
-import { withUrqlClient } from 'next-urql';
-import { NextPage } from 'next';
-import { Form, Formik } from 'Formik';
-import { useRouter } from "next/router";
-import { toErrorMap } from '../../../utils/utils';
-import { InputField, PasswordField } from '../../../components/core/InputField'
 import {
-    Flex,
-    Box, Checkbox,
-    Stack,
-    Link,
-    Button,
-    Heading,
-    Text,
-    useColorModeValue
+    Box, Button, Flex, Heading, Link, Stack, useColorModeValue
 } from '@chakra-ui/react';
+import { Form, Formik } from 'Formik';
+import NextLink from 'next/link';
+import { useRouter } from "next/router";
 import { APP_CONFIG } from '../../../app/AppConfig';
 import { AuthContext } from '../../../app/AuthContext';
-import NextLink from 'next/link'
+import { PasswordField } from '../../../components/core/InputField';
 import { useChangePasswordMutation } from '../../../graphql/identity/graphql';
+import { toErrorMap } from '../../../utils/utils';
 
-import * as shell from '../../../components/shell'
-import { useContext, useState } from 'react';
+import { ReactElement, useContext, useState } from 'react';
+import * as shell from '../../../components/shell';
 
-const ChangePasswordPage: NextPage<{ token: string }> = ({ token }) => {
+const ChangePasswordPage = () => {
     return (
         <>
-            <shell.TopNavBar />
             <ChangePassword />
         </>
     );
 }
 
-ChangePasswordPage.getInitialProps = ({ query }) => {
-    return {
-        token: query.token as string
-    }
+ChangePasswordPage.getLayout = function getLayout(page: ReactElement) {
+    return (
+        <>
+            <shell.TopNavBar />
+            {page}
+        </>
+    )
 }
-
 
 
 const ChangePassword = () => {
@@ -89,7 +80,7 @@ const ChangePassword = () => {
                         bg={useColorModeValue('gray.50', 'gray.800')}>
                         <Stack mt={20} spacing={8} mx={'auto'} maxW={'lg'} py={4} px={6}>
                             <Stack align={'center'}>
-                            <Heading fontSize={'3xl'}>Change Password</Heading>
+                                <Heading fontSize={'3xl'}>Change Password</Heading>
                             </Stack>
                             <Box
                                 rounded={'lg'}
@@ -97,7 +88,7 @@ const ChangePassword = () => {
                                 boxShadow={'lg'}
                                 p={8}>
                                 <Stack spacing={4}>
-                                    <Form>                                        
+                                    <Form>
                                         <PasswordField label="Password" placeholder='password' name='password' type='password' />
                                         <Box mt={2} mr={2} style={{ color: "red" }}>
                                             {tokenError}
@@ -140,5 +131,4 @@ const ChangePassword = () => {
     );
 };
 
-
-export default withUrqlClient(createUrqlClient, { ssr: false })(ChangePasswordPage)
+export default ChangePasswordPage;
