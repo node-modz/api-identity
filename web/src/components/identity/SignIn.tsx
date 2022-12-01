@@ -1,29 +1,19 @@
-import { useContext, useEffect, useState } from 'react';
+import {
+  Box, Button, Center, Checkbox, Divider, Flex, Link, Stack, Text, useColorModeValue
+} from '@chakra-ui/react';
 import { Form, Formik } from 'Formik';
+import NextLink from 'next/link';
 import { useRouter } from "next/router";
+import { useContext, useEffect, useState } from 'react';
+import { FaGithub } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
+import Container from 'typedi';
+import { AuthContext } from '../../app/AuthContext';
 import { useLoginMutation } from '../../graphql/identity/graphql';
+import { IdentityConfigOptions } from '../../lib/identity/IdentityConfigOptions';
+import { AuthService } from '../../lib/identity/services/AuthService';
 import { toErrorMap } from '../../utils/utils';
 import { InputField } from '../core/InputField';
-import {
-  Flex,
-  Box, Checkbox,
-  Stack,
-  Link,
-  Button,
-  Heading,
-  Text,
-  Divider,
-  Center,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { APP_CONFIG } from '../../app/AppConfig';
-import { AuthContext } from '../../app/AuthContext';
-import NextLink from 'next/link'
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook, FaGithub } from 'react-icons/fa';
-import { SiLinkedin, SiMessenger } from 'react-icons/si';
-import Container from 'typedi';
-import { AuthService } from '../../lib/identity/services/AuthService';
 
 export const SignIn = () => {
   const authContext = useContext(AuthContext)
@@ -31,6 +21,8 @@ export const SignIn = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [, loginRequest] = useLoginMutation();
   const router = useRouter();
+  const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions');
+
   useEffect(() => {
     setDomLoaded(true)
   }, []);
@@ -52,7 +44,7 @@ export const SignIn = () => {
             authContext.setAuthState?.(response.data?.login.tokenInfo)
             console.log("postlogin: isAuthenticated:", authContext.isAuthenticated?.())
           }
-          router.push(APP_CONFIG.identity.postLogin.href);
+          router.push(identityConfig.links["postLogin"].href);
         }
       }}>
       {({ isSubmitting }) => {
@@ -83,8 +75,8 @@ export const SignIn = () => {
                         align={'start'}
                         justify={'space-between'}>
                         <Checkbox>Remember me</Checkbox>
-                        <NextLink href={APP_CONFIG.identity.forgotPassword.href}>
-                          <Link href={APP_CONFIG.identity.forgotPassword.href} color={'blue.400'}>Forgot password?</Link>
+                        <NextLink href={identityConfig.links["forgotPassword"].href}>
+                          <Link href={identityConfig.links["forgotPassword"].href} color={'blue.400'}>Forgot password?</Link>
                         </NextLink>
                       </Stack>
                       {errMsg ? <div className='error'>{errMsg}</div> : <></>}

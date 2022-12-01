@@ -26,7 +26,8 @@ import {
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { AuthContext } from '../../app/AuthContext';
-import { APP_CONFIG } from '../../app/AppConfig';
+import Container from 'typedi';
+import { LinkItemProps, SideBarItems } from '../core/NavItems';
 
 
 export function SimpleSidebar({ children }: { children: ReactNode }) {
@@ -63,7 +64,9 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  console.log("loading sidebar: items: ", APP_CONFIG.SideBar.Items.length)
+  const items:SideBarItems = Container.get('SideBarItems');
+
+  console.log("loading sidebar: items: ", items.length)
   return (
     <Box
       bg={useColorModeValue('white', 'gray.900')}
@@ -88,7 +91,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
 
-      {APP_CONFIG.SideBar.Items.map((link) => (
+      {items.map((link) => (
         <NavItem key={link.name} icon={link.icon} href={link.href}>
           {link.name}
         </NavItem>

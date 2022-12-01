@@ -1,4 +1,3 @@
-import { IconType } from 'react-icons';
 import {
     FiHome,
     FiTrendingUp,
@@ -7,26 +6,16 @@ import {
     FiSettings,
     FiMenu,
 } from 'react-icons/fi';
-
-//SideBar Item
-export interface LinkItemProps {
-    href: string;
-    name: string;
-    icon: IconType;
-}
-
-type NavItemType = "label" | "divider" | "link";
-
-// TOP NAV Item
-export interface NavItem {
-    label: string;
-    subLabel?: string;
-    children?: Array<NavItem>;
-    href?: string;
-    type?: NavItemType;
-}
+import { LinkItemProps, NavItem, SideBarItems, TopNavItems, UserProfileItems } from '../components/core/NavItems';
+import { IdentityConfigOptions } from '../lib/identity/IdentityConfigOptions';
 
 export const APP_CONFIG = {
+    config : [
+        {prop:'identity',container_ref:'IdentityConfigOptions'},
+        {prop:'SideBar.Items',container_ref:'SideBarItems'},
+        {prop:'TopNav.Items',container_ref:'TopNavItems'},
+        {prop:'UserProfile.Items',container_ref:'UserProfileItems'},
+    ],
     appHost : "http://localhost:3000",
     graphQLUrl: "http://localhost:4000/graphql",
     identity: {
@@ -34,26 +23,16 @@ export const APP_CONFIG = {
             authority: 'http://localhost:4000/oauth2',
             client_id: 'react-oidc-client',
             scopes: 'openid profile identity:profile accounting:* dachain:*'
-        },
-        postLogin: {
-            href:"/accounting/dashboard"
-        },
-        postSignup: {
-            href:"/accounting/dashboard"
-        },
-        register: {
-            href:'/identity/register'
-        },
-        login: {
-            href:'/identity/login'
-        },        
-        postLogout: {
-            href:'/'
-        },
-        forgotPassword: {
-            href:'/identity/password/forgot-password'
-        },
-    },
+        },              
+        links: {
+            postLogin: {href:"/accounting/dashboard"},
+            postSignup: {href:"/accounting/dashboard"},
+            register: {href:'/identity/register'},
+            login: {href:'/identity/login'},
+            postLogout: {href:'/'},
+            forgotPassword: {href:'/identity/password/forgot-password'}
+        } as Record<string,LinkItemProps>
+    } as IdentityConfigOptions,
     SideBar: {
         Items: [
             { href: '/accounting/dashboard', name: 'Dasboard', icon: FiHome },
@@ -61,7 +40,7 @@ export const APP_CONFIG = {
             { href: '/posts', name: 'Posts', icon: FiCompass },
             { href: '/favorites', name: 'Favourites', icon: FiStar },
             { href: '/settings', name: 'Settings', icon: FiSettings },
-        ] as Array<LinkItemProps>
+        ] as SideBarItems
     },
     TopNav: {
         Items: [
@@ -87,7 +66,7 @@ export const APP_CONFIG = {
                 label: 'Hire Designers',
                 href: '#',
             },
-        ] as Array<NavItem>
+        ] as TopNavItems
     },
     // TODO: how to attach client side actions to these..
     UserProfile: {
@@ -95,6 +74,6 @@ export const APP_CONFIG = {
             { type:"link", label:"Settings", href:"/settings" },
             { type:"link", label:"Profile", href:"/profile" },
             { type:"divider", label:"divider"}
-        ] as Array<NavItem>
+        ] as UserProfileItems
     }
 }

@@ -1,27 +1,22 @@
+import {
+    Box, Button, Flex, Heading, Link, Stack, useColorModeValue
+} from '@chakra-ui/react';
 import { Form, Formik } from 'Formik';
+import NextLink from 'next/link';
 import { useRouter } from "next/router";
+import { useState } from 'react';
+import Container from 'typedi';
+import { useForgotPasswordMutation } from '../../graphql/identity/graphql';
+import { IdentityConfigOptions } from '../../lib/identity/IdentityConfigOptions';
 import { toErrorMap } from '../../utils/utils';
 import { InputField } from '../core/InputField';
-import {
-    Flex,
-    Box, Checkbox,
-    Stack,
-    Link,
-    Button,
-    Heading,
-    Text,
-    useColorModeValue
-} from '@chakra-ui/react';
-import { APP_CONFIG } from '../../app/AppConfig';
-import { AuthContext } from '../../app/AuthContext';
-import NextLink from 'next/link'
-import { useForgotPasswordMutation } from '../../graphql/identity/graphql';
-import { useState } from 'react';
 
 export const ForgotPassword = () => {
     const [, forgotPasswordAPI] = useForgotPasswordMutation()
     const router = useRouter();
     const [apiError, setAPIError] = useState("")
+    const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions');
+
     return (
         <Formik
             initialValues={{ username: "", email: "" }}
@@ -65,8 +60,8 @@ export const ForgotPassword = () => {
                                                 direction={{ base: 'column', sm: 'row' }}
                                                 align={'start'}
                                                 justify={'space-between'}>
-                                                <NextLink href={APP_CONFIG.identity.login.href}>
-                                                    <Link href={APP_CONFIG.identity.login.href}
+                                                <NextLink href={identityConfig.links["login"].href}>
+                                                    <Link href={identityConfig.links["login"].href}
                                                         ml={'auto'}
                                                         color={'blue.400'}>
                                                         Sign In?

@@ -1,12 +1,15 @@
 import { useRouter } from 'next/router';
 import { UserManager } from 'oidc-client';
 import { ReactElement, useEffect, useState } from 'react';
+import Container from 'typedi';
 import { APP_CONFIG } from '../../app/AppConfig';
 import * as shell from '../../components/shell';
+import { IdentityConfigOptions } from '../../lib/identity/IdentityConfigOptions';
 
 const SigninCallback = () => {
     const router = useRouter()    
     const [errMsg, setErrorMsg] = useState('');
+    const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions');
 
     useEffect(() => {
         // console.log("local storage", localStorage.length);
@@ -18,11 +21,11 @@ const SigninCallback = () => {
         const userMgr = new UserManager({ response_mode: "query" })
         userMgr.signinRedirectCallback().then(function () {
             console.log(" ------> token fetched");
-            router.push(APP_CONFIG.identity.postLogin.href);
+            router.push(identityConfig.links["postLogin"].href);
         }).catch(function (e) {
             console.error(e);
             setErrorMsg(e);
-            router.push(APP_CONFIG.identity.login.href);
+            router.push(identityConfig.links["login"].href);
         });
     }, [])
 

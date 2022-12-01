@@ -1,15 +1,17 @@
 import { useRouter } from 'next/router';
 import { useContext, useEffect } from 'react';
-import { APP_CONFIG } from '../app/AppConfig';
+import Container from 'typedi';
 import { AuthContext } from '../app/AuthContext';
+import { IdentityConfigOptions } from '../lib/identity/IdentityConfigOptions';
 
 const Settings = () => {
   const authContext = useContext(AuthContext);
   const router = useRouter();
+  const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions');
 
   useEffect(()=>{
     if ( !authContext.isAuthenticated() ) {
-      router.push(APP_CONFIG.identity.login.href);
+      router.push(identityConfig.links["login"].href);
     }    
   },[])
   return (<>

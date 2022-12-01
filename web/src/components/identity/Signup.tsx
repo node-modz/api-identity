@@ -1,20 +1,17 @@
-import { Form, Formik } from 'Formik';
-import { useRouter } from "next/router";
-import { useRegisterMutation } from '../../graphql/identity/graphql';
-import { toErrorMap } from '../../utils/utils';
-import { InputField, PasswordField } from '../core/InputField';
-import NextLink from 'next/link';
 import {
-  Flex,
-  Box, HStack, Stack,
-  Button,
-  Heading,
-  Text,
+  Box, Button, Flex, Heading, HStack, Stack, Text,
   useColorModeValue
 } from '@chakra-ui/react';
+import { Form, Formik } from 'Formik';
+import NextLink from 'next/link';
+import { useRouter } from "next/router";
 import { useContext, useState } from 'react';
-import { APP_CONFIG } from '../../app/AppConfig';
+import Container from 'typedi';
 import { AuthContext } from '../../app/AuthContext';
+import { useRegisterMutation } from '../../graphql/identity/graphql';
+import { IdentityConfigOptions } from '../../lib/identity/IdentityConfigOptions';
+import { toErrorMap } from '../../utils/utils';
+import { InputField, PasswordField } from '../core/InputField';
 
 
 
@@ -23,6 +20,8 @@ export const Signup = () => {
   const [registerReponse, register] = useRegisterMutation();
   const [errMsg, setErrorMsg] = useState('');
   const router = useRouter();
+  const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions');
+
   return (
     <Formik
       initialValues={{ firstName: "", lastName: "", email: "", username: "", password: "" }}
@@ -36,7 +35,7 @@ export const Signup = () => {
         } else if (response.data?.register.tokenInfo) {          
           authContext.setAuthState?.(response.data?.register.tokenInfo)
           console.log("postsignup: isAuthenticated:",authContext.isAuthenticated?.())
-          router.push(APP_CONFIG.identity.postSignup.href);
+          router.push(identityConfig.links["postSignup"].href);
         }
       }}>
       {({ isSubmitting }) => {

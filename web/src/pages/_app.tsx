@@ -5,13 +5,13 @@ import theme from '../theme';
 
 import { AuthProvider } from '../app/AuthContext';
 import * as urqlConfig from '../app/urql-bootstrap';
-import { ChakraContainer } from '../components/storybook/ChakraContainer';
 import * as shell from '../components/shell';
+import { ChakraContainer } from '../components/storybook/ChakraContainer';
 
 import type { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
-import {Container} from 'typedi'
-import { AuthService } from '../lib/identity/services/AuthService';
+import { Container } from 'typedi';
+import { APP_CONFIG } from '../app/AppConfig';
 
 export type PageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -21,6 +21,11 @@ type AppWithLayout = AppProps & {
   Component: PageWithLayout
 }
 
+function getDescendantProp(obj, desc) {
+  var arr = desc.split(".");
+  while(arr.length && (obj = obj[arr.shift()]));
+  return obj;
+}
 
 function MyApp({ Component, pageProps, router }: AppWithLayout) {
 
@@ -39,19 +44,19 @@ function MyApp({ Component, pageProps, router }: AppWithLayout) {
     )
   })
   console.log("loading _app");
-
-  if( !(typeof window === "undefined") ) {
-    Container.set(AuthService,new AuthService())
+  Container.set('AppConfig', APP_CONFIG);
+  for ( const attr of APP_CONFIG.config ) {
+    Container.set(attr.container_ref,getDescendantProp(APP_CONFIG,attr.prop));
   }
 
-  const client = createClient(urqlConfig.UrqlClientConfig())  
-  
+  const client = createClient(urqlConfig.UrqlClientConfig())
+
   // all pages get the UrqlClient & AuthContext provides
   return (
     <Provider value={client}>
       <AuthProvider>
         <ChakraProvider theme={theme}>
-        { getLayout(<Component {...pageProps} />) }
+          {getLayout(<Component {...pageProps} />)}
         </ChakraProvider>
       </AuthProvider>
     </Provider>

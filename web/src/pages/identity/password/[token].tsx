@@ -4,7 +4,6 @@ import {
 import { Form, Formik } from 'Formik';
 import NextLink from 'next/link';
 import { useRouter } from "next/router";
-import { APP_CONFIG } from '../../../app/AppConfig';
 import { AuthContext } from '../../../app/AuthContext';
 import { PasswordField } from '../../../components/core/InputField';
 import { useChangePasswordMutation } from '../../../graphql/identity/graphql';
@@ -12,6 +11,8 @@ import { toErrorMap } from '../../../utils/utils';
 
 import { ReactElement, useContext, useState } from 'react';
 import * as shell from '../../../components/shell';
+import Container from 'typedi';
+import { IdentityConfigOptions } from '../../../lib/identity/IdentityConfigOptions';
 
 const ChangePasswordPage = () => {
     return (
@@ -36,7 +37,8 @@ const ChangePassword = () => {
     const [tokenError, setTokenError] = useState("");
     const [apiError, setAPIError] = useState("");
     const router = useRouter();
-    const authContext = useContext(AuthContext)
+    const authContext = useContext(AuthContext);
+    const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions');
 
     console.log("token:", router.query.token)
     return (
@@ -67,7 +69,7 @@ const ChangePassword = () => {
                             authContext.setAuthState?.(response.data?.changePassword.tokenInfo)
                             console.log("postlogin: isAuthenticated:", authContext.isAuthenticated?.())
                         }
-                        router.push(APP_CONFIG.identity.postLogin.href);
+                        router.push(identityConfig.links["postLogin"].href);
                     }
                 }
             }}>
@@ -101,8 +103,8 @@ const ChangePassword = () => {
                                                 direction={{ base: 'column', sm: 'row' }}
                                                 align={'start'}
                                                 justify={'space-between'}>
-                                                <NextLink href={APP_CONFIG.identity.login.href}>
-                                                    <Link href={APP_CONFIG.identity.login.href}
+                                                <NextLink href={identityConfig.links["login"].href}>
+                                                    <Link href={identityConfig.links["login"].href}
                                                         ml={'auto'}
                                                         color={'blue.400'}>
                                                         Sign In?

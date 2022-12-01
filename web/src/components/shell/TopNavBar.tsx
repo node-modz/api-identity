@@ -10,10 +10,12 @@ import NextLink from 'next/link';
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from 'react';
 import Container from 'typedi';
-import { APP_CONFIG, NavItem } from '../../app/AppConfig';
+import { APP_CONFIG } from '../../app/AppConfig';
 import { AuthContext } from '../../app/AuthContext';
 import { useLogoutMutation } from "../../graphql/identity/graphql";
+import { IdentityConfigOptions } from '../../lib/identity/IdentityConfigOptions';
 import { AuthService } from '../../lib/identity/services/AuthService';
+import { NavItem, TopNavItems, UserProfileItems } from '../core/NavItems';
 
 export function TopNavBar() {
     const { isOpen, onToggle } = useDisclosure();
@@ -87,13 +89,14 @@ const LoggedInState = () => {
     }
 
     const authService = Container.get(AuthService);
+    const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions')
 
     // TODO: is it possible to assign this as action in MODULE_CONFIG
     const doLogut = async () => {
         console.log("clicked logout")
         await logoutAPI({});
         authContext.logout?.();
-        router.push(APP_CONFIG.identity.postLogout.href);
+        router.push(identityConfig.links["postLogout"].href);
     }
     console.log("In LoggedInState: isAuthenticated", authContext.isAuthenticated())
 
@@ -116,7 +119,7 @@ const LoggedInState = () => {
         view = (
             <>
                 <Button onClick={async () => {
-                    authService.login({extraQueryParams:{ui:APP_CONFIG.appHost+APP_CONFIG.identity.login.href}});
+                    authService.login({extraQueryParams:{ui:APP_CONFIG.appHost+identityConfig.links["login"].href}});
                 }} variant="link" mr={12}>oidc-login
                 </Button>
                 <Login />
@@ -127,8 +130,9 @@ const LoggedInState = () => {
     return (<>{view}</>);
 }
 const Login = () => {
+    const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions')
     return (
-        <NextLink href={APP_CONFIG.identity.login.href}>
+        <NextLink href={identityConfig.links["login"].href}>
             <Button
                 as={'a'}
                 fontSize={'sm'}
@@ -140,8 +144,9 @@ const Login = () => {
     )
 }
 const Register = () => {
+    const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions')
     return (
-        <NextLink href={APP_CONFIG.identity.register.href}>
+        <NextLink href={identityConfig.links["register"].href}>
             <Button
                 as={'a'}
                 display={{ base: 'none', md: 'inline-flex' }}
@@ -159,6 +164,7 @@ const Register = () => {
 }
 const UserProfile = ({ logout }) => {
     const authContext = useContext(AuthContext)
+    const userProfileItems:UserProfileItems = Container.get('UserProfileItems');
     return (
         <Menu>
             <MenuButton
@@ -177,7 +183,7 @@ const UserProfile = ({ logout }) => {
             </MenuButton>
             <MenuList>
                 {/* //TODO: onClick of logout call logout function above */}
-                {APP_CONFIG.UserProfile.Items.map((navItem) => {
+                {userProfileItems.map((navItem) => {
                     if (navItem.href) {
                         return (
                             <NextLink key={navItem.label} href={navItem.href}>
@@ -197,16 +203,16 @@ const UserProfile = ({ logout }) => {
         </Menu>
     )
 }
-const DesktopNav = () => {
-    console.log("loading topnav: items:", APP_CONFIG.TopNav.Items.length);
+const DesktopNav = () => {    
 
     const linkColor = useColorModeValue('gray.600', 'gray.200');
     const linkHoverColor = useColorModeValue('gray.800', 'white');
     const popoverContentBgColor = useColorModeValue('white', 'gray.800');
+    const topNavItems:TopNavItems = Container.get('TopNavItems');
 
     return (
         <Stack direction={'row'} spacing={4}>
-            {APP_CONFIG.TopNav.Items.map((navItem) => (
+            {topNavItems.map((navItem) => (
                 <Box key={navItem.label}>
                     <Popover trigger={'hover'} placement={'bottom-start'}>
                         <PopoverTrigger>
@@ -281,12 +287,13 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 };
 
 const MobileNav = () => {
+    const topNavItems:TopNavItems = Container.get('TopNavItems')
     return (
         <Stack
             bg={useColorModeValue('white', 'gray.800')}
             p={4}
             display={{ md: 'none' }}>
-            {APP_CONFIG.TopNav.Items.map((navItem) => (
+            {topNavItems.map((navItem) => (
                 <MobileNavItem key={navItem.label} {...navItem} />
             ))}
         </Stack>

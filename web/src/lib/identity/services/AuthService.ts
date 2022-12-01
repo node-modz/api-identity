@@ -1,20 +1,27 @@
 import { Log, User, UserManager } from 'oidc-client';
-import { APP_CONFIG } from '../../../app/AppConfig';
-import { Service } from 'typedi'
-import 'reflect-metadata'
+import 'reflect-metadata';
+import { Inject, Service } from 'typedi';
+import type { IdentityConfigOptions } from '../IdentityConfigOptions';
 
 @Service()
 export class AuthService {
     public userManager: UserManager;
-    constructor() {        
+
+    constructor(
+        @Inject('AppConfig')
+        private readonly appConfig: any,
+
+        @Inject('IdentityConfigOptions')
+        private readonly identityConfig: IdentityConfigOptions
+    ) {
         const settings = {
-            authority: APP_CONFIG.identity.client.authority,            
-            client_id: APP_CONFIG.identity.client.client_id,
-            scope: APP_CONFIG.identity.client.scopes,
-            redirect_uri: `${APP_CONFIG.appHost}/identity/signin-callback`,
-            silent_redirect_uri: `${APP_CONFIG.appHost}/identity/silent-renew`,
-            post_logout_redirect_uri: `${APP_CONFIG.appHost}`,
-            response_type: 'code',            
+            authority: this.identityConfig.client.authority,
+            client_id: this.identityConfig.client.client_id,
+            scope: this.identityConfig.client.scopes,
+            redirect_uri: `${this.appConfig.appHost}/identity/signin-callback`,
+            silent_redirect_uri: `${this.appConfig.appHost}/identity/silent-renew`,
+            post_logout_redirect_uri: `${this.appConfig.appHost}`,
+            response_type: 'code',
         };
         this.userManager = new UserManager(settings);
 
@@ -25,8 +32,7 @@ export class AuthService {
         return this.userManager.getUser();
     }
 
-    public login(queryParams:any): Promise<void> {
-        //this.userManager.signinRedirectCallback()
+    public login(queryParams: any): Promise<void> {
         return this.userManager.signinRedirect(queryParams);
     }
 
