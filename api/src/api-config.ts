@@ -12,6 +12,15 @@ dotenv.config();
 
 export const __prod__ = process.env.NODE_ENV === 'production'
 export const __SERVER_CONFIG__ = {
+    config : [
+        {prop:'server',container_ref:'ServerConfigOptions'},
+        {prop:'db',container_ref:'DBConfigOptions'},
+        {prop:'http',container_ref:'HttpConfigOptions'},
+        {prop:'apollo',container_ref:'GraphQLConfigOptions'},
+        {prop:'notifier',container_ref:'NotifierConfigOptions'},
+        {prop:'identity',container_ref:'IdentityConfigOptions'},
+    ],
+
     setup: [
         { init: "./app/init-server", config: 'server' },
         { init: "./app/init-db", config: 'db' },

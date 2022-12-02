@@ -3,15 +3,15 @@ import { AppProps } from 'next/app';
 import { createClient, Provider } from 'urql';
 import theme from '../theme';
 
-import { AuthProvider } from '../app/AuthContext';
-import * as urqlConfig from '../app/urql-bootstrap';
-import * as shell from '../components/shell';
-import { ChakraContainer } from '../components/storybook/ChakraContainer';
+import { AuthProvider } from '../mfe/identity/components/AuthContext';
+import * as urqlConfig from '../mfe/identity/graphql/Urql';
+import * as shell from '../mfe/shell/components';
+import { ChakraContainer } from '../mfe/storybook/components/ChakraContainer';
 
 import type { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
 import { Container } from 'typedi';
-import { APP_CONFIG } from '../app/AppConfig';
+import { __APP_CONFIG__ } from '../app-config';
 
 export type PageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -21,9 +21,14 @@ type AppWithLayout = AppProps & {
   Component: PageWithLayout
 }
 
-function getDescendantProp(obj, desc) {
-  var arr = desc.split(".");
-  while(arr.length && (obj = obj[arr.shift()]));
+function getDescendantProp(obj:any, desc:string) {
+  var arr:string[] = desc.split(".");
+  while(arr.length && obj ) {
+    let prop = arr.shift();
+    if( prop ) {
+      obj = obj[prop];
+    }
+  }
   return obj;
 }
 
@@ -44,9 +49,9 @@ function MyApp({ Component, pageProps, router }: AppWithLayout) {
     )
   })
   console.log("loading _app");
-  Container.set('AppConfig', APP_CONFIG);
-  for ( const attr of APP_CONFIG.config ) {
-    Container.set(attr.container_ref,getDescendantProp(APP_CONFIG,attr.prop));
+  Container.set('AppConfig', __APP_CONFIG__);
+  for ( const attr of __APP_CONFIG__.config ) {
+    Container.set(attr.container_ref,getDescendantProp(__APP_CONFIG__,attr.prop));
   }
 
   const client = createClient(urqlConfig.UrqlClientConfig())

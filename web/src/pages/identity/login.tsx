@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
-import { SignIn } from '../../components/identity/SignIn';
-import * as shell from '../../components/shell';
+import { SignIn } from '../../mfe/identity/components/SignIn';
+import * as shell from '../../mfe/shell/components';
 
 
 const Login = () => {

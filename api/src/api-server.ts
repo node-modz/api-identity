@@ -19,11 +19,31 @@ const main = async () => {
     return;
   }
   logger.info("starting server using config:", rfile);
-  
-  const config = require(rfile).__SERVER_CONFIG__;
+
+  const descendentProperty = (obj:any, desc:string) => {
+    var arr = desc.split(".");
+    while(arr.length && (obj = obj[arr.shift() as string]));
+    return obj;
+  }
+
+  const server = require(rfile).__SERVER_CONFIG__;
+  /**
+   * initialize the config in.
+   */
+  for ( const attr of server.config as {prop:string,container_ref:string}[] ) {
+    Container.set(attr.container_ref,descendentProperty(server,attr.prop));
+  }
+
+  // for ( const attr of server.config as {prop:string,container_ref:string}[] ) {
+  //   logger.info(` Container[${attr.container_ref}]`, Container.get(attr.container_ref));
+  // }
+
+  /**
+   * bootup app.
+   */
   const appCtxt = initApp("ledgers-api");
-  for (const mod of config.setup as { init: string, config: string }[]) {
-    await require(mod.init).default(appCtxt, (config as any)[mod.config])
+  for (const mod of server.setup as { init: string, config: string }[]) {
+    await require(mod.init).default(appCtxt, (server as any)[mod.config])
   }
 
   const serverConfig:ServerConfigOptions = Container.get('ServerConfigOptions')

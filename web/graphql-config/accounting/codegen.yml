@@ -1,9 +1,0 @@
-overwrite: true
-schema: "http://localhost:4000/graphql"
-documents: "graphql-config/accounting/*.graphql"
-generates:
-  src/graphql/accounting/graphql.tsx:
-    plugins:
-      - "typescript"
-      - "typescript-operations"
-      - "typescript-urql"

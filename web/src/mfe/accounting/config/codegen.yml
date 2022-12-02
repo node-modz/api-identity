@@ -1,0 +1,9 @@
+overwrite: true
+schema: "http://localhost:4000/graphql"
+documents: "src/mfe/accounting/config/*.graphql"
+generates:
+  src/mfe/accounting/graphql/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-urql"

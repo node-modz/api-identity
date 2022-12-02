@@ -1,13 +1,13 @@
 import { ReactElement } from 'react';
-import { ForgotPassword } from '../../../components/identity/ForgotPassword';
-import * as shell from '../../../components/shell';
+import { ForgotPassword } from '../../../mfe/identity/components/ForgotPassword';
+import * as shell from '../../../mfe/shell/components';
 
 const ForgotPasswordPage = () => {
-    return (
-        <>
-          <ForgotPassword/>
-        </> 
-      );
+  return (
+    <>
+      <ForgotPassword />
+    </>
+  );
 }
 
 ForgotPasswordPage.getLayout = function getLayout(page: ReactElement) {
@@ -19,4 +19,4 @@ ForgotPasswordPage.getLayout = function getLayout(page: ReactElement) {
   )
 }
 
-export default ForgotPassword;
+export default ForgotPasswordPage;

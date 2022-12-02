@@ -1,10 +1,10 @@
 import { HStack } from "@chakra-ui/react";
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
-import { AuthContext } from '../../app/AuthContext';
-import BankActivity from "../../components/accounting/BankActivity";
-import Card from "../../components/accounting/Card";
-import { AuthContent } from "../../components/identity/AuthInfo";
+import { AuthContext } from '../../mfe/identity/components/AuthContext';
+import BankActivity from "../../mfe/accounting/components/BankActivity";
+import Card from "../../mfe/accounting/components/Card";
+import { AuthContent } from "../../mfe/identity/components/AuthInfo";
 
 
 const Dasboard = () => {

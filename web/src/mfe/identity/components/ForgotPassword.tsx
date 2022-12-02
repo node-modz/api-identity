@@ -4,85 +4,45 @@ import {
 import { Form, Formik } from 'Formik';
 import NextLink from 'next/link';
 import { useRouter } from "next/router";
-import { AuthContext } from '../../../mfe/identity/components/AuthContext';
-import { PasswordField } from '../../../mfe/core/components/InputField';
-import { useChangePasswordMutation } from '../../../mfe/identity/graphql/graphql';
-import { toErrorMap } from "../../../mfe/identity/utils";
-
-import { ReactElement, useContext, useState } from 'react';
-import * as shell from '../../../mfe/shell/components';
+import { useState } from 'react';
 import Container from 'typedi';
-import { IdentityConfigOptions } from '../../../mfe/identity/config/config';
+import { useForgotPasswordMutation } from '../graphql/graphql';
+import { IdentityConfigOptions } from '../config/config';
+import { toErrorMap } from "../utils";
+import { InputField } from '../../core/components/InputField';
 
-const ChangePasswordPage = () => {
-    return (
-        <>
-            <ChangePassword />
-        </>
-    );
-}
-
-ChangePasswordPage.getLayout = function getLayout(page: ReactElement) {
-    return (
-        <>
-            <shell.TopNavBar />
-            {page}
-        </>
-    )
-}
-
-
-const ChangePassword = () => {
-    const [, changePasswordAPI] = useChangePasswordMutation()
-    const [tokenError, setTokenError] = useState("");
-    const [apiError, setAPIError] = useState("");
+export const ForgotPassword = () => {
+    const [, forgotPasswordAPI] = useForgotPasswordMutation()
     const router = useRouter();
-    const authContext = useContext(AuthContext);
+    const [apiError, setAPIError] = useState("")
     const identityConfig:IdentityConfigOptions = Container.get('IdentityConfigOptions');
 
-    console.log("token:", router.query.token)
     return (
         <Formik
-            initialValues={{ password: "" }}
+            initialValues={{ username: "", email: "" }}
             onSubmit={async (values, helpers) => {
-                const { setErrors } = helpers
-                const response = await changePasswordAPI({
-                    token: typeof router.query.token === "string"
-                        ? router.query.token
-                        : "",
-                    ...values
-                })
+                const { setErrors } = helpers     
+                setAPIError("");
+                const response = await forgotPasswordAPI(values)
                 if (response.error) {
                     //TODO: have a standard toast to display these errors?
                     console.log(response.error)
-                    setAPIError(response.error.toString());
+                    setAPIError(response.error.toString())
                 } else if (response.data) {
-                    const { errors } = response.data.changePassword
+                    const { errors } = response.data.forgotPassword
                     if (errors) {
-                        const errorMap = toErrorMap(errors)
-                        if ("token" in errorMap) {
-                            setTokenError(errorMap.token);
-                        }
-                        setErrors(errorMap)
+                        setErrors(toErrorMap(errors))
                     } else {
-                        if (response.data?.changePassword.tokenInfo) {
-                            authContext.setAuthState?.(response.data?.changePassword.tokenInfo)
-                            console.log("postlogin: isAuthenticated:", authContext.isAuthenticated?.())
-                        }
-                        router.push(identityConfig.links["postLogin"].href);
+                        // TODO: show message to check email.
                     }
                 }
             }}>
             {({ isSubmitting }) => {
                 return (
-                    <Flex
-                        minH={'100vh'}
-                        align={'center'}
-                        justify={'center'}
-                        bg={useColorModeValue('gray.50', 'gray.800')}>
-                        <Stack mt={20} spacing={8} mx={'auto'} maxW={'lg'} py={4} px={6}>
+                    <Flex p={8}>
+                        <Stack spacing={2} mx={'auto'} maxW={'lg'} py={4} px={6}>
                             <Stack align={'center'}>
-                                <Heading fontSize={'3xl'}>Change Password</Heading>
+                            <Heading fontSize={'3xl'}>Enter Your Email</Heading>                                
                             </Stack>
                             <Box
                                 rounded={'lg'}
@@ -91,13 +51,10 @@ const ChangePassword = () => {
                                 p={8}>
                                 <Stack spacing={4}>
                                     <Form>
-                                        <PasswordField label="Password" placeholder='password' name='password' type='password' />
-                                        <Box mt={2} mr={2} style={{ color: "red" }}>
-                                            {tokenError}
-                                        </Box>
-                                        <Box mt={2} mr={2} style={{ color: "red" }}>
+                                        <Box mr={2} style={{ color: "red" }}>
                                             {apiError}
                                         </Box>
+                                        <InputField label="Email" placeholder='email' name='email' />
                                         <Stack spacing={10}>
                                             <Stack
                                                 direction={{ base: 'column', sm: 'row' }}
@@ -119,7 +76,7 @@ const ChangePassword = () => {
                                                 _hover={{
                                                     bg: 'blue.500',
                                                 }}>
-                                                Reset Password
+                                                Get Link
                                             </Button>
                                         </Stack>
                                     </Form>
@@ -132,5 +89,3 @@ const ChangePassword = () => {
         </Formik>
     );
 };
-
-export default ChangePasswordPage;

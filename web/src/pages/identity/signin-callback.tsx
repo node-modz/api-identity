@@ -2,9 +2,8 @@ import { useRouter } from 'next/router';
 import { UserManager } from 'oidc-client';
 import { ReactElement, useEffect, useState } from 'react';
 import Container from 'typedi';
-import { APP_CONFIG } from '../../app/AppConfig';
-import * as shell from '../../components/shell';
-import { IdentityConfigOptions } from '../../lib/identity/IdentityConfigOptions';
+import { IdentityConfigOptions } from '../../mfe/identity/config/config';
+import * as shell from '../../mfe/shell/components';
 
 const SigninCallback = () => {
     const router = useRouter()    

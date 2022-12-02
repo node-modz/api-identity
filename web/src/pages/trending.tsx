@@ -1,4 +1,4 @@
-import * as shell from '../components/shell'
+import * as shell from '../mfe/shell/components'
 
 const Trending = () => (
   <>

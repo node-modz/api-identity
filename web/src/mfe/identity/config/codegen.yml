@@ -1,0 +1,9 @@
+overwrite: true
+schema: "http://localhost:4000/graphql"
+documents: "src/mfe/identity/config/*.graphql"
+generates:
+  src/mfe/identity/graphql/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-urql"
