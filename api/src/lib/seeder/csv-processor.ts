@@ -1,6 +1,6 @@
 import fs from "fs";
 import csv from "csv-parser";
-import Logger from "../Logger";
+import Logger from "../logger/Logger";
 
 const logger = Logger(module)
 

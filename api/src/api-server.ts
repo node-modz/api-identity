@@ -1,9 +1,9 @@
 import dotenv from 'dotenv-safe';
 import minimist from 'minimist';
 import Container from 'typedi';
-import initApp from "./app/init-context";
-import { ServerConfigOptions } from './app/init-server';
-import Logger from './lib/Logger';
+import initApp from "./lib/core/init-context";
+import { ServerConfigOptions } from "./lib/core/config/ServerConfigOptions";
+import Logger from './lib/logger/Logger';
 
 const logger = Logger(module);
 
@@ -31,22 +31,21 @@ const main = async () => {
    * initialize the config in.
    */
   for ( const attr of server.config as {prop:string,container_ref:string}[] ) {
-    Container.set(attr.container_ref,descendentProperty(server,attr.prop));
+    Container.set(
+      attr.container_ref,
+      descendentProperty(server,attr.prop));
   }
-
-  // for ( const attr of server.config as {prop:string,container_ref:string}[] ) {
-  //   logger.info(` Container[${attr.container_ref}]`, Container.get(attr.container_ref));
-  // }
 
   /**
    * bootup app.
    */
   const appCtxt = initApp("ledgers-api");
   for (const mod of server.setup as { init: string, config: string }[]) {
-    await require(mod.init).default(appCtxt, (server as any)[mod.config])
+    await require(mod.init).default(appCtxt)
   }
 
   const serverConfig:ServerConfigOptions = Container.get('ServerConfigOptions')
+  logger.info('ServerConfigOptions', serverConfig);
   appCtxt.http.listen(serverConfig.port, () => {
     logger.info("ledgers-api listening on: ", serverConfig.port);
   });

@@ -4,7 +4,7 @@ import fs from "fs";
 import moment from "moment";
 import { Service } from 'typedi';
 import { getConnection } from "typeorm";
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 import { Seeder } from "../../../lib/seeder/Seeder";
 import {
     ActivityType,

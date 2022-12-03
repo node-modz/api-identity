@@ -21,11 +21,11 @@ type AppWithLayout = AppProps & {
   Component: PageWithLayout
 }
 
-function getDescendantProp(obj:any, desc:string) {
-  var arr:string[] = desc.split(".");
-  while(arr.length && obj ) {
+function getDescendantProp(obj: any, desc: string) {
+  var arr: string[] = desc.split(".");
+  while (arr.length && obj) {
     let prop = arr.shift();
-    if( prop ) {
+    if (prop) {
       obj = obj[prop];
     }
   }
@@ -50,8 +50,11 @@ function MyApp({ Component, pageProps, router }: AppWithLayout) {
   })
   console.log("loading _app");
   Container.set('AppConfig', __APP_CONFIG__);
-  for ( const attr of __APP_CONFIG__.config ) {
-    Container.set(attr.container_ref,getDescendantProp(__APP_CONFIG__,attr.prop));
+  for (const attr of __APP_CONFIG__.config) {
+    Container.set(
+      attr.container_ref,
+      getDescendantProp(__APP_CONFIG__, attr.prop)
+    );
   }
 
   const client = createClient(urqlConfig.UrqlClientConfig())

@@ -10,7 +10,7 @@ import {
     W3LedgerAccountActivity, __LEDGER_RULES__
 } from "../entities/index";
 
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 import { UserService } from "../../identity/services/identity/UserService";
 
 const logger = Logger(module)

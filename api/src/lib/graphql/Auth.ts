@@ -1,7 +1,6 @@
-import { GraphQLReqContext } from "src/lib/graphql/GraphQLReqContext";
-import { ApolloError } from "apollo-server-express";
 import { GraphQLError } from "graphql";
-import { MiddlewareFn } from 'type-graphql'
+import { MiddlewareFn } from 'type-graphql';
+import { GraphQLReqContext } from "./GraphQLReqContext";
 
 export const isUserAuth: MiddlewareFn<GraphQLReqContext> = async ({ context }, next) => {
     if (!context.user) {

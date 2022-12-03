@@ -3,7 +3,7 @@ import { Inject, Service } from 'typedi';
 import { getConnection } from "typeorm";
 import { Login, Tenant, User, IdpConnect } from "../entities/identity/index";
 import { AuthService } from "../services/identity/AuthService";
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 import { Seeder } from '../../../lib/seeder/Seeder';
 
 const logger = Logger(module)

@@ -10,9 +10,8 @@
 
 ```
   $ npx typeorm migration:run -c ledgers  
-
-  $ node dist/lib/seeder/seeder-run.js --loaders dist/seed-data/seed-loaders --clean
-  $ node dist/lib/seeder/seeder-run.js --loaders dist/seed-data/seed-loaders 
+  $ node dist/lib/seeder/seeder-run.js --init dist/seeder-config.ts --loaders dist/seed-data/seed-loaders --clean
+  $ node dist/lib/seeder/seeder-run.js --init dist/seeder-config.ts --loaders dist/seed-data/seed-loaders
 ```
 
 ```bash

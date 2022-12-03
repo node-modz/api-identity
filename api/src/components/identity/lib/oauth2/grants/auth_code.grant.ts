@@ -13,7 +13,7 @@ import { ResponseInterface } from "../responses/response";
 import { DateInterval } from "../utils/date_interval";
 import { AbstractAuthorizedGrant } from "./abstract/abstract_authorized.grant";
 import { GrantIdentifier } from "./abstract/grant.interface";
-import Logger from '../../../../../lib/Logger'
+import Logger from '../../../../../lib/logger/Logger'
 
 const logger = Logger(module);
 

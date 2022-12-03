@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 import { CsvProcessor } from "../../../lib/seeder/csv-processor";
 import { Seeder } from '../../../lib/seeder/Seeder';
 import { Tenant } from "../entities/identity";

@@ -2,36 +2,20 @@ import { json, urlencoded } from "body-parser";
 import * as fs from 'fs';
 import * as jose from 'node-jose';
 import Container from "typedi";
-import Logger from '../lib/Logger';
-import { AppContext } from "./init-context";
-import * as oauth2Routes from '../components/identity/routes/oauth2-routes'
-import * as identityRoutes from '../components/identity/routes/identity-routes'
+import Logger from '../../lib/logger/Logger';
+import { AppContext } from "../../lib/core/AppContext";
+import * as oauth2Routes from './routes/oauth2-routes'
+import * as identityRoutes from './routes/identity-routes'
+import { IdentityConfigOptions } from "./config/IdentityConfigOptions";
 
 const logger = Logger(module);
 
-export type IdentityConfigOptions = {
-  forgot_password_prefix: string,
-  oauth2: {
-    jwt_keys: string
-    jwt_secret: string
-  }
-  federated: Record<string, {
-    type: string,
-    client_id: string,
-    client_secret: string
-    authorize_url?: string
-    token_url?: string
-    profile_url?: string
-    callback_url?: string,
-    scopes: string[]
-  }>
-}
+const init = async (ctx: AppContext) => {
 
-const init = async (ctx: AppContext, config: IdentityConfigOptions) => {
+  const config: IdentityConfigOptions = Container.get('IdentityConfigOptions');
+
   logger.info(ctx.name, ": init identity: ");
   logger.info(ctx.name, ": init oauth jwt_secret:", config.oauth2.jwt_secret);
-
-  Container.set('IdentityConfigOptions',config);
 
   const keyStore = await initKeyStore(ctx,config);
 

@@ -1,7 +1,7 @@
 import express from "express";
 import { Inject, Service } from 'typedi';
-import { HttpConfigOptions } from '../../../../app/init-http';
-import Logger from "../../../../lib/Logger";
+import { HttpConfigOptions } from "../../../../lib/core/config/HttpConfigOptions";
+import Logger from "../../../../lib/logger/Logger";
 import { User } from "../../entities/identity";
 
 const logger = Logger(module)

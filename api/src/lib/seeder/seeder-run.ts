@@ -1,8 +1,7 @@
 import minimist from "minimist";
-import { __SERVER_CONFIG__ } from '../../api-config';
-import initApp from "../../app/init-context";
-import db from '../../app/init-db';
-import Logger from "../Logger";
+import Container from "typedi";
+import initApp from "../core/init-context";
+import Logger from "../logger/Logger";
 import { Seeder } from "./Seeder";
 const logger = Logger(module)
 
@@ -12,46 +11,80 @@ const main = async () => {
     logger.info("start seeder:", __dirname);
     logger.info(argv);
 
-    const appCtxt = initApp("seeder");
-    await db(appCtxt,__SERVER_CONFIG__.db);
+    const file = argv["init"];
+    const rfile = (file) ? process.cwd() + "/" + file.replace(/\.[^/.]+$/, "") : '';
+    if (!file) {
+        logger.error("server config missing: --init <file>")
+        return;
+    }
+    logger.info("starting seeder using config:", rfile);
 
-    // for (const file of ["../app/init-db"]) {
-    //     await require(file).default(appCtxt);
-    // }
+    const descendentProperty = (obj: any, desc: string) => {
+        var arr = desc.split(".");
+        while (arr.length && (obj = obj[arr.shift() as string]));
+        return obj;
+    }
+    
+    const config = require(rfile).__SERVER_CONFIG__;
 
-    // const fileLoaders = [
-    //     { cmd: "users", fileName: "dist/seed-data/identity/users.ts", seeder: Container.get(IdentityUserSeeder) },
-    //     { cmd: "tenants", fileName: "dist/seed-data/identity/tenants.csv", seeder: Container.get(TenantSeeder) },
-    //     { cmd: "activity", fileName: "dist/seed-data/accounting/", seeder: Container.get(BankActivitySeeder) },
-    //     { cmd: "w3chains", fileName: "dist/seed-data/dacchain/user-chain.ts", seeder: Container.get(UserChainSeeder) },
-    //     { cmd: "w3activity", fileName: "dist/seed-data/dacchain/user-transactions.ts", seeder: Container.get(UserTransactionSeeder) },
-    //     { cmd: "oauthclients", fileName: "dist/seed-data/oauth2/clients.ts", seeder: Container.get(ClientSeeder) },
-    // ];
+    logger.info("loading config");
+    /**
+     * initialize config.
+     */
+    for (const attr of config.config as { prop: string, container_ref: string }[]) {
+        Container.set(
+            attr.container_ref,
+            descendentProperty(config, attr.prop));
+    }
+
+    for (const attr of config.config as { prop: string, container_ref: string }[]) {
+        logger.info(` prop: ${attr.container_ref}`, Container.get(attr.container_ref));
+    }
+
+    /**
+     * run all initializers
+     */
+    const appCtxt = initApp("ledgers-api");
+    for (const mod of config.setup as { init: string, config: string }[]) {
+        logger.info("loading ", mod.init);
+        await require(process.cwd() + "/"+mod.init).default(appCtxt)
+    }
+
     const loaderFile = process.cwd() + "/" + argv["loaders"].replace(/\.[^/.]+$/, "")
-    const fileLoaders = require(loaderFile).fileLoaders as {cmd:string,fileName:string,seeder:Seeder}[];    
 
+    logger.info("loading from seed-loaders file",loaderFile);
+    const resolvedLoader = require(loaderFile)
+    const seedLoaders = resolvedLoader.seedLoaders as { cmd: string, fileName: string, seeder: Seeder }[];
+    
     let all = true;
-    fileLoaders.forEach(l => {
+    seedLoaders.forEach(l => {
         if (argv[l.cmd]) { all = false }
     })
 
     if (all || argv["all"]) {
-        fileLoaders.forEach(l => argv[l.cmd] = true)
+        seedLoaders.forEach(l => argv[l.cmd] = true)
     }
 
-    if (argv["clean"]) {
-        for (var v of fileLoaders.reverse()) {
+    const doClean = async () => {
+        for (var v of seedLoaders.reverse()) {
             if (argv[v.cmd]) {
-                logger.info("clean up:", v.fileName)
+                logger.info("clean up:", v.fileName)                
                 await v.seeder.tearDown()
             }
         }
-    } else {
-        for (var v of fileLoaders) {
-            if (argv[v.cmd]) {
+    }
+    const doLoad = async () => {
+        for (var v of seedLoaders) {
+            if (argv[v.cmd]) {                
                 await v.seeder.setup(v.fileName)
             }
         }
+    }
+
+    if (argv["clean"]) {
+        await doClean();
+    } else {
+        await doLoad();
     }
 
     logger.info("seeder done");

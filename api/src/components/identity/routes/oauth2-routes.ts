@@ -9,9 +9,9 @@ import {
     handleExpressResponse, requestFromExpress
 } from '../lib/oauth2/adapters/express';
 
-import { IdentityConfigOptions } from '../../../app/init-identity';
-import { ServerConfigOptions } from '../../../app/init-server';
-import Logger from "../../../lib/Logger";
+import { IdentityConfigOptions } from "../config/IdentityConfigOptions";
+import { ServerConfigOptions } from "../../../lib/core/config/ServerConfigOptions";
+import Logger from "../../../lib/logger/Logger";
 import { SecurityService } from '../services/identity/SecurityService';
 import { UserService } from '../services/identity/UserService';
 import {

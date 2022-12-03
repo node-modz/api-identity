@@ -13,8 +13,8 @@ import {
   ChangePasswordInput, ChangePasswordResponse, ForgotPasswordResponse, RegisterUserInput, UserResponse
 } from "./models";
 
-import { IdentityConfigOptions } from "../../../app/init-identity";
-import Logger from "../../../lib/Logger";
+import { IdentityConfigOptions } from "../config/IdentityConfigOptions";
+import Logger from "../../../lib/logger/Logger";
 import { LoginService } from "../services/identity/LoginService";
 import { SecurityService } from "../services/identity/SecurityService";
 import { UserService } from "../services/identity/UserService";

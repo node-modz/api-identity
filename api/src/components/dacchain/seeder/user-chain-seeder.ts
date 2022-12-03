@@ -11,7 +11,7 @@ import { AuthService } from "../../identity/services/identity/AuthService";
 import { UserService } from "../../identity/services/identity/UserService";
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { Repository } from "typeorm";
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 import { Seeder } from "../../../lib/seeder/Seeder";
 
 const logger = Logger(module)

@@ -15,7 +15,7 @@ import "reflect-metadata";
 import { BankActivity } from "../entities/BankActivity";
 import { isUserAuth } from '../../../lib/graphql/Auth'
 import { Service } from "typedi";
-import Logger from '../../../lib/Logger'
+import Logger from '../../../lib/logger/Logger'
 
 const logger = Logger(module);
 

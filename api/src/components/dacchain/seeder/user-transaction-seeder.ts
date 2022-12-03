@@ -4,7 +4,7 @@ import {
 } from "../../dacchain/entities/index";
 import { W3ChainService } from "../services/W3ChainService";
 import { Inject, Service } from 'typedi';
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 import { Seeder } from "../../../lib/seeder/Seeder";
 
 const logger = Logger(module)

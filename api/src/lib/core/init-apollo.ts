@@ -1,22 +1,23 @@
 import { ApolloServer } from "apollo-server-express";
 import path from "path";
-import { buildSchema, NonEmptyArray } from "type-graphql";
+import { buildSchema } from "type-graphql";
 import { Container } from "typedi";
-import Logger from '../lib/Logger';
-import { AppContext } from "./init-context";
+import Logger from '../logger/Logger';
+import { AppContext } from "./AppContext";
+import * as ioRedis from "ioredis";
+import { GraphqQLConfig } from "./config/GraphqQLConfig";
 
 const logger = Logger(module);
 
-export type GraphqQLConfig = {
-  resolvers?: NonEmptyArray<string>
-}
+const init = async (ctx: AppContext ) => {
 
-const init = async (ctx: AppContext, config:GraphqQLConfig={} ) => {
+  const config:GraphqQLConfig= Container.get('GraphQLConfigOptions');
+
   logger.info(ctx.name, ": init apollo: ");
   logger.debug(config.resolvers);
 
   const app = ctx.http;
-  const redisClient = ctx.redis;
+  const redisClient:ioRedis.Redis = ctx.redis;
 
   if ( config.resolvers ) {
     const server = new ApolloServer({

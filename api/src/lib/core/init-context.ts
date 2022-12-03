@@ -1,13 +1,9 @@
 import express from "express";
 
 import * as ioRedis from "ioredis";
+import { AppContext } from "./AppContext";
 
 
-export class AppContext {
-  name: string
-  http: express.Express;
-  redis: ioRedis.Redis;
-}
 const init = (name:string): AppContext => {
   const appCtxt = new AppContext();
   appCtxt.name = name

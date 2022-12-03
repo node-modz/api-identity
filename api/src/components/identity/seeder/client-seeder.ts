@@ -3,7 +3,7 @@ import * as process from 'process';
 import { Service } from 'typedi';
 import { getConnection, Repository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 import { Seeder } from '../../../lib/seeder/Seeder';
 import { AuthCode } from '../entities/oauth2/AuthCode';
 import { Client } from '../entities/oauth2/Client';

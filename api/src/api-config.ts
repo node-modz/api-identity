@@ -1,12 +1,12 @@
 
 import dotenv from 'dotenv-safe';
 import path from "path";
-import { GraphqQLConfig } from "./app/init-apollo";
-import { DBConfigOptions } from "./app/init-db";
-import { HttpConfigOptions } from "./app/init-http";
-import { IdentityConfigOptions } from "./app/init-identity";
-import { NotifierConfigOptions } from './app/init-notifier';
-import { ServerConfigOptions } from './app/init-server';
+import { GraphqQLConfig } from "./lib/core/config/GraphqQLConfig";
+import { DBConfigOptions } from "./lib/core/config/DBConfigOptions";
+import { HttpConfigOptions } from "./lib/core/config/HttpConfigOptions";
+import { IdentityConfigOptions } from "./components/identity/config/IdentityConfigOptions";
+import { NotifierConfigOptions } from "./components/notifier/config/NotifierConfigOptions";
+import { ServerConfigOptions } from "./lib/core/config/ServerConfigOptions";
 
 dotenv.config();
 
@@ -22,13 +22,11 @@ export const __SERVER_CONFIG__ = {
     ],
 
     setup: [
-        { init: "./app/init-server", config: 'server' },
-        { init: "./app/init-db", config: 'db' },
-        { init: "./app/init-http", config: 'http' },
-        { init: "./app/init-session", config: 'http' },
-        { init: "./app/init-apollo", config: 'apollo' },
-        { init: "./app/init-notifier", config: 'notifier' },
-        { init: "./app/init-identity", config: 'identity' },
+        { init: "./lib/core/init-db"  },
+        { init: "./lib/core/init-http"  },
+        { init: "./lib/core/init-session"  },
+        { init: "./lib/core/init-apollo"  },
+        { init: "./components/identity/init-identity" },
     ],
     // this host.
     // TODO: this can support multiple hosts.

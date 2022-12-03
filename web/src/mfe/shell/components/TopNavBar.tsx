@@ -92,7 +92,7 @@ const LoggedInState = () => {
     const authService = Container.get(AuthService);
     const identityConfig: IdentityConfigOptions = Container.get('IdentityConfigOptions')
     const appConfig: AppConfigOptions = Container.get('AppConfigOptions');
-    const redirTo = appConfig.host + identityConfig.links["login"].href
+    const loginUI = appConfig.host + identityConfig.links["login"].href
 
     // TODO: is it possible to assign this as action in MODULE_CONFIG
     const doLogut = async () => {
@@ -122,7 +122,7 @@ const LoggedInState = () => {
         view = (
             <>
                 <Button onClick={async () => {
-                    authService.login({ extraQueryParams: { ui: redirTo } });
+                    authService.login({ extraQueryParams: { ui: loginUI } });
                 }} variant="link" mr={12}>oidc-login
                 </Button>
                 <Login />

@@ -4,8 +4,8 @@ import jwtDecode from "jwt-decode";
 import { Inject, Service } from 'typedi';
 import { Repository } from "typeorm";
 import { InjectRepository } from 'typeorm-typedi-extensions';
-import { IdentityConfigOptions } from "../../../../app/init-identity";
-import Logger from "../../../../lib/Logger";
+import { IdentityConfigOptions } from "../../config/IdentityConfigOptions";
+import Logger from "../../../../lib/logger/Logger";
 import { Login, User } from '../../entities/identity';
 import { Token } from "../../resolvers/models";
 

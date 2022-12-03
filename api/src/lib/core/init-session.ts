@@ -2,20 +2,23 @@ import connectRedis from "connect-redis";
 import session from "express-session";
 import Redis from "ioredis";
 import Container from "typedi";
-import { SecurityService } from "../components/identity/services/identity/SecurityService";
-import Logger from '../lib/Logger';
-import { AppContext } from "./init-context";
-import { HttpConfigOptions } from "./init-http";
+import { SecurityService } from "../../components/identity/services/identity/SecurityService";
+import Logger from '../logger/Logger';
+import { AppContext } from "./AppContext";
+import { HttpConfigOptions } from "./config/HttpConfigOptions";
+import express from "express";
 
 const logger = Logger(module);
 const __prod__ = process.env.NODE_ENV === 'production'
 
-const init = async (ctx: AppContext, config: HttpConfigOptions) => {
+const init = async (ctx: AppContext) => {
+
+  const config: HttpConfigOptions = Container.get('HttpConfigOptions');
 
   logger.info(ctx.name, ": init session: ", config.session.redis_store);
   logger.info(ctx.name, ": init session: connecting to redis client: ");
 
-  const app = ctx.http;
+  const app:express.Express = ctx.http;
   const RedisStore = connectRedis(session);
   const redis = new Redis(config.session.redis_store);
 
@@ -45,7 +48,7 @@ const init = async (ctx: AppContext, config: HttpConfigOptions) => {
 };
 
 const applySessionMiddleWare = (ctx: AppContext) => {
-  const app = ctx.http;
+  const app:express.Express = ctx.http;
   app.use(async (req, res, next) => {
     await Container.get(SecurityService)
       .loadAuthContext(req,res);

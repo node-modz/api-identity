@@ -1,20 +1,21 @@
 
-import { ConnectionOptions, createConnection, useContainer } from "typeorm";
-import { Container } from 'typeorm-typedi-extensions';
-import Logger from '../lib/Logger';
-import { AppContext } from "./init-context";
+import Container from "typedi";
+import { createConnection, useContainer } from "typeorm";
+import * as OrmExt from 'typeorm-typedi-extensions'
+import Logger from '../logger/Logger';
+import { DBConfigOptions } from "./config/DBConfigOptions";
+import { AppContext } from "./AppContext";
 
 const logger = Logger(module);
 
-export type DBConfigOptions = ConnectionOptions & {  
-  url?:string  
-}
+const init = async (appCtxt: AppContext) => {
 
-const init = async (appCtxt: AppContext, dbConfig: DBConfigOptions ) => {
+  const dbConfig: DBConfigOptions = Container.get('DBConfigOptions');
+  
   logger.info(appCtxt.name, ": init db config:", dbConfig );
   
-  useContainer(Container);
- 
+  useContainer(OrmExt.Container);
+  
   logger.debug("entity locations:", dbConfig.entities);
 
   const conn = await createConnection({

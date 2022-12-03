@@ -2,28 +2,17 @@ import cors, { CorsOptionsDelegate } from "cors";
 import express from "express";
 import morgan from 'morgan';
 import Container from "typedi";
-import Logger from "../lib/Logger";
-import { AppContext } from "./init-context";
+import Logger from "../logger/Logger";
+import { HttpConfigOptions } from "./config/HttpConfigOptions";
+import { AppContext } from "./AppContext";
 
 const logger = Logger(module)
 
-export type HttpConfigOptions = {
-  cors_allow_domains?: string[]
-  views?: string
-  session: {
-    redis_store: string,
-    cookie_secret: string,
-    cookie_name: string,
-    cookie_max_age: number
-  }
-}
-
-const init = async (ctx: AppContext, config:HttpConfigOptions) => {
+const init = async (ctx: AppContext) => {
+  const config:HttpConfigOptions =  Container.get('HttpConfigOptions');
 
   logger.info(ctx.name, ": init http: ")
   
-  Container.set('HttpConfigOptions',config);
-
   const app = ctx.http = express();
 
   app.set('view engine', 'ejs');

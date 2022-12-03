@@ -1,7 +1,7 @@
 import * as nodemailer from 'nodemailer';
-import { NotifierConfigOptions } from '../../../app/init-notifier';
+import { NotifierConfigOptions } from "../config/NotifierConfigOptions";
 import { Inject, Service } from "typedi";
-import Logger from "../../../lib/Logger";
+import Logger from "../../../lib/logger/Logger";
 
 const logger = Logger(module)
 
