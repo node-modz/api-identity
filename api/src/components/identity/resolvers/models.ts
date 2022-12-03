@@ -1,5 +1,5 @@
 import { User } from "../entities/identity/User";
-import { FieldError } from '../../../lib/graphql/FieldError'
+import { FieldError } from '../../../lib/core/graphql/FieldError'
 import {
   Field,
   InputType,  

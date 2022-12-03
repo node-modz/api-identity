@@ -4,8 +4,8 @@ import fs from "fs";
 import moment from "moment";
 import { Service } from 'typedi';
 import { getConnection } from "typeorm";
-import Logger from "../../../lib/logger/Logger";
-import { Seeder } from "../../../lib/seeder/Seeder";
+import Logger from "../../../lib/core/logger/Logger";
+import { Seeder } from "../../../lib/core/seeder/Seeder";
 import {
     ActivityType,
     BankActivity

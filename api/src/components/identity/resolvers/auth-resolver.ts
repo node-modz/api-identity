@@ -3,9 +3,9 @@ import "reflect-metadata";
 import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import { Inject, Service } from "typedi";
 import { v4 } from "uuid";
-import { isUserAuth } from "../../../lib/graphql/Auth";
-import { FieldError } from '../../../lib/graphql/FieldError';
-import { GraphQLReqContext } from "../../../lib/graphql/GraphQLReqContext";
+import { isUserAuth } from "../../../lib/core/graphql/Auth";
+import { FieldError } from '../../../lib/core/graphql/FieldError';
+import { GraphQLReqContext } from "../../../lib/core/graphql/GraphQLReqContext";
 import { EmailNotifierService } from "../../notifier/services/EmailNotifierService";
 import { Login, User } from "../entities/identity";
 import { AuthService } from "../services/identity/AuthService";
@@ -14,7 +14,7 @@ import {
 } from "./models";
 
 import { IdentityConfigOptions } from "../config/IdentityConfigOptions";
-import Logger from "../../../lib/logger/Logger";
+import Logger from "../../../lib/core/logger/Logger";
 import { LoginService } from "../services/identity/LoginService";
 import { SecurityService } from "../services/identity/SecurityService";
 import { UserService } from "../services/identity/UserService";

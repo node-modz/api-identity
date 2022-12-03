@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
-import Logger from "../../../lib/logger/Logger";
-import { CsvProcessor } from "../../../lib/seeder/csv-processor";
-import { Seeder } from '../../../lib/seeder/Seeder';
+import Logger from "../../../lib/core/logger/Logger";
+import { CsvProcessor } from "../../../lib/core/seeder/csv-processor";
+import { Seeder } from '../../../lib/core/seeder/Seeder';
 import { Tenant } from "../entities/identity";
 
 const logger = Logger(module)

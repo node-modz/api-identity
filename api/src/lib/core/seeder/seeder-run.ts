@@ -1,6 +1,6 @@
 import minimist from "minimist";
 import Container from "typedi";
-import initApp from "../core/init-context";
+import initApp from "../init-context";
 import Logger from "../logger/Logger";
 import { Seeder } from "./Seeder";
 const logger = Logger(module)
@@ -25,7 +25,8 @@ const main = async () => {
         return obj;
     }
     
-    const config = require(rfile).__SERVER_CONFIG__;
+    const seederConfig = require(rfile)
+    const config = seederConfig.__SERVER_CONFIG__;
 
     logger.info("loading config");
     /**
@@ -50,11 +51,7 @@ const main = async () => {
         await require(process.cwd() + "/"+mod.init).default(appCtxt)
     }
 
-    const loaderFile = process.cwd() + "/" + argv["loaders"].replace(/\.[^/.]+$/, "")
-
-    logger.info("loading from seed-loaders file",loaderFile);
-    const resolvedLoader = require(loaderFile)
-    const seedLoaders = resolvedLoader.seedLoaders as { cmd: string, fileName: string, seeder: Seeder }[];
+    const seedLoaders = config.seed_loaders() as { cmd: string, fileName: string, seeder: Seeder }[];
     
     let all = true;
     seedLoaders.forEach(l => {

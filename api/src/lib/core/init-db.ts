@@ -2,7 +2,7 @@
 import Container from "typedi";
 import { createConnection, useContainer } from "typeorm";
 import * as OrmExt from 'typeorm-typedi-extensions'
-import Logger from '../logger/Logger';
+import Logger from './logger/Logger';
 import { DBConfigOptions } from "./config/DBConfigOptions";
 import { AppContext } from "./AppContext";
 

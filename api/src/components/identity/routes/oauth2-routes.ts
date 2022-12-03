@@ -11,7 +11,7 @@ import {
 
 import { IdentityConfigOptions } from "../config/IdentityConfigOptions";
 import { ServerConfigOptions } from "../../../lib/core/config/ServerConfigOptions";
-import Logger from "../../../lib/logger/Logger";
+import Logger from "../../../lib/core/logger/Logger";
 import { SecurityService } from '../services/identity/SecurityService';
 import { UserService } from '../services/identity/UserService';
 import {

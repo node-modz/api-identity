@@ -3,7 +3,7 @@ import minimist from 'minimist';
 import Container from 'typedi';
 import initApp from "./lib/core/init-context";
 import { ServerConfigOptions } from "./lib/core/config/ServerConfigOptions";
-import Logger from './lib/logger/Logger';
+import Logger from './lib/core/logger/Logger';
 
 const logger = Logger(module);
 

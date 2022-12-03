@@ -5,13 +5,14 @@
 ```
 ```
   $ yarn install
+  $ find node_modules -name tscp\*.js -print | xargs dos2unix
   $ yarn watch
 ```
 
 ```
   $ npx typeorm migration:run -c ledgers  
-  $ node dist/lib/seeder/seeder-run.js --init dist/seeder-config.ts --loaders dist/seed-data/seed-loaders --clean
-  $ node dist/lib/seeder/seeder-run.js --init dist/seeder-config.ts --loaders dist/seed-data/seed-loaders
+  $ node dist/lib/core/seeder/seeder-run.js --init dist/seeder-config  --clean
+  $ node dist/lib/core/seeder/seeder-run.js --init dist/seeder-config
 ```
 
 ```bash

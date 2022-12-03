@@ -2,7 +2,7 @@ import cors, { CorsOptionsDelegate } from "cors";
 import express from "express";
 import morgan from 'morgan';
 import Container from "typedi";
-import Logger from "../logger/Logger";
+import Logger from "./logger/Logger";
 import { HttpConfigOptions } from "./config/HttpConfigOptions";
 import { AppContext } from "./AppContext";
 

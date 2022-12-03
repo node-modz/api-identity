@@ -2,7 +2,7 @@ import { json, urlencoded } from "body-parser";
 import * as fs from 'fs';
 import * as jose from 'node-jose';
 import Container from "typedi";
-import Logger from '../../lib/logger/Logger';
+import Logger from '../../lib/core/logger/Logger';
 import { AppContext } from "../../lib/core/AppContext";
 import * as oauth2Routes from './routes/oauth2-routes'
 import * as identityRoutes from './routes/identity-routes'

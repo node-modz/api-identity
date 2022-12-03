@@ -3,7 +3,7 @@ import session from "express-session";
 import Redis from "ioredis";
 import Container from "typedi";
 import { SecurityService } from "../../components/identity/services/identity/SecurityService";
-import Logger from '../logger/Logger';
+import Logger from './logger/Logger';
 import { AppContext } from "./AppContext";
 import { HttpConfigOptions } from "./config/HttpConfigOptions";
 import express from "express";

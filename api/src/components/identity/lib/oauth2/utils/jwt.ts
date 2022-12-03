@@ -1,7 +1,7 @@
 import jwt, { Secret, SignOptions, VerifyOptions } from "jsonwebtoken";
 import * as jose from 'node-jose'
 import { Service } from "typedi";
-import Logger from '../../../../../lib/logger/Logger'
+import Logger from '../../../../../lib/core/logger/Logger'
 
 const logger = Logger(module);
 

@@ -2,7 +2,7 @@ import { ApolloServer } from "apollo-server-express";
 import path from "path";
 import { buildSchema } from "type-graphql";
 import { Container } from "typedi";
-import Logger from '../logger/Logger';
+import Logger from './logger/Logger';
 import { AppContext } from "./AppContext";
 import * as ioRedis from "ioredis";
 import { GraphqQLConfig } from "./config/GraphqQLConfig";

@@ -7,7 +7,7 @@ import OAuth2Strategy, * as oauth2 from 'passport-oauth2';
 import Container from 'typedi';
 import { IdentityConfigOptions } from "../config/IdentityConfigOptions";
 import { ServerConfigOptions } from "../../../lib/core/config/ServerConfigOptions";
-import Logger from "../../../lib/logger/Logger";
+import Logger from "../../../lib/core/logger/Logger";
 import { IdpConnect } from '../entities/identity/IdpConnect';
 import { AuthorizationServer } from '../lib/oauth2';
 import { handleExpressResponse } from '../lib/oauth2/adapters/express';

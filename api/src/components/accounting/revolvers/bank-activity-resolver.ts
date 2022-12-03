@@ -13,9 +13,9 @@ import {
 } from "type-graphql";
 import "reflect-metadata";
 import { BankActivity } from "../entities/BankActivity";
-import { isUserAuth } from '../../../lib/graphql/Auth'
+import { isUserAuth } from '../../../lib/core/graphql/Auth'
 import { Service } from "typedi";
-import Logger from '../../../lib/logger/Logger'
+import Logger from '../../../lib/core/logger/Logger'
 
 const logger = Logger(module);
 

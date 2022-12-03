@@ -6,7 +6,7 @@ import { LoginService } from "./LoginService";
 import { IdpConnect } from '../../entities/identity/IdpConnect';
 import passport from 'passport';
 import { getConnection } from 'typeorm';
-import Logger from "../../../../lib/logger/Logger";
+import Logger from "../../../../lib/core/logger/Logger";
 
 const logger = Logger(module)
 

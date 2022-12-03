@@ -1,7 +1,7 @@
 import express from "express";
 import { Inject, Service } from 'typedi';
 import { HttpConfigOptions } from "../../../../lib/core/config/HttpConfigOptions";
-import Logger from "../../../../lib/logger/Logger";
+import Logger from "../../../../lib/core/logger/Logger";
 import { User } from "../../entities/identity";
 import { JwtKeyStoreService } from '../../lib/oauth2';
 

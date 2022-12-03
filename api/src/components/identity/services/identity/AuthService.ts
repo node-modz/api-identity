@@ -5,7 +5,7 @@ import { Inject, Service } from 'typedi';
 import { Repository } from "typeorm";
 import { InjectRepository } from 'typeorm-typedi-extensions';
 import { IdentityConfigOptions } from "../../config/IdentityConfigOptions";
-import Logger from "../../../../lib/logger/Logger";
+import Logger from "../../../../lib/core/logger/Logger";
 import { Login, User } from '../../entities/identity';
 import { Token } from "../../resolvers/models";
 
