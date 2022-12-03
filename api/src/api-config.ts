@@ -22,11 +22,11 @@ export const __SERVER_CONFIG__ = {
     ],
 
     setup: [
-        { init: "./lib/core/init-db"  },
-        { init: "./lib/core/init-http"  },
-        { init: "./lib/core/init-session"  },
-        { init: "./lib/core/init-apollo"  },
-        { init: "./components/identity/init-identity" },
+        { init: "dist/lib/core/init-db"  },
+        { init: "dist/lib/core/init-http"  },
+        { init: "dist/lib/core/init-session"  },
+        { init: "dist/lib/core/init-apollo"  },
+        { init: "dist/components/identity/init-identity" },
     ],
     // this host.
     // TODO: this can support multiple hosts.

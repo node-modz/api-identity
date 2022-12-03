@@ -1,16 +1,17 @@
 import dotenv from 'dotenv-safe';
 import minimist from 'minimist';
 import Container from 'typedi';
-import initApp from "./lib/core/init-context";
-import { ServerConfigOptions } from "./lib/core/config/ServerConfigOptions";
-import Logger from './lib/core/logger/Logger';
+import initApp from "../init-context";
+import { ServerConfigOptions } from "../config/ServerConfigOptions";
+import Logger from '../logger/Logger';
 
 const logger = Logger(module);
 
 const main = async () => {
   const argv = minimist(process.argv.slice(2));
   dotenv.config();
-  logger.info("start api-server:", __dirname);
+  logger.info("start api-server __dirname:", __dirname);
+  logger.info("start api-server process.cwd():", process.cwd());
 
   const file = argv["init"];
   const rfile = (file) ? process.cwd() + "/" + file.replace(/\.[^/.]+$/, "") : '';
@@ -41,7 +42,7 @@ const main = async () => {
    */
   const appCtxt = initApp("ledgers-api");
   for (const mod of server.setup as { init: string, config: string }[]) {
-    await require(mod.init).default(appCtxt)
+    await require(process.cwd() + "/"+ mod.init).default(appCtxt)
   }
 
   const serverConfig:ServerConfigOptions = Container.get('ServerConfigOptions')

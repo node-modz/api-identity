@@ -12,8 +12,8 @@
   "scripts": {
     "gen-env": "gen-env-types .env -o src/env.d.ts -e .",
     "watch": "tsc -w & tscp -w",
-    "run:dev": "nodemon dist/api-server.js --init dist/api-config.ts",
-    "run:dev:api": "nodemon dist/api-server.js",
+    "run:dev": "nodemon dist/lib/core/server/server-run.js --init dist/api-config.ts",
+    "run:dev:api": "nodemon dist/lib/core/server/server-run.js --init dist/api-config.ts",
     "mig:run": "typeorm migration:run -c ledgers -f ormconfig.json",
     "mig:gen:all": "npm run mig:gen:identity $npm_config_first || npm run mig:gen:oauth2 $npm_config_first || npm run mig:gen:accounting $npm_config_first || npm run mig:gen:dacchain $npm_config_first",
     "mig:gen:identity": "typeorm migration:generate -c identity -d src/migrations/identity -f ormconfig.json -n ",
@@ -22,6 +22,7 @@
     "mig:gen:dacchain": "typeorm migration:generate -c dacchain -d src/migrations/dacchain -f ormconfig.json -n "
   },
   "keywords": [],
+  
   "author": "",
   "license": "ISC",
   "devDependencies": {
